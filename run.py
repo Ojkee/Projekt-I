@@ -12,7 +12,7 @@ def run_dev():
     backend_proc = subprocess.Popen(["go", "run", "main.go", "dev"], cwd=BACKEND_DIR)
 
     print("Running frontend server in dev mode...")
-    frontend_proc = subprocess.Popen(["npm", "run", "dev"], cwd=FRONTEND_DIR)
+    frontend_proc = subprocess.Popen([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR)
 
     try:
         backend_proc.wait()
@@ -24,7 +24,7 @@ def run_dev():
 
 def run_prod():
     print("Building frontend...")
-    subprocess.run(["npm", "run", "build"], cwd=FRONTEND_DIR, check=True)
+    subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "build"], cwd=FRONTEND_DIR, check=True)
 
     print("Starting backend in production mode...")
 
