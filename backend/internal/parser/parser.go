@@ -96,7 +96,9 @@ func (parser *Parser) Parse() *ast.Program {
 		} else {
 			program.AppendStatement(stmt)
 		}
-		parser.advanceToken()
+		if parser.current.Type == token.NEW_LINE {
+			parser.advanceToken()
+		}
 	}
 	return program
 }
