@@ -9,14 +9,13 @@ func (parser *Parser) parseExpression(precedence int) (expression.Expression, *P
 	prefix := parser.prefixExprFns[parser.current.Type]
 	if prefix == nil {
 		err := NewParseErr("Error near: `" + parser.current.Literal + "`")
-		err.AddStack("parseExpression", []any{parser.current})
-		parser.skipOverNewLine()
+		err.AddStack("parseExpression nil prefix", parser.current)
 		return nil, err
 	}
 	var err *ParseErr
 	lhs, err := prefix()
 	if err != nil {
-		err.AddStack("parseExpression")
+		err.AddStack("parseExpression", parser.current)
 		return nil, err
 	}
 

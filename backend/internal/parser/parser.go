@@ -91,7 +91,7 @@ func (parser *Parser) Parse() *ast.Program {
 	for parser.current.Type != token.EOF {
 		stmt, err := parser.parseStatement()
 		if err != nil {
-			errStmt := statement.NewLineError(err.Error(), err.GetStack())
+			errStmt := statement.NewLineError(err.Error(), err.Stack())
 			program.AppendStatement(errStmt)
 		} else {
 			program.AppendStatement(stmt)
@@ -153,7 +153,7 @@ func (parser *Parser) parseCommand() (statement.Statement, *ParseErr) {
 	if err != nil {
 		err.AddStack("parseCommand")
 	}
-	parser.skipOverNewLine()
+	parser.advanceToken()
 	return stmt, err
 }
 

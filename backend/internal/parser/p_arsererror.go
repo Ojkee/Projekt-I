@@ -40,7 +40,7 @@ func (parseErr *ParseErr) AddStack(frame string, args ...any) {
 	parseErr.stack = append(parseErr.stack, stackFrame{name: frame, args: args})
 }
 
-func (parseErr *ParseErr) GetStack() []string {
+func (parseErr *ParseErr) Stack() []string {
 	toStr := func(frame stackFrame) string {
 		return frame.toString()
 	}
