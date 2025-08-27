@@ -170,3 +170,5 @@ func TestLexerExamplePrograms(t *testing.T) {
 		})
 	}
 }
+
+func TestLexerPreprocess(t *testing.T) {} // TODO-BACK

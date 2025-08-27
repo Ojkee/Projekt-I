@@ -1,6 +1,7 @@
 package parser_test
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -15,7 +16,11 @@ import (
 
 func stmtsToString(stmts []statement.Statement) string {
 	stmtToString := func(stmt statement.Statement) string {
-		return stmt.ToString()
+		switch s := stmt.(type) {
+		case *statement.LineError:
+			return fmt.Sprintf("- %s\n%s", s.ToString(), s.StackString())
+		}
+		return "- " + stmt.ToString()
 	}
 	strs := fn.Map(stmts, stmtToString)
 	return strings.Join(strs, "\n")
@@ -462,7 +467,7 @@ func TestParserFormula(t *testing.T) {
 	}
 }
 
-func TestParserMultiline(t *testing.T) {
+func TestParserAlgebraicMultiline(t *testing.T) {
 	tests := map[string]struct {
 		input    string
 		expected []statement.Statement
@@ -470,6 +475,49 @@ func TestParserMultiline(t *testing.T) {
 		"Empty": {
 			input:    "",
 			expected: []statement.Statement{},
+		},
+		"+ AtomTransform": {
+			input: "2*x = 3^5\n/2",
+			expected: []statement.Statement{
+				statement.NewSubject(
+					expression.NewInfix(token.New(token.EQUALS, "="),
+						expression.NewInfix(token.New(token.ASTERISK, "*"),
+							expression.NewNumber(2.),
+							expression.NewIdentifier(token.New(token.IDENT, "x")),
+						),
+						expression.NewInfix(token.New(token.CARET, "^"),
+							expression.NewNumber(3.),
+							expression.NewNumber(5.),
+						),
+					),
+				),
+				statement.NewAtomTransform(token.New(token.SLASH, "/"),
+					expression.NewNumber(2.),
+				),
+			},
+		},
+		"+ 2 AtomTransform": {
+			input: "2*x = 3^5\n/*1\n/+6",
+			expected: []statement.Statement{
+				statement.NewSubject(
+					expression.NewInfix(token.New(token.EQUALS, "="),
+						expression.NewInfix(token.New(token.ASTERISK, "*"),
+							expression.NewNumber(2.),
+							expression.NewIdentifier(token.New(token.IDENT, "x")),
+						),
+						expression.NewInfix(token.New(token.CARET, "^"),
+							expression.NewNumber(3.),
+							expression.NewNumber(5.),
+						),
+					),
+				),
+				statement.NewAtomTransform(token.New(token.ASTERISK, "*"),
+					expression.NewNumber(1.),
+				),
+				statement.NewAtomTransform(token.New(token.PLUS, "+"),
+					expression.NewNumber(6.),
+				),
+			},
 		},
 	}
 
@@ -482,7 +530,7 @@ func TestParserMultiline(t *testing.T) {
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(
-					"\ngot: \n\t`%s`, \nexpected: \n\t`%s`",
+					"\ngot:\n%s, \nexpected: \n%s",
 					stmtsToString(result),
 					stmtsToString(tt.expected),
 				)
@@ -490,3 +538,5 @@ func TestParserMultiline(t *testing.T) {
 		})
 	}
 }
+
+func TestParserErrors(t *testing.T) {} // TODO-BACK

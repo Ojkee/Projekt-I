@@ -34,9 +34,9 @@ var precedences = map[token.TokenType]int{
 }
 
 type (
-	prefixExprFn          = func() expression.Expression
-	infixExprFn           = func(expression.Expression) expression.Expression
-	prefixAtomTransformFn = func() statement.Statement
+	prefixExprFn          = func() (expression.Expression, *ParseErr)
+	infixExprFn           = func(expression.Expression) (expression.Expression, *ParseErr)
+	prefixAtomTransformFn = func() (statement.Statement, *ParseErr)
 )
 
 type Parser struct {
@@ -89,8 +89,11 @@ func New(lexer *lexer_api.Lexer) *Parser {
 func (parser *Parser) Parse() *ast.Program {
 	program := ast.NewProgram()
 	for parser.current.Type != token.EOF {
-		stmt := parser.parseStatement()
-		if stmt != nil {
+		stmt, err := parser.parseStatement()
+		if err != nil {
+			errStmt := statement.NewLineError(err.Error(), err.GetStack())
+			program.AppendStatement(errStmt)
+		} else {
 			program.AppendStatement(stmt)
 		}
 		parser.advanceToken()
@@ -103,10 +106,10 @@ func (parser *Parser) advanceToken() {
 	parser.peek = parser.lexer.ReadToken()
 }
 
-func (parser *Parser) parseStatement() statement.Statement {
+func (parser *Parser) parseStatement() (statement.Statement, *ParseErr) {
 	switch parser.current.Type {
 	case token.ILLEGAL:
-		return parser.parseIllegal()
+		return nil, parser.parseIllegal()
 	case token.SLASH:
 		return parser.parseCommand()
 	default:
@@ -123,138 +126,50 @@ func (parser *Parser) skipOverNewLine() {
 	}
 }
 
-func (parser *Parser) parseIllegal() *statement.LineError {
+func (parser *Parser) parseIllegal() *ParseErr {
 	msg := fmt.Sprintf("Illegal character: %s", parser.current.Literal)
-	invalid := statement.NewLineError(msg)
-	parser.skipOverNewLine()
-	return invalid
+	err := NewParseErr(msg)
+	err.AddStack("parseIllegal")
+	return err
 }
 
-func (parser *Parser) parseCommand() statement.Statement {
+func (parser *Parser) parseCommand() (statement.Statement, *ParseErr) {
 	parser.advanceToken()
+	var err *ParseErr
 	var stmt statement.Statement
 	switch parser.current.Type {
 	case token.NEW_LINE, token.EOF:
-		stmt = statement.NewLineError("Empty line")
+		err = NewParseErr("Empty line")
 	case token.IDENT:
 		if parser.current.IsSymbol() {
-			stmt = parser.parseAtomTransform()
+			stmt, err = parser.parseAtomTransform()
 		} else {
-			stmt = parser.parseFormula()
+			stmt, err = parser.parseFormula()
 		}
 	default:
-		stmt = parser.parseAtomTransform()
+		stmt, err = parser.parseAtomTransform()
 	}
 
+	if err != nil {
+		err.AddStack("parseCommand")
+	}
 	parser.skipOverNewLine()
-	return stmt
+	return stmt, err
 }
 
-func (parser *Parser) parseAtomTransform() statement.Statement {
-	prefix := parser.prefixAtomTransformFns[parser.current.Type]
-	if prefix == nil {
-		return statement.NewLineError("Error near: `" + parser.current.Literal + "`")
-	}
-	return prefix()
+func (parser *Parser) parseIdentifier() (expression.Expression, *ParseErr) {
+	return expression.NewIdentifier(parser.current), nil
 }
 
-func (parser *Parser) prefixAtom() statement.Statement {
-	op := parser.current
-	parser.advanceToken()
-	expr := parser.parseExpression(LOWEST)
-	return statement.NewAtomTransform(op, expr)
-}
-
-func (parser *Parser) prefixAtomDiv() statement.Statement {
-	op := token.New(token.SLASH, "/")
-	expr := parser.parseExpression(LOWEST)
-	return statement.NewAtomTransform(op, expr)
-}
-
-func (parser *Parser) parseFormula() statement.Statement {
-	ident := parser.current
-	parser.advanceToken()
-	params := parser.parseCommaSepParams()
-	return statement.NewFormula(ident, params)
-}
-
-func (parser *Parser) parseCommaSepParams() []expression.Expression {
-	params := make([]expression.Expression, 0)
-	for !newLineOrEOF(parser.current) {
-		expr := parser.parseExpression(LOWEST)
-		params = append(params, expr)
-		parser.advanceToken() // For some reason expr stops at last exprs token
-		if parser.current.Type == token.COMMA {
-			parser.advanceToken()
-		}
-	}
-	return params
-}
-
-func (parser *Parser) parseSubject() *statement.Subject {
-	expr := parser.parseExpression(LOWEST)
-	if newLineOrEOF(parser.peek) {
-		parser.advanceToken()
-	}
-	return statement.NewSubject(expr)
-}
-
-func (parser *Parser) parseExpression(precedence int) expression.Expression {
-	prefix := parser.prefixExprFns[parser.current.Type]
-	if prefix == nil {
-		msg := "Error near: `" + parser.current.Literal + "`"
-		parser.skipOverNewLine()
-		return expression.NewExprError(msg)
-	}
-	lhs := prefix()
-
-	for !newLineOrEOF(parser.peek) && precedence < parser.peekPrecedence() {
-		infix := parser.infixExprFns[parser.peek.Type]
-		if infix == nil {
-			return lhs
-		}
-		parser.advanceToken()
-		lhs = infix(lhs)
-	}
-
-	return lhs
-}
-
-func (parser *Parser) parsePrefixExpression() expression.Expression {
-	operator := parser.current
-	parser.advanceToken()
-	rhs := parser.parseExpression(PREFIX)
-	return expression.NewPrefix(operator, rhs)
-}
-
-func (parser *Parser) parseInfixExpression(lhs expression.Expression) expression.Expression {
-	operator := parser.current
-	precedence := parser.currentPrecedence()
-	parser.advanceToken()
-	rhs := parser.parseExpression(precedence)
-	return expression.NewInfix(operator, lhs, rhs)
-}
-
-func (parser *Parser) parseGroupedExpression() expression.Expression {
-	parser.advanceToken()
-	expr := parser.parseExpression(LOWEST)
-	if parser.peek.Type != token.RPAREN {
-		return nil
-	}
-	parser.advanceToken()
-	return expr
-}
-
-func (parser *Parser) parseIdentifier() expression.Expression {
-	return expression.NewIdentifier(parser.current)
-}
-
-func (parser *Parser) parseNumber() expression.Expression {
+func (parser *Parser) parseNumber() (expression.Expression, *ParseErr) {
 	num, err := strconv.ParseFloat(parser.current.Literal, 64)
 	if err != nil {
-		panic(err)
+		msg := fmt.Sprintf("Parsing number error for: %s", parser.current.Literal)
+		perr := NewParseErr(msg)
+		perr.AddStack("parseNumber", parser.current)
+		return nil, perr
 	}
-	return expression.NewNumber(num)
+	return expression.NewNumber(num), nil
 }
 
 func (parser *Parser) peekPrecedence() int {
