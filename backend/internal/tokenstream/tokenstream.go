@@ -44,8 +44,11 @@ func (tokenStream *TokenStream) preprocess() {
 
 	for i := 0; i < len(tokenStream.tokens)-1; i++ {
 		current := tokenStream.tokens[i]
+		next := tokenStream.tokens[i+1]
 		if current.Type == token.BANG {
 			i++
+			value = append(value, current)
+			value = append(value, next)
 			continue
 		}
 		if current.Type == token.IDENT && len(current.Literal) > 1 {
@@ -54,7 +57,6 @@ func (tokenStream *TokenStream) preprocess() {
 		} else {
 			value = append(value, current)
 		}
-		next := tokenStream.tokens[i+1]
 		if tokenStream.mulBetween(current.Type, next.Type) {
 			value = append(value, token.New(token.ASTERISK, "*"))
 		}

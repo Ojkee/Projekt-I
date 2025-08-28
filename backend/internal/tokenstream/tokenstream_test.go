@@ -154,3 +154,47 @@ func TestTokenStreamPreprocess(t *testing.T) {
 		})
 	}
 }
+
+func TestTokenStreamPreprocessFormula(t *testing.T) {
+	tests := map[string]struct {
+		input    string
+		expected []token.Token
+	}{
+		"Formula no args": {
+			input: "!formula",
+			expected: []token.Token{
+				token.New(token.BANG, "!"),
+				token.New(token.IDENT, "formula"),
+				token.New(token.EOF, "EOF"),
+			},
+		},
+		"Formula args": {
+			input: "!formula xy",
+			expected: []token.Token{
+				token.New(token.BANG, "!"),
+				token.New(token.IDENT, "formula"),
+				token.New(token.IDENT, "x"),
+				token.New(token.ASTERISK, "*"),
+				token.New(token.IDENT, "y"),
+				token.New(token.EOF, "EOF"),
+			},
+		},
+	}
+
+	for name, test := range tests {
+		tt := test
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			lexer := lexer_api.New(tt.input)
+			result := tokenstream.New(lexer).Get()
+			if !reflect.DeepEqual(result, tt.expected) {
+				t.Errorf(
+					"\nDiff at: %d\ngot: `%v`,\nexpected: `%v`",
+					fn.DiffIdx(result, tt.expected),
+					result,
+					tt.expected,
+				)
+			}
+		})
+	}
+}
