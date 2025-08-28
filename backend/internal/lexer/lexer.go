@@ -86,6 +86,8 @@ func (lexer *Lexer) readNextToken() token.Token {
 		if lexer.peekRune() == '=' {
 			tok = token.New(token.NOT_EQUALS, "!=")
 			lexer.readRune()
+		} else {
+			tok = token.New(token.BANG, "!")
 		}
 	case '<':
 		if lexer.peekRune() == '=' {

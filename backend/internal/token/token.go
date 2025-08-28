@@ -16,6 +16,8 @@ const (
 	GT         = ">"
 	GE         = ">="
 
+	BANG = "!"
+
 	COMMA  = ","
 	LPAREN = "("
 	RPAREN = ")"

@@ -7,6 +7,7 @@ import (
 )
 
 func (parser *Parser) parseFormula() (statement.Statement, *ParseErr) {
+	parser.advanceToken()
 	ident := parser.current
 	parser.advanceToken()
 	params, err := parser.parseCommaSepParams()

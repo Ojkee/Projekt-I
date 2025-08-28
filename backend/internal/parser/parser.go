@@ -114,6 +114,8 @@ func (parser *Parser) parseStatement() (statement.Statement, *ParseErr) {
 		return nil, parser.parseIllegal()
 	case token.SLASH:
 		return parser.parseCommand()
+	case token.BANG:
+		return parser.parseFormula()
 	default:
 		return parser.parseSubject()
 	}
@@ -142,12 +144,6 @@ func (parser *Parser) parseCommand() (statement.Statement, *ParseErr) {
 	switch parser.current.Type {
 	case token.NEW_LINE, token.EOF:
 		err = NewParseErr("Empty line")
-	case token.IDENT:
-		if parser.current.IsSymbol() {
-			stmt, err = parser.parseAtomTransform()
-		} else {
-			stmt, err = parser.parseFormula()
-		}
 	default:
 		stmt, err = parser.parseAtomTransform()
 	}

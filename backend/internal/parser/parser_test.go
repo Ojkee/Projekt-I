@@ -387,7 +387,7 @@ func TestParserFormula(t *testing.T) {
 		expected []statement.Statement
 	}{
 		"Formula no args": {
-			input: "/formula",
+			input: "!formula",
 			expected: []statement.Statement{
 				statement.NewFormula(token.New(token.IDENT, "formula"),
 					[]expression.Expression{},
@@ -395,7 +395,7 @@ func TestParserFormula(t *testing.T) {
 			},
 		},
 		"Formula single arg num": {
-			input: "/formula 2",
+			input: "!formula 2",
 			expected: []statement.Statement{
 				statement.NewFormula(token.New(token.IDENT, "formula"),
 					[]expression.Expression{
@@ -405,7 +405,7 @@ func TestParserFormula(t *testing.T) {
 			},
 		},
 		"Formula single arg ident": {
-			input: "/formula x",
+			input: "!formula x",
 			expected: []statement.Statement{
 				statement.NewFormula(token.New(token.IDENT, "formula"),
 					[]expression.Expression{
@@ -415,7 +415,7 @@ func TestParserFormula(t *testing.T) {
 			},
 		},
 		"Formula multi arg": {
-			input: "/formula 2, 1, x, a",
+			input: "!formula 2, 1, x, a",
 			expected: []statement.Statement{
 				statement.NewFormula(token.New(token.IDENT, "formula"),
 					[]expression.Expression{
@@ -428,7 +428,7 @@ func TestParserFormula(t *testing.T) {
 			},
 		},
 		"Formula multi arg complex expression": {
-			input: "/formula 2+x, i*(y - 8)",
+			input: "!formula 2+x, i*(y - 8)",
 			expected: []statement.Statement{
 				statement.NewFormula(token.New(token.IDENT, "formula"),
 					[]expression.Expression{
@@ -584,7 +584,7 @@ func TestParserAlgebraicMultiline(t *testing.T) {
 			},
 		},
 		"+ Formula no args": {
-			input: "2*x = 3^5\n/formula",
+			input: "2*x = 3^5\n!formula",
 			expected: []statement.Statement{
 				statement.NewSubject(
 					expression.NewInfix(token.New(token.EQUALS, "="),
@@ -604,7 +604,7 @@ func TestParserAlgebraicMultiline(t *testing.T) {
 			},
 		},
 		"+ Formula with args": {
-			input: "2*x = 3^5\n/formula (x * 2)\n",
+			input: "2*x = 3^5\n!formula (x * 2)\n",
 			expected: []statement.Statement{
 				statement.NewSubject(
 					expression.NewInfix(token.New(token.EQUALS, "="),
@@ -629,7 +629,7 @@ func TestParserAlgebraicMultiline(t *testing.T) {
 			},
 		},
 		"+ 3 Formula with and without args": {
-			input: "2*x = 3^5\n/formula (x * 2)\n/formula\n/formula x^(3 + y), x + y",
+			input: "2*x = 3^5\n!formula (x * 2)\n!formula\n!formula x^(3 + y), x + y",
 			expected: []statement.Statement{
 				statement.NewSubject(
 					expression.NewInfix(token.New(token.EQUALS, "="),
