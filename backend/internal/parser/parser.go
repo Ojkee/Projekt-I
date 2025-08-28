@@ -6,9 +6,9 @@ import (
 
 	"app/internal/ast"
 	"app/internal/expression"
-	lexer_api "app/internal/lexer"
 	"app/internal/statement"
 	"app/internal/token"
+	"app/internal/tokenstream"
 )
 
 const (
@@ -40,18 +40,18 @@ type (
 )
 
 type Parser struct {
-	lexer   *lexer_api.Lexer
-	current token.Token
-	peek    token.Token
+	tokenStream *tokenstream.TokenStream
+	current     token.Token
+	peek        token.Token
 
 	prefixExprFns          map[token.TokenType]prefixExprFn
 	infixExprFns           map[token.TokenType]infixExprFn
 	prefixAtomTransformFns map[token.TokenType]prefixAtomTransformFn
 }
 
-func New(lexer *lexer_api.Lexer) *Parser {
+func New(tokenStream *tokenstream.TokenStream) *Parser {
 	newParser := Parser{
-		lexer:                  lexer,
+		tokenStream:            tokenStream,
 		prefixExprFns:          make(map[token.TokenType]prefixExprFn),
 		infixExprFns:           make(map[token.TokenType]infixExprFn),
 		prefixAtomTransformFns: make(map[token.TokenType]prefixAtomTransformFn),
@@ -105,7 +105,7 @@ func (parser *Parser) Parse() *ast.Program {
 
 func (parser *Parser) advanceToken() {
 	parser.current = parser.peek
-	parser.peek = parser.lexer.ReadToken()
+	parser.peek = parser.tokenStream.Next()
 }
 
 func (parser *Parser) parseStatement() (statement.Statement, *ParseErr) {

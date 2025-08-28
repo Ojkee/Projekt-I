@@ -12,6 +12,7 @@ import (
 	parser_api "app/internal/parser"
 	"app/internal/statement"
 	"app/internal/token"
+	"app/internal/tokenstream"
 )
 
 func stmtsToString(stmts []statement.Statement) string {
@@ -283,7 +284,8 @@ func TestParserAlgebraic(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			lexer := lexer_api.New(tt.input)
-			parser := parser_api.New(lexer)
+			stream := tokenstream.New(lexer)
+			parser := parser_api.New(stream)
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(
@@ -368,7 +370,8 @@ func TestParserCommand(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			lexer := lexer_api.New(tt.input)
-			parser := parser_api.New(lexer)
+			stream := tokenstream.New(lexer)
+			parser := parser_api.New(stream)
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(
@@ -454,7 +457,8 @@ func TestParserFormula(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			lexer := lexer_api.New(tt.input)
-			parser := parser_api.New(lexer)
+			stream := tokenstream.New(lexer)
+			parser := parser_api.New(stream)
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(
@@ -678,7 +682,8 @@ func TestParserAlgebraicMultiline(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			lexer := lexer_api.New(tt.input)
-			parser := parser_api.New(lexer)
+			stream := tokenstream.New(lexer)
+			parser := parser_api.New(stream)
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(
@@ -702,7 +707,8 @@ func TestParserErrors(t *testing.T) { // TODO-BACK implement better err handling
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			lexer := lexer_api.New(tt.input)
-			parser := parser_api.New(lexer)
+			stream := tokenstream.New(lexer)
+			parser := parser_api.New(stream)
 			result := *parser.Parse().Get()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf(

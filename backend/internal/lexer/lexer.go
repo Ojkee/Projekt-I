@@ -26,28 +26,11 @@ func New(input string) *Lexer {
 		content:        make([]token.Token, 0),
 	}
 	lexer.tokenize()
-	lexer.preprocess()
 	return &lexer
 }
 
 func (lexer *Lexer) Tokenize() []token.Token {
 	return lexer.content
-}
-
-func (lexer *Lexer) ReadToken() token.Token {
-	tok := lexer.content[lexer.readContentIdx]
-	if tok.Type != token.EOF {
-		lexer.readContentIdx++
-	}
-	return tok
-}
-
-func (lexer *Lexer) preprocess() {
-	preprocessed := make([]token.Token, 0)
-	for _, tok := range lexer.content { // TODO-BACK: insert preprocess mechanism here
-		preprocessed = append(preprocessed, tok)
-	}
-	lexer.content = preprocessed
 }
 
 func (lexer *Lexer) tokenize() {
