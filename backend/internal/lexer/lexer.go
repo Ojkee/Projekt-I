@@ -11,6 +11,9 @@ type Lexer struct {
 	pos     int  // Points to current
 	readPos int  // Points to next character after current
 	current rune // Current rune
+
+	readContentIdx int
+	content        []token.Token
 }
 
 func New(input string) *Lexer {
@@ -18,23 +21,48 @@ func New(input string) *Lexer {
 		input:   []rune(input),
 		pos:     0,
 		readPos: 0,
+
+		readContentIdx: 0,
+		content:        make([]token.Token, 0),
 	}
-	lexer.readRune()
+	lexer.tokenize()
+	lexer.preprocess()
 	return &lexer
 }
 
 func (lexer *Lexer) Tokenize() []token.Token {
-	tokens := make([]token.Token, 0)
-
-	tok := lexer.ReadToken()
-	for ; tok.Type != token.EOF; tok = lexer.ReadToken() {
-		tokens = append(tokens, tok)
-	}
-	tokens = append(tokens, token.New(token.EOF, "EOF"))
-	return tokens
+	return lexer.content
 }
 
 func (lexer *Lexer) ReadToken() token.Token {
+	tok := lexer.content[lexer.readContentIdx]
+	if tok.Type != token.EOF {
+		lexer.readContentIdx++
+	}
+	return tok
+}
+
+func (lexer *Lexer) preprocess() {
+	preprocessed := make([]token.Token, 0)
+	for _, tok := range lexer.content { // TODO-BACK: insert preprocess mechanism here
+		preprocessed = append(preprocessed, tok)
+	}
+	lexer.content = preprocessed
+}
+
+func (lexer *Lexer) tokenize() {
+	lexer.readRune()
+
+	tokens := make([]token.Token, 0)
+	tok := lexer.readNextToken()
+	for ; tok.Type != token.EOF; tok = lexer.readNextToken() {
+		tokens = append(tokens, tok)
+	}
+	tokens = append(tokens, token.New(token.EOF, "EOF"))
+	lexer.content = tokens
+}
+
+func (lexer *Lexer) readNextToken() token.Token {
 	lexer.skipWhitespace()
 	if lexer.pos >= len(lexer.input) {
 		return token.New(token.EOF, "EOF")
