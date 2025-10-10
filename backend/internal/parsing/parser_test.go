@@ -695,28 +695,3 @@ func TestParserAlgebraicMultiline(t *testing.T) {
 		})
 	}
 }
-
-func TestParserErrors(t *testing.T) { // TODO-BACK implement better err handling in parser
-	tests := map[string]struct {
-		input    string
-		expected []statement.Statement
-	}{}
-
-	for name, test := range tests {
-		tt := test
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
-			lexer := lexer_api.New(tt.input)
-			stream := tokenstream.New(lexer)
-			parser := parser_api.New(stream)
-			result := *parser.Parse().Get()
-			if !reflect.DeepEqual(result, tt.expected) {
-				t.Errorf(
-					"\ngot:\n%s \nexpected: \n%s",
-					stmtsToString(result),
-					stmtsToString(tt.expected),
-				)
-			}
-		})
-	}
-}
