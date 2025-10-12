@@ -34,5 +34,8 @@ class Token(NamedTuple):
     ttype: TokenType
     literal: str
 
+    def __repr__(self):
+        return f"Token({self.ttype}, {self.literal})"
+
     def is_symbol(self) -> bool:
         return self.ttype == TokenType.IDENT and len(self.literal) == 1

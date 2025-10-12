@@ -6,9 +6,11 @@ class Number(Expression):
         super().__init__()
         self.value: float = value
 
-    def debug_str(self) -> str:
-        buffer = ["NUMBER(", self._number_to_str(), ")"]
-        return "".join(buffer)
+    def __eq__(self, other):
+        return isinstance(other, Number) and self.value == other.value
+
+    def __repr__(self) -> str:
+        return f"NUMBER({self.value})"
 
     def pretty_str(self) -> str:
         return self._number_to_str()

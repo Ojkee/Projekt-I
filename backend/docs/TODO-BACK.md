@@ -7,3 +7,4 @@
 
 ### Extras
 - [ ] Statement printing strategy
+- [ ] Better __repl__ implementation  of statments and expressions (more readable)

@@ -7,14 +7,17 @@ class Prefix(Expression):
         self._op = operator
         self._expr = expr
 
-    def debug_str(self) -> str:
-        buffer: list[str] = [
-            "PREFIX(",
-            self._op.literal,
-            self._expr.debug_str(),
-            ")",
-        ]
-        return "".join(buffer)
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Prefix):
+            return False
+        return (
+            self._op.ttype == other._op.ttype
+            and self._op.literal == other._op.literal
+            and self._expr == other._expr
+        )
+
+    def __repr__(self) -> str:
+        return f"PREFIX({repr(self._op)}, {repr(self._expr)}\n)"
 
     def pretty_str(self) -> str:
         return self._op.literal + self._expr.pretty_str()

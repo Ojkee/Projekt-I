@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from backend.internal.expressions import Prefix, Infix, Identifier, Number
 from backend.internal.lexing import Lexer
-from backend.internal.statements import Statement, Subject
+from backend.internal.statements import Statement, Subject, AtomTransform
 from backend.internal.tokens import Token, TokenType
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
@@ -14,7 +14,6 @@ class Case:
     name: str
     input: str
     expected: list[Statement]
-
 
 CASES_ALGEBRAIC = [
     Case(
@@ -291,9 +290,160 @@ CASES_ALGEBRAIC = [
     ),
 ]
 
+CASES_COMMANDS = [
+    Case(
+        "Atom plus",
+        "/+2",
+        [
+            AtomTransform(
+                Token(TokenType.PLUS, "+"),
+                Number(2.0),
+            ),
+        ],
+    ),
+    Case(
+        "Atom minus",
+        "/-x",
+        [
+            AtomTransform(
+                Token(TokenType.MINUS, "-"),
+                Identifier(Token(TokenType.IDENT, "x")),
+            ),
+        ],
+    ),
+    Case(
+        "atom divide",
+        "/3",
+        [
+            AtomTransform(
+                Token(TokenType.SLASH, "/"),
+                Number(3.0),
+            ),
+        ],
+    ),
+    Case(
+        "Atom multiply",
+        "/*2",
+        [
+            AtomTransform(
+                Token(TokenType.ASTERISK, "*"),
+                Number(2.0),
+            ),
+        ],
+    ),
+    Case(
+        "Atom power",
+        "/^x",
+        [
+            AtomTransform(
+                Token(TokenType.CARET, "^"),
+                Identifier(Token(TokenType.IDENT, "x")),
+            ),
+        ],
+    ),
+    Case(
+        "Atom complex",
+        "/+(2 - x * 3 / 4 ^ y)",
+        [
+            AtomTransform(
+                Token(TokenType.PLUS, "+"),
+                Infix(
+                    Token(TokenType.MINUS, "-"),
+                    Number(2.0),
+                    Infix(
+                        Token(TokenType.SLASH, "/"),
+                        Infix(
+                            Token(TokenType.ASTERISK, "*"),
+                            Identifier(Token(TokenType.IDENT, "x")),
+                            Number(3.0),
+                        ),
+                        Infix(
+                            Token(TokenType.CARET, "^"),
+                            Number(4.0),
+                            Identifier(Token(TokenType.IDENT, "y")),
+                        ),
+                    ),
+                ),
+            ),
+        ],
+    ),
+]
 
-@pytest.mark.parametrize("case", CASES_ALGEBRAIC, ids=[c.name for c in CASES_ALGEBRAIC])
-def test_parser_algebraic(case: Case) -> None:
+CASES_FORMULA = [
+    # Future formula test cases
+]
+
+CASES_ALGEBRAIC_MULTILINE = [
+    Case(
+        "Empty",
+        "",
+        [
+        ],
+    ),
+    Case(
+        "single AtomTransform",
+        "2*x = 3^5\n/2",
+        [
+            Subject(
+                Infix(
+                    Token(TokenType.EQUALS, "="),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(2.0),
+                        Identifier(Token(TokenType.IDENT, "x")),
+                    ),
+                    Infix(
+                        Token(TokenType.CARET, "^"),
+                        Number(3.0),
+                        Number(5.0),
+                    ),
+                )
+            ),
+            AtomTransform(
+                Token(TokenType.SLASH, "/"),
+                Number(2.0),
+            ),
+        ],
+    ),
+    Case(
+        "double AtomTransform",
+        "2*x = 3^5\n/*1\n/+6",
+        [
+            Subject(
+                Infix(
+                    Token(TokenType.EQUALS, "="),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(2.0),
+                        Identifier(Token(TokenType.IDENT, "x")),
+                    ),
+                    Infix(
+                        Token(TokenType.CARET, "^"),
+                        Number(3.0),
+                        Number(5.0),
+                    ),
+                )
+            ),
+            AtomTransform(
+                Token(TokenType.ASTERISK, "*"),
+                Number(1.0),
+            ),
+            AtomTransform(
+                Token(TokenType.PLUS, "+"),
+                Number(6.0),
+            ),
+        ],
+    ),
+]
+
+PARSER_UT = []
+PARSER_UT.extend(CASES_ALGEBRAIC)
+PARSER_UT.extend(CASES_COMMANDS)
+PARSER_UT.extend(CASES_FORMULA)
+PARSER_UT.extend(CASES_ALGEBRAIC_MULTILINE)
+
+@pytest.mark.parametrize("case", PARSER_UT, ids=[c.name for c in PARSER_UT])
+def test_parser(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)

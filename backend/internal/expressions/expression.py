@@ -3,7 +3,11 @@ from abc import ABC, abstractmethod
 
 class Expression(ABC):
     @abstractmethod
-    def debug_str(self) -> str:
+    def __eq__(self, value):
+        pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
         pass
 
     @abstractmethod

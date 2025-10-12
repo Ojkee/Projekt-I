@@ -74,7 +74,11 @@ class Parser:
         assert self._current
         program = Program()
         while self._current.ttype != TokenType.EOF:
-            pass
+            stmt = self._parse_statement()
+            program.append(stmt)
+            if self._current.ttype == TokenType.NEW_LINE:
+                self._advance_token()
+  
 
         return program
 
@@ -195,12 +199,12 @@ class Parser:
 
         assert self._peek
         while (
-            self._new_line_or_eof(self._peek) and precedence < self._peek_precedence()
+            not self._new_line_or_eof(self._peek) and precedence < self._peek_precedence()
         ):
             if not self._peek.ttype in self._infix_fns:
                 return lhs
-            self._advance_token()
             infix = self._infix_fns[self._peek.ttype]
+            self._advance_token()
             lhs = infix(lhs)
             if isinstance(lhs, ParseErr):
                 lhs.append("parse_expr")
@@ -277,3 +281,6 @@ class Parser:
         if not ttype in precedences:
             return Precedence.LOWEST
         return precedences[ttype]
+
+# --- IGNORE ---
+

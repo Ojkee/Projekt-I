@@ -1,3 +1,33 @@
+# === Python cache / build ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# pyenv
+.python-version
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.pytest_cache/
+pytestdebug.log
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 # Node.js
 node_modules/
 npm-debug.log*
@@ -11,6 +41,7 @@ pnpm-lock.yaml
 # Output directories
 dist/
 build/
+p
 
 # Local env files
 .env
