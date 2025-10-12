@@ -3,5 +3,5 @@ from abc import ABC, abstractmethod
 
 class Statement(ABC):
     @abstractmethod
-    def to_str(self) -> str:
+    def __str__(self) -> str:
         pass

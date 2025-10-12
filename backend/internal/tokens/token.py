@@ -37,5 +37,12 @@ class Token(NamedTuple):
     def __repr__(self):
         return f"Token({self.ttype}, {self.literal})"
 
+    def __eq__(self, value) -> bool:
+        return (
+            isinstance(value, Token)
+            and self.ttype == value.ttype
+            and self.literal == value.literal
+        )
+
     def is_symbol(self) -> bool:
         return self.ttype == TokenType.IDENT and len(self.literal) == 1

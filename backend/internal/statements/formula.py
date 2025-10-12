@@ -8,7 +8,7 @@ class Formula(Statement):
         self._name = name
         self._params = params
 
-    def to_str(self) -> str:
+    def __str__(self) -> str:
         params_str = map(lambda param: param.pretty_str(), self._params)
         buffer = [
             self._name.literal,
