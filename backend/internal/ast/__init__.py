@@ -1,2 +1,2 @@
-from .ast import ASTNode
+from .ast_node import ASTNode
 from .ast import Program

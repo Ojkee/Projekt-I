@@ -1,11 +1,13 @@
+from typing import Optional
 from backend.internal.evaluator.objects import Object, SubjectObject, TransformObject
 
 from backend.internal.ast import Program, ASTNode
 from backend.internal.statements import Subject, AtomTransform, Formula, LineError
 from backend.internal.expressions import Expression, Infix, Prefix, Number, Identifier
-from backend.internal.tokens import TokenType, Token
+from backend.internal.tokens import TokenType
 
 from backend.internal.expressionTree import Node, convert_to_expression_tree
+
 
 class Evaluator:
     def eval(self, node: ASTNode) -> Object:
@@ -21,14 +23,14 @@ class Evaluator:
                 raise NotImplementedError("Formula evaluation not implemented yet.")
             case LineError():
                 raise NotImplementedError("LineError evaluation not implemented yet.")
-            
+
             # Expressions
+            case Infix(_op=op) if op.ttype == TokenType.EQUALS:
+                return SubjectObject(
+                    self._convert_expression(node.left()),
+                    self._convert_expression(node.right()),
+                )
             case Infix():
-                if node.operator == Token(TokenType.EQUALS, '='):
-                    return SubjectObject(
-                        self._convert_expression(node.left()),
-                        self._convert_expression(node.right())
-                    )
                 return SubjectObject(self._convert_expression(node), None)
             case Prefix():
                 return SubjectObject(self._convert_expression(node), None)
@@ -39,18 +41,8 @@ class Evaluator:
             case _:
                 raise ValueError(f"Unknown AST node type: {type(node)}")
 
-    def _convert_expression(self, expr: Expression) -> Node:
-        tree = convert_to_expression_tree(expr)
-        return tree.reduce()
-
-    def _evaluate_atom_transform(self, transform: AtomTransform) -> Object:
-        operator = transform.operator().literal
-        expr = self.eval(transform.expression())
-
-        return TransformObject(operator, expr)
-
     def _eval_program(self, program: Program) -> Object:
-        subject_object = None
+        subject_object: Optional[SubjectObject] = None
         for stmt in program.get():
             object = self.eval(stmt)
             match object:
@@ -64,4 +56,12 @@ class Evaluator:
 
         return subject_object
 
+    def _convert_expression(self, expr: Expression) -> Node:
+        tree = convert_to_expression_tree(expr)
+        assert tree
+        return tree.reduce()
 
+    def _evaluate_atom_transform(self, transform: AtomTransform) -> Object:
+        operator = transform.operator().literal
+        expr = self.eval(transform.expression())
+        return TransformObject(operator, expr)

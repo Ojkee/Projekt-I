@@ -1,4 +1,4 @@
-from backend.internal.ast.astNode import ASTNode
+from backend.internal.ast import ASTNode
 
 
 class Program(ASTNode):
