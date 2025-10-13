@@ -10,10 +10,9 @@ class Infix(Expression):
         self._rhs = rhs
 
     def __eq__(self, other):
-        if not isinstance(other, Infix):
-            return False
         return (
-            self._op.ttype == other._op.ttype
+            isinstance(other, Infix)
+            and self._op.ttype == other._op.ttype
             and self._op.literal == other._op.literal
             and self._lhs == other._lhs
             and self._rhs == other._rhs
@@ -31,3 +30,12 @@ class Infix(Expression):
             ")",
         ]
         return "".join(buffer)
+
+    def operator(self) -> Token:
+        return self._op
+
+    def left(self) -> Expression:
+        return self._lhs
+
+    def right(self) -> Expression:
+        return self._rhs

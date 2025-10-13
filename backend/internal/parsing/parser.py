@@ -78,8 +78,6 @@ class Parser:
             program.append(stmt)
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
-  
-
         return program
 
     def _advance_token(self) -> None:

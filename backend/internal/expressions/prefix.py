@@ -8,10 +8,9 @@ class Prefix(Expression):
         self._expr = expr
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, Prefix):
-            return False
         return (
-            self._op.ttype == other._op.ttype
+            isinstance(other, Prefix)
+            and self._op.ttype == other._op.ttype
             and self._op.literal == other._op.literal
             and self._expr == other._expr
         )
@@ -21,3 +20,6 @@ class Prefix(Expression):
 
     def pretty_str(self) -> str:
         return self._op.literal + self._expr.pretty_str()
+
+    def operator(self) -> Token:
+        return self._op

@@ -7,7 +7,7 @@ class AtomTransform(Statement):
     def __init__(self, operator: Token, expr: Expression) -> None:
         self._op = operator
         self._expr = expr
-    
+
     def __eq__(self, other):
         return isinstance(other, AtomTransform) and self._op == other._op and self._expr == other._expr
 
@@ -16,3 +16,9 @@ class AtomTransform(Statement):
 
     def to_str(self) -> str:
         return self._op.literal + self._expr.pretty_str()
+
+    def expression(self) -> Expression:
+        return self._expr
+
+    def operator(self) -> Token:
+        return self._op

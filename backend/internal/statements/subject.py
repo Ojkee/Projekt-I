@@ -15,5 +15,8 @@ class Subject(Statement):
 
     def to_str(self) -> str:
         return self._expr.pretty_str()
-    
+
+    def expression(self) -> Expression:
+        return self._expr
+
 

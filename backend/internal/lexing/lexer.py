@@ -3,7 +3,6 @@ from backend.internal.tokens import Token, TokenType
 
 NULL_CODE: str = "\0"
 
-
 class Lexer:
     def __init__(self, input: str) -> None:
         self._input = input
