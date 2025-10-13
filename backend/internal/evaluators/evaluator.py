@@ -1,20 +1,31 @@
 from typing import Optional
-from backend.internal.evaluator.objects import Object, SubjectObject, TransformObject
+from backend.internal.objects import (
+    Object,
+    SubjectObject,
+    TransformObject,
+)
 
-from backend.internal.ast import Program, ASTNode
-from backend.internal.statements import Subject, AtomTransform, Formula, LineError
+from backend.internal.ast import Program
+from backend.internal.statements import (
+    Statement,
+    Subject,
+    AtomTransform,
+    Formula,
+    LineError,
+)
 from backend.internal.expressions import Expression, Infix, Prefix, Number, Identifier
 from backend.internal.tokens import TokenType
 
-from backend.internal.expressionTree import Node, convert_to_expression_tree
+from backend.internal.expression_tree import Node, convert_to_expression_tree
 
 
 class Evaluator:
-    def eval(self, node: ASTNode) -> Object:
+    def eval(self, node: Program | Statement | Expression) -> Object:
         match node:
-            # Statements
             case Program():
                 return self._eval_program(node)
+
+            # Statements
             case Subject():
                 return self.eval(node.expression())
             case AtomTransform():
@@ -30,16 +41,10 @@ class Evaluator:
                     self._convert_expression(node.left()),
                     self._convert_expression(node.right()),
                 )
-            case Infix():
-                return SubjectObject(self._convert_expression(node), None)
-            case Prefix():
-                return SubjectObject(self._convert_expression(node), None)
-            case Number():
-                return SubjectObject(self._convert_expression(node), None)
-            case Identifier():
+            case Infix() | Prefix() | Number() | Identifier():
                 return SubjectObject(self._convert_expression(node), None)
             case _:
-                raise ValueError(f"Unknown AST node type: {type(node)}")
+                raise ValueError(f"Can't eval type: {type(node)}")
 
     def _eval_program(self, program: Program) -> Object:
         subject_object: Optional[SubjectObject] = None

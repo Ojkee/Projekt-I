@@ -1,5 +1,5 @@
 from abc import ABC
 
 
-class ASTNode(ABC):
+class Object(ABC):
     pass

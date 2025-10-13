@@ -1,23 +1,14 @@
-from abc import ABC
 from typing import Optional
-
-from backend.internal.expressionTree import Node
-
-
-class Object(ABC):
-    pass
+from backend.internal.objects import Object
+from backend.internal.expression_tree.node import Node
 
 
-class TransformObject(Object):
-    operator: str
-    transform: Node
+class ExpressionObject(Object):
+    expr: Node
 
-    def __init__(self, operator: str, transform: Node) -> None:
-        self.operator = operator
-        self.transform = transform
-
-    def __repr__(self) -> str:
-        return f"Transform({self.operator}, {repr(self.transform)})"
+    def __init__(self, value: Node) -> None:
+        super().__init__()
+        self.value = value
 
 
 class SubjectObject(Object):
@@ -45,19 +36,25 @@ class SubjectObject(Object):
         match operator:
             case "+":
                 self.lhs += transform
-                if self.is_equation():
+                if self.rhs:
                     self.rhs += transform
             case "-":
                 self.lhs -= transform
-                if self.is_equation():
+                if self.rhs:
                     self.rhs -= transform
             case "*":
                 self.lhs *= transform
-                if self.is_equation():
+                if self.rhs:
                     self.rhs *= transform
             case "/":
                 self.lhs /= transform
-                if self.is_equation():
+                if self.rhs:
                     self.rhs /= transform
             case _:
                 raise ValueError(f"Unknown operator: {operator}")
+
+
+class ErrorObject(Object):
+    def __init__(self, msg: str) -> None:
+        super().__init__()
+        self.msg = msg
