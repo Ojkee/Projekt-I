@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from backend.internal.ast import ASTNode
 
+
 class Expression(ASTNode, ABC):
     @abstractmethod
     def __eq__(self, value) -> bool:
@@ -11,5 +12,5 @@ class Expression(ASTNode, ABC):
         pass
 
     @abstractmethod
-    def pretty_str(self) -> str:
+    def __str__(self) -> str:
         pass

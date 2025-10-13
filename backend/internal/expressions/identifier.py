@@ -13,5 +13,5 @@ class Identifier(Expression):
     def __repr__(self) -> str:
         return f"IDENT({repr(self.name)})"
 
-    def pretty_str(self) -> str:
+    def __str__(self) -> str:
         return self.name.literal

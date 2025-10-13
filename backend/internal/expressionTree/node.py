@@ -211,6 +211,6 @@ def convert_to_expression_tree(expression: Optional[Expression]) -> Optional[Nod
         root = Numeric(expression.value)
 
     if isinstance(expression, Identifier):
-        root = Symbol(expression.pretty_str())
+        root = Symbol(str(expression))
 
     return root

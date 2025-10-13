@@ -12,7 +12,7 @@ class Number(Expression):
     def __repr__(self) -> str:
         return f"NUMBER({self.value})"
 
-    def pretty_str(self) -> str:
+    def __str__(self) -> str:
         return self._number_to_str()
 
     def _number_to_str(self) -> str:

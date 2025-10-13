@@ -20,7 +20,7 @@ class AtomTransform(Statement):
         return f"AtomTransform({repr(self._op)} {repr(self._expr)})"
 
     def __str__(self) -> str:
-        return self._op.literal + self._expr.pretty_str()
+        return self._op.literal + str(self._expr)
 
     def expression(self) -> Expression:
         return self._expr
