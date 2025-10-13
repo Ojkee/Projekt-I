@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from backend.internal.lexing import Lexer
 from backend.internal.parsing import Parser
-from backend.internal.tokenstreams.tokenstream import TokenStream
+from backend.internal.tokenstreams import TokenStream
 from backend.internal.evaluators import Evaluator
 
 
