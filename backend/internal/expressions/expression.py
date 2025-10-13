@@ -3,7 +3,7 @@ from backend.internal.ast import ASTNode
 
 class Expression(ASTNode, ABC):
     @abstractmethod
-    def __eq__(self, value):
+    def __eq__(self, value) -> bool:
         pass
 
     @abstractmethod

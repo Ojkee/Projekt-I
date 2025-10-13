@@ -1,7 +1,13 @@
 from enum import IntEnum, auto, unique
 from typing import Callable, Optional
 
-from backend.internal.statements import Statement, Formula, Subject, AtomTransform
+from backend.internal.statements import (
+    Statement,
+    Formula,
+    Subject,
+    AtomTransform,
+    LineError,
+)
 from backend.internal.expressions import Expression, Identifier, Number, Prefix, Infix
 from backend.internal.parsing.parseerror import ParseErr
 from backend.internal.tokens import Token, TokenType
@@ -74,11 +80,19 @@ class Parser:
         assert self._current
         program = Program()
         while self._current.ttype != TokenType.EOF:
-            stmt = self._parse_statement()
+            result = self._parse_statement()
+            stmt = self._bind_statemnt(result)
             program.append(stmt)
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
         return program
+
+    def _bind_statemnt(self, stmt: Statement | ParseErr) -> Statement:
+        match stmt:
+            case Statement():
+                return stmt
+            case ParseErr() as err:
+                return LineError(err)
 
     def _advance_token(self) -> None:
         self._current = self._peek
@@ -197,7 +211,8 @@ class Parser:
 
         assert self._peek
         while (
-            not self._new_line_or_eof(self._peek) and precedence < self._peek_precedence()
+            not self._new_line_or_eof(self._peek)
+            and precedence < self._peek_precedence()
         ):
             if not self._peek.ttype in self._infix_fns:
                 return lhs
@@ -280,5 +295,5 @@ class Parser:
             return Precedence.LOWEST
         return precedences[ttype]
 
-# --- IGNORE ---
 
+# --- IGNORE ---

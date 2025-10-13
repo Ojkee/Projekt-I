@@ -3,5 +3,5 @@ from backend.internal.ast.astNode import ASTNode
 
 class Statement(ASTNode, ABC):
     @abstractmethod
-    def to_str(self) -> str:
+    def __str__(self) -> str:
         pass

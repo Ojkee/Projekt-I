@@ -21,6 +21,7 @@ coverage.xml
 pytestdebug.log
 
 # Environments
+back_venv/
 .venv
 env/
 venv/

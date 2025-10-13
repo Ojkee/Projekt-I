@@ -15,6 +15,7 @@ class Case:
     input: str
     expected: list[Statement]
 
+
 CASES_ALGEBRAIC = [
     Case(
         "Simple expr",
@@ -369,7 +370,7 @@ CASES_COMMANDS = [
     ),
 ]
 
-CASES_FORMULA = [
+CASES_FORMULA: list[Case] = [
     # Future formula test cases
 ]
 
@@ -377,8 +378,7 @@ CASES_ALGEBRAIC_MULTILINE = [
     Case(
         "Empty",
         "",
-        [
-        ],
+        [],
     ),
     Case(
         "single AtomTransform",
@@ -441,6 +441,7 @@ PARSER_UT.extend(CASES_ALGEBRAIC)
 PARSER_UT.extend(CASES_COMMANDS)
 PARSER_UT.extend(CASES_FORMULA)
 PARSER_UT.extend(CASES_ALGEBRAIC_MULTILINE)
+
 
 @pytest.mark.parametrize("case", PARSER_UT, ids=[c.name for c in PARSER_UT])
 def test_parser(case: Case) -> None:

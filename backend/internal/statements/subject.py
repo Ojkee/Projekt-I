@@ -13,10 +13,8 @@ class Subject(Statement):
     def __repr__(self) -> str:
         return f"Subject({repr(self._expr)})"
 
-    def to_str(self) -> str:
+    def __str__(self) -> str:
         return self._expr.pretty_str()
 
     def expression(self) -> Expression:
         return self._expr
-
-
