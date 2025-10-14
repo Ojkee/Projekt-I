@@ -30,7 +30,7 @@ class Evaluator:
             case stmts if not stmts:
                 return [ErrorObject("No input")]
             case _:
-                return [ErrorObject("First line must be equation")]
+                return [ErrorObject("First line must be equation or expression")]
 
     def _eval_statements(
         self, subject: Subject, stmts: list[Statement]

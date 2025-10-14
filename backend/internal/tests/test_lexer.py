@@ -155,10 +155,14 @@ CASES_EXAMPLE_PROGRAMS = [
     ),
 ]
 
+LEXER_UT: list[Case] = []
+LEXER_UT.extend(CASES_CATEGORIES)
+LEXER_UT.extend(CASES_EXAMPLE_PROGRAMS)
 
 @pytest.mark.parametrize(
-    "case", CASES_EXAMPLE_PROGRAMS, ids=[c.name for c in CASES_EXAMPLE_PROGRAMS]
+    "case", LEXER_UT, ids=[c.name for c in LEXER_UT]
 )
-def test_example_programs(case: Case) -> None:
+def test_lexer(case: Case) -> None:
     lexer = Lexer(case.input)
     assert lexer.tokenize() == case.expected
+

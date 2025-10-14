@@ -144,9 +144,11 @@ CASES_PREPROCESS = [
     ),
 ]
 
+TOKEN_UT: list[Case] = []
+TOKEN_UT.extend(CASES_PREPROCESS)
 
 @pytest.mark.parametrize(
-    "case", CASES_PREPROCESS, ids=[c.name for c in CASES_PREPROCESS]
+    "case", TOKEN_UT, ids=[c.name for c in TOKEN_UT]
 )
 def test_lexer(case: Case) -> None:
     lexer = Lexer(case.input)

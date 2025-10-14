@@ -155,12 +155,14 @@ CASES_SIMPLIFY_EXPRESSION_TREE = [
     ),
 ]
 
-test_expression_tree = []
-test_expression_tree.extend(CASES_CONVERT_AST_EXPRESSION)
-test_expression_tree.extend(CASES_SIMPLIFY_EXPRESSION_TREE)
+EXPRESSION_TREE_UT: list[Case] = []
+EXPRESSION_TREE_UT .extend(CASES_CONVERT_AST_EXPRESSION)
+EXPRESSION_TREE_UT .extend(CASES_SIMPLIFY_EXPRESSION_TREE)
 
 
-@pytest.mark.parametrize("case", test_expression_tree, ids=lambda c: c.name)
+@pytest.mark.parametrize(
+        "case", EXPRESSION_TREE_UT , ids=lambda c: c.name
+)
 def test_expression_tree(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
