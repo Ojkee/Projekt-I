@@ -5,7 +5,6 @@ from backend.internal.lexing import Lexer
 from backend.internal.parsing import Parser
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.evaluators import Evaluator
-from backend.internal.objects import SubjectObject
 
 
 @dataclass
@@ -97,7 +96,6 @@ def test_evaluator(case: Case) -> None:
     parser = Parser(stream)
     program = parser.parse()
     evaluator = Evaluator()
-    subjects: list[SubjectObject] = evaluator.eval(program)
+    subjects = evaluator.eval(program)
 
-    for object, expected in zip(subjects, case.expected):
-        assert repr(object) == expected
+    assert list(map(repr, subjects)) == case.expected

@@ -44,8 +44,8 @@ class Evaluator:
             match self._eval_statement(stmt):
                 case SubjectObject() as sub:
                     subject_object = sub
-                case AtomTransformObject(operator=op, transform=trans):
-                    subject_object.transform(op, trans)
+                case AtomTransformObject() as atom:
+                    subject_object.transform(atom)
             subjects.append(copy.deepcopy(subject_object))
 
         return subjects
@@ -83,6 +83,6 @@ class Evaluator:
         return tree.reduce()
 
     def _eval_atom_transform(self, transform: AtomTransform) -> AtomTransformObject:
-        operator = transform.operator().literal
-        expr = self._convert_expression(transform.expression())
-        return AtomTransformObject(operator, expr)
+        operator = transform.operator()
+        expr_node = self._convert_expression(transform.expression())
+        return AtomTransformObject(operator, expr_node)
