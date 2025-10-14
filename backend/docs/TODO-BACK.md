@@ -6,5 +6,4 @@
 - [x] Replace all 'ToString's with string builders
 
 ### Extras
-- [ ] Statement printing strategy
-- [ ] Better __repl__ implementation  of statments and expressions (more readable)
+- [x] Better __repl__ implementation  of statments and expressions (more readable)

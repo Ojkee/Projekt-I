@@ -9,7 +9,7 @@ class Formula(Statement):
         self._params = params
 
     def __str__(self) -> str:
-        params_str = map(lambda param: param.pretty_str(), self._params)
+        params_str = map(str, self._params)
         buffer = [
             self._name.literal,
             " ",

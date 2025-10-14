@@ -2,16 +2,17 @@ import pytest
 from dataclasses import dataclass
 
 from backend.internal.lexing import Lexer
-from backend.internal.statements import Subject
 from backend.internal.parsing import Parser
-from backend.internal.expressionTree.node import convert_to_expression_tree
+from backend.internal.expression_tree import convert_to_expression_tree
 from backend.internal.tokenstreams.tokenstream import TokenStream
+
 
 @dataclass
 class Case:
     name: str
     input: str
     expected: str
+
 
 CASES_CONVERT_AST_EXPRESSION = [
     Case(
@@ -157,6 +158,7 @@ CASES_SIMPLIFY_EXPRESSION_TREE = [
 test_expression_tree = []
 test_expression_tree.extend(CASES_CONVERT_AST_EXPRESSION)
 test_expression_tree.extend(CASES_SIMPLIFY_EXPRESSION_TREE)
+
 
 @pytest.mark.parametrize("case", test_expression_tree, ids=lambda c: c.name)
 def test_expression_tree(case: Case) -> None:

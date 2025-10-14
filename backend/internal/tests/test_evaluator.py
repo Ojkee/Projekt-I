@@ -3,14 +3,16 @@ from dataclasses import dataclass
 
 from backend.internal.lexing import Lexer
 from backend.internal.parsing import Parser
-from backend.internal.tokenstreams.tokenstream import TokenStream
-from backend.internal.evaluator import Evaluator
+from backend.internal.tokenstreams import TokenStream
+from backend.internal.evaluators import Evaluator
+
 
 @dataclass
 class Case:
     name: str
     input: str
     expected: str
+
 
 CASES_EVAL_SUBJECT = [
     Case(
@@ -58,7 +60,7 @@ CASES_EVAL_ATOM_TRANSFORM = [
     ),
 ]
 
-CASES_EVAL_SUBJECT_ATOM= [
+CASES_EVAL_SUBJECT_ATOM = [
     Case(
         "Addition",
         "a + b\n/+2",
@@ -81,13 +83,14 @@ CASES_EVAL_SUBJECT_ATOM= [
     ),
 ]
 
-test_expression_tree = []
-test_expression_tree.extend(CASES_EVAL_SUBJECT)
-test_expression_tree.extend(CASES_EVAL_ATOM_TRANSFORM)
-test_expression_tree.extend(CASES_EVAL_SUBJECT_ATOM)
+EVALUATOR_UT: list[Case] = []
+EVALUATOR_UT.extend(CASES_EVAL_SUBJECT)
+EVALUATOR_UT.extend(CASES_EVAL_ATOM_TRANSFORM)
+EVALUATOR_UT.extend(CASES_EVAL_SUBJECT_ATOM)
 
-@pytest.mark.parametrize("case", test_expression_tree, ids=lambda c: c.name)
-def test_expression_tree(case: Case) -> None:
+
+@pytest.mark.parametrize("case", EVALUATOR_UT, ids=lambda c: c.name)
+def test_evaluator(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)

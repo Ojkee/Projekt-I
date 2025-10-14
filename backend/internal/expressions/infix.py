@@ -17,16 +17,16 @@ class Infix(Expression):
             and self._lhs == other._lhs
             and self._rhs == other._rhs
         )
-    
+
     def __repr__(self) -> str:
         return f"INFIX({repr(self._op)} {repr(self._lhs)} {repr(self._rhs)})"
 
-    def pretty_str(self) -> str:
+    def __str__(self) -> str:
         buffer: list[str] = [
             "(",
-            self._lhs.pretty_str(),
+            str(self._lhs),
             self._op.literal,
-            self._rhs.pretty_str(),
+            str(self._rhs),
             ")",
         ]
         return "".join(buffer)

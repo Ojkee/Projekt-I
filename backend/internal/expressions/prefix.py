@@ -18,8 +18,8 @@ class Prefix(Expression):
     def __repr__(self) -> str:
         return f"PREFIX({repr(self._op)}, {repr(self._expr)}\n)"
 
-    def pretty_str(self) -> str:
-        return self._op.literal + self._expr.pretty_str()
+    def __str__(self) -> str:
+        return self._op.literal + str(self._expr)
 
     def operator(self) -> Token:
         return self._op

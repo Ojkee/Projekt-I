@@ -14,7 +14,7 @@ class Subject(Statement):
         return f"Subject({repr(self._expr)})"
 
     def __str__(self) -> str:
-        return self._expr.pretty_str()
+        return str(self._expr)
 
     def expression(self) -> Expression:
         return self._expr
