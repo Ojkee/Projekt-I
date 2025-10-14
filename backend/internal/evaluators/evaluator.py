@@ -45,8 +45,11 @@ class Evaluator:
             match self._eval_statement(stmt):
                 case SubjectObject() as sub:
                     subject_object = sub
-                case AtomTransformObject() as atom:
-                    subject_object.transform(atom)
+                case (AtomTransformObject() | FormulaObject()) as t_obj:
+                    subject_object.transform(t_obj)
+                case obj:
+                    raise ValueError(f"Unimplemented transform type: {type(obj)}")
+
             subjects.append(copy.deepcopy(subject_object))
 
         return subjects
@@ -57,10 +60,10 @@ class Evaluator:
                 return self._eval_expression(expr)
             case AtomTransform() as atom:
                 return self._eval_atom_transform(atom)
-            case Formula():
-                raise NotImplementedError("Formula evaluation not implemented yet.")
-            case LineError():
-                raise NotImplementedError("LineError evaluation not implemented yet.")
+            case Formula() as formula:
+                return self._eval_formula(formula)
+            case LineError() as err:
+                return ErrorObject(str(err))
             case _:
                 raise NotImplementedError(
                     f"{type(stmt)} evaluation not implemented yet."
