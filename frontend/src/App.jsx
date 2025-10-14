@@ -12,12 +12,12 @@ function App() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:8080/hello", {
+      const res = await fetch("http://localhost:8080/interpret", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: input }),
+        body: JSON.stringify({ code: input }),
       });
 
       if (!res.ok) {

@@ -1,32 +1,47 @@
-from backend.internal.evaluator.evaluator import Evaluator
-from backend.internal.lexing import Lexer
-from backend.internal.parsing import Parser
-from backend.internal.tokenstreams import TokenStream
-from backend.internal.statements import Subject
+from backend.rest.server import run_server
 
-print("-------------------------")
-print("Type 'exit' to quit")
-while True:
+import subprocess
+import sys
+import os
+import shutil
+
+BACKEND_DIR = "./backend"
+FRONTEND_DIR = "./frontend"
+DIST_DIR = os.path.join(FRONTEND_DIR, "dist")
+
+DEV_PORT = 5173
+PROD_PORT = 8080
+
+def install_dependencies():
+    print("Installing frontend dependencies...")
+    subprocess.run(["npm", "install"], cwd=FRONTEND_DIR, check=True)
+
+def run_prod():
+    install_dependencies()
+    print("Building frontend...")
+    subprocess.run(["npm", "run", "build"], cwd=FRONTEND_DIR, check=True)
+
+    print("Running backend server in production mode...")
+
     try:
-        inp = input(">>> ").strip()
-        if inp.lower() == "exit":
-            break
-        if not inp:
-            continue
+        print("Server is running at http://localhost:{}".format(PROD_PORT))
+        run_server(PROD_PORT, DEV_MODE=False)
+    except KeyboardInterrupt:
+        print("\nStopping...")
+    finally:
+        if os.path.exists(DIST_DIR):
+            print("Removing frontend/dist directory...")
+            shutil.rmtree(DIST_DIR)
 
-        lexer = Lexer(inp)
-        stream = TokenStream(lexer)
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python run.py [dev|prod]")
+        sys.exit(1)
 
-        parser = Parser(stream)
-        program = parser.parse()
-
-        stmts = program.get()
-
-        evaluator = Evaluator(program)
-
-        tree = evaluator.eval_program()
-
-        print("Tree:", tree)
-
-    except Exception as e:
-        print("Error:", e)
+    mode = sys.argv[1].lower()
+    if mode == "dev":
+        pass
+    elif mode == "prod":
+        run_prod()
+    else:
+        print("Unknwon type: use 'dev' or 'prod'")
