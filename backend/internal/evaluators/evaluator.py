@@ -1,10 +1,11 @@
 import copy
 from backend.internal.objects import (
+    Object,
     SubjectObject,
     ExpressionObject,
     EquationObject,
-    TransformObject,
     AtomTransformObject,
+    FormulaObject,
     ErrorObject,
 )
 
@@ -35,7 +36,7 @@ class Evaluator:
     def _eval_statements(
         self, subject: Subject, stmts: list[Statement]
     ) -> list[SubjectObject]:
-        subject_object = self._eval_expression(subject.expression())
+        subject_object = self._eval_expression(subject.expr)
         assert isinstance(subject_object, SubjectObject)
 
         subjects: list[SubjectObject] = [copy.deepcopy(subject_object)]
@@ -50,12 +51,12 @@ class Evaluator:
 
         return subjects
 
-    def _eval_statement(self, stmt: Statement) -> TransformObject | SubjectObject:
+    def _eval_statement(self, stmt: Statement) -> Object:
         match stmt:
-            case Subject():
-                return self._eval_expression(stmt.expression())
-            case AtomTransform():
-                return self._eval_atom_transform(stmt)
+            case Subject(_expr=expr):
+                return self._eval_expression(expr)
+            case AtomTransform() as atom:
+                return self._eval_atom_transform(atom)
             case Formula():
                 raise NotImplementedError("Formula evaluation not implemented yet.")
             case LineError():
@@ -65,7 +66,7 @@ class Evaluator:
                     f"{type(stmt)} evaluation not implemented yet."
                 )
 
-    def _eval_expression(self, expr: Expression) -> TransformObject | SubjectObject:
+    def _eval_expression(self, expr: Expression) -> Object:
         match expr:
             case Infix(_op=op, _lhs=lhs, _rhs=rhs) if op.ttype == TokenType.EQUALS:
                 return EquationObject(
@@ -83,6 +84,9 @@ class Evaluator:
         return tree.reduce()
 
     def _eval_atom_transform(self, transform: AtomTransform) -> AtomTransformObject:
-        operator = transform.operator()
-        expr_node = self._convert_expression(transform.expression())
-        return AtomTransformObject(operator, expr_node)
+        expr_node = self._convert_expression(transform.expr)
+        return AtomTransformObject(transform.operator, expr_node)
+
+    def _eval_formula(self, formula: Formula) -> FormulaObject:
+        param_nodes = [self._convert_expression(expr) for expr in formula.params]
+        return FormulaObject(formula.name, param_nodes)

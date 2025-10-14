@@ -3,6 +3,7 @@ from backend.internal.parsing import Parser
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.evaluators import Evaluator
 
+
 def run_code(input: str) -> list[str]:
     """
     Runs the input code through the full pipeline: lexing, parsing, and evaluating.

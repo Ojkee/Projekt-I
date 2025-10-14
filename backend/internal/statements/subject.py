@@ -16,5 +16,6 @@ class Subject(Statement):
     def __str__(self) -> str:
         return str(self._expr)
 
-    def expression(self) -> Expression:
+    @property
+    def expr(self) -> Expression:
         return self._expr

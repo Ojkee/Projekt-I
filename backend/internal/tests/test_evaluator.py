@@ -83,10 +83,13 @@ CASES_EVAL_SUBJECT_ATOM = [
     ),
 ]
 
+CASES_EVAL_FORMULA: list[Case] = []
+
 EVALUATOR_UT: list[Case] = []
 EVALUATOR_UT.extend(CASES_EVAL_SUBJECT)
 EVALUATOR_UT.extend(CASES_EVAL_ATOM_TRANSFORM)
 EVALUATOR_UT.extend(CASES_EVAL_SUBJECT_ATOM)
+EVALUATOR_UT.extend(CASES_EVAL_FORMULA)
 
 
 @pytest.mark.parametrize("case", EVALUATOR_UT, ids=lambda c: c.name)
@@ -98,4 +101,4 @@ def test_evaluator(case: Case) -> None:
     evaluator = Evaluator()
     subjects = evaluator.eval(program)
 
-    assert list(map(repr, subjects)) == case.expected
+    assert [repr(subject) for subject in subjects] == case.expected

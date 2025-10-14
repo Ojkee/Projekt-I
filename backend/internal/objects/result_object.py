@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from backend.internal.expression_tree.node import Node
 from backend.internal.objects import TransformObject, AtomTransformObject
+from backend.internal.objects import Object
 from backend.internal.tokens.token import TokenType
 
 
-class SubjectObject(ABC):
+class SubjectObject(Object, ABC):
     @abstractmethod
     def __repr__(self) -> str:
         pass
