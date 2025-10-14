@@ -90,7 +90,7 @@ EVALUATOR_UT.extend(CASES_EVAL_SUBJECT_ATOM)
 
 
 @pytest.mark.parametrize("case", EVALUATOR_UT, ids=lambda c: c.name)
-def test_expression_tree(case: Case) -> None:
+def test_evaluator(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)

@@ -1,3 +1,3 @@
 from .eval_object import Object
-from .transform_object import TransformObject
-from .result_object import ExpressionObject, SubjectObject, ErrorObject
+from .transform_object import TransformObject, AtomTransformObject
+from .result_object import SubjectObject, ExpressionObject, EquationObject, ErrorObject

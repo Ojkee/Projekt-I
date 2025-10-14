@@ -3,10 +3,12 @@ from backend.internal.objects import Object
 
 
 class TransformObject(Object):
-    operator: str
-    transform: Node
+    pass
 
+
+class AtomTransformObject(TransformObject):
     def __init__(self, operator: str, transform: Node) -> None:
+        super().__init__()
         self.operator = operator
         self.transform = transform
 
