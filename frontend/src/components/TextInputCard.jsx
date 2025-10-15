@@ -5,7 +5,6 @@ function TextInputCard({ cellId, value, onChange, onRemove, showControls = false
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Nasłuchiwanie eventu uruchomienia komórki z paska narzędzi
   useEffect(() => {
     const handleRunCell = (event) => {
       if (event.detail.cellId === cellId) {
@@ -18,15 +17,15 @@ function TextInputCard({ cellId, value, onChange, onRemove, showControls = false
   }, [cellId, value]);
 
   const handleSend = async () => {
-    const text = value.trim();
-    if (!text) return;
+    const code = value.trim();
+    if (!code) return;
 
     setLoading(true);
     setMessage("");
 
     try {
-      const data = await sendText(text);
-      setMessage(data.message || "✅ Wykonano pomyślnie");
+      const data = await sendText(code);
+      setMessage(data.result.join("\n"));
     } catch (err) {
       setMessage("⚠️ Błąd połączenia z backendem");
       console.error(err);
@@ -82,9 +81,11 @@ function TextInputCard({ cellId, value, onChange, onRemove, showControls = false
       {message && (
         <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
           <div className="text-sm text-gray-600 mb-1 font-medium">Output:</div>
-          <div className="text-gray-800 font-mono text-sm whitespace-pre-wrap">
-            {message}
-          </div>
+          <div className="text-gray-800 font-mono text-sm">
+            {message.split("\n").map((line, i) => (
+            <div key={i}>{line}</div>
+                ))}
+            </div>
         </div>
       )}
       

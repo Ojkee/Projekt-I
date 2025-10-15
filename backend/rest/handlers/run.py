@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 
-from dataclasses import dataclass
-
 from fastapi import APIRouter
 from backend.pkg.api import run_code
 
+# TODO
 class RunRequest(BaseModel):
     code: str
 
 class RunResponse(BaseModel):
-    result: list[str]
+    steps: list[str]
+    final: str
 
 router = APIRouter()
 
@@ -17,6 +17,6 @@ router = APIRouter()
 def interpret(req: RunRequest):
     try:
         result = run_code(req.code)
-        return RunResponse(result=result)
+        return RunResponse(steps=result[:-1], final=result[-1])
     except Exception as e:
-        return RunResponse(result=[f"Error: {str(e)}"])
+        return RunResponse(steps=[f"Error: {str(e)}"], final="")

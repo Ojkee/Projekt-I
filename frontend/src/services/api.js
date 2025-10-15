@@ -1,10 +1,10 @@
-export async function sendText(text) {
-  const res = await fetch("http://localhost:8080/hello", {
+export async function sendText(code) {
+  const res = await fetch("http://localhost:8080/interpret", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ code }),
   });
 
   if (!res.ok) {
