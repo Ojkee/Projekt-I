@@ -157,6 +157,7 @@ class Pow(Node):
         return Pow(base, exponent)
 
 
+# TODO: refactor
 def convert_to_expression_tree(expression: Optional[Expression]) -> Optional[Node]:
     if expression is None:
         return None

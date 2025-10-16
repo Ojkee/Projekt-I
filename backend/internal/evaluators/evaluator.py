@@ -1,4 +1,6 @@
 import copy
+
+from backend.internal.builtins import BuiltIns
 from backend.internal.objects import (
     Object,
     SubjectObject,
@@ -46,7 +48,10 @@ class Evaluator:
                 case SubjectObject() as sub:
                     subject_object = sub
                 case (AtomTransformObject() | FormulaObject()) as t_obj:
-                    subject_object.transform(t_obj)
+                    subject_object.apply(t_obj)
+                case ErrorObject() as err:
+                    subjects.append(err)
+                    break
                 case obj:
                     raise ValueError(f"Unimplemented transform type: {type(obj)}")
 
@@ -90,6 +95,10 @@ class Evaluator:
         expr_node = self._convert_expression(transform.expr)
         return AtomTransformObject(transform.operator, expr_node)
 
-    def _eval_formula(self, formula: Formula) -> FormulaObject:
+    def _eval_formula(self, formula: Formula) -> FormulaObject | ErrorObject:
+        name = formula.name.literal
+        if not BuiltIns.is_present(name):
+            return ErrorObject(f"No formula `{name}`")
+
         param_nodes = [self._convert_expression(expr) for expr in formula.params]
         return FormulaObject(formula.name, param_nodes)
