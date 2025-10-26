@@ -3,6 +3,7 @@ from typing import Optional
 from abc import ABC, abstractmethod
 
 from backend.internal.expressions import Expression, Infix, Number, Prefix, Identifier
+from backend.internal.tokens.token import Token, TokenType
 
 
 class Node(ABC):
@@ -157,61 +158,50 @@ class Pow(Node):
         return Pow(base, exponent)
 
 
-# TODO: refactor
 def convert_to_expression_tree(expression: Optional[Expression]) -> Optional[Node]:
     if expression is None:
         return None
 
-    root: Optional[Node] = None
+    match expression:
+        case Infix(_op=Token(TokenType.PLUS), _lhs=left, _rhs=right):
+            lhs = convert_to_expression_tree(left)
+            rhs = convert_to_expression_tree(right)
+            assert lhs and rhs, "lhs and rhs must be not None"
+            return Add(lhs, rhs)
+        case Infix(_op=Token(TokenType.MINUS), _lhs=left, _rhs=right):
+            lhs = convert_to_expression_tree(left)
+            rhs = convert_to_expression_tree(right)
+            assert rhs, "rhs must be not None"
+            negation = Mul(rhs, Numeric(-1))
+            assert lhs and negation, "lhs and rhs must be not None"
+            return Add(lhs, negation)
+        case Infix(_op=Token(TokenType.ASTERISK), _lhs=left, _rhs=right):
+            lhs = convert_to_expression_tree(left)
+            rhs = convert_to_expression_tree(right)
+            assert lhs and rhs, "lhs and rhs must be not None"
+            return Mul(lhs, rhs)
+        case Infix(_op=Token(TokenType.SLASH), _lhs=left, _rhs=right):
+            lhs = convert_to_expression_tree(left)
+            inverse_base = convert_to_expression_tree(right)
+            assert inverse_base, "inverse base must be not None"
+            rhs = Pow(inverse_base, Numeric(-1))
+            assert lhs and rhs, "lhs and rhs must be not None"
+            return Mul(lhs, rhs)
+        case Infix(_op=Token(TokenType.CARET), _lhs=left, _rhs=right):
+            base = convert_to_expression_tree(left)
+            exponent = convert_to_expression_tree(right)
+            assert base and exponent, "base and exponent must be not None"
+            return Pow(base, exponent)
 
-    if isinstance(expression, Infix):
-        operator = expression.operator().literal
-        match operator:
-            case "+":
-                lhs = convert_to_expression_tree(expression.left())
-                rhs = convert_to_expression_tree(expression.right())
-                assert lhs and rhs, "lhs and rhs must be not None"
-                root = Add(lhs, rhs)
-            case "-":
-                lhs = convert_to_expression_tree(expression.left())
-                rhs = convert_to_expression_tree(expression.right())
-                assert rhs, "rhs must be not None"
-                negation = Mul(rhs, Numeric(-1))
-                assert lhs and negation, "lhs and rhs must be not None"
-                root = Add(lhs, negation)
-            case "*":
-                lhs = convert_to_expression_tree(expression.left())
-                rhs = convert_to_expression_tree(expression.right())
-                assert lhs and rhs, "lhs and rhs must be not None"
-                root = Mul(lhs, rhs)
-            case "/":
-                lhs = convert_to_expression_tree(expression.left())
-                inverse_base = convert_to_expression_tree(expression.right())
-                assert inverse_base, "inverse base must be not None"
-                rhs = Pow(inverse_base, Numeric(-1))
-                assert lhs and rhs, "lhs and rhs must be not None"
-                root = Mul(lhs, rhs)
-            case "^":
-                base = convert_to_expression_tree(expression.left())
-                exponent = convert_to_expression_tree(expression.right())
-                assert base and exponent, "base and exponent must be not None"
-                root = Pow(base, exponent)
-            case _:
-                raise ValueError(f"Unknown operator: {expression.operator().literal}")
+        case Prefix(_op=Token(TokenType.MINUS), _expr=expr):
+            inner_mul = convert_to_expression_tree(expr)
+            assert inner_mul
+            return Mul(inner_mul, Numeric(-1))
 
-    if isinstance(expression, Prefix):
-        match expression.operator().literal:
-            case "-":
-                inner_mul = convert_to_expression_tree(expression._expr)
-                assert inner_mul
-                root = Mul(inner_mul, Numeric(-1))
-            case _:
-                raise ValueError(f"Unknown operator: {expression.operator().literal}")
+        case Number(value=value):
+            return Numeric(value)
 
-    if isinstance(expression, Number):
-        root = Numeric(expression.value)
+        case Identifier(name=Token(_, literal)):
+            return Symbol(literal)
 
-    if isinstance(expression, Identifier):
-        root = Symbol(str(expression))
-
-    return root
+    return None

@@ -2,7 +2,7 @@ import pytest
 from dataclasses import dataclass
 
 from backend.internal.expression_tree import Node, Add, Numeric
-from backend.internal.builtins import BuiltIns
+from backend.internal.math_builtins import BuiltIns
 
 
 @dataclass

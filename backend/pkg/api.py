@@ -1,6 +1,6 @@
 from backend.internal.lexing import Lexer
-from backend.internal.parsing import Parser
 from backend.internal.tokenstreams import TokenStream
+from backend.internal.parsing import Parser
 from backend.internal.evaluators import Evaluator
 
 
@@ -18,8 +18,8 @@ def run_code(input: str) -> list[str]:
     lexer = Lexer(input)
     token_stream = TokenStream(lexer)
     parser = Parser(token_stream)
-    subject = parser.parse()
+    program = parser.parse()
     evaluator = Evaluator()
-    result = evaluator.eval(subject)
+    result = evaluator.eval(program)
 
-    return [str(obj) for obj in result] if result else []
+    return [str(obj) for obj in result]

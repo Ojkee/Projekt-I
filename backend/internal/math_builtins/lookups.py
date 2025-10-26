@@ -1,5 +1,5 @@
 from typing import NamedTuple, Optional
-from backend.internal.builtins.formula_node import WildNode
+from backend.internal.math_builtins.formula_node import WildNode
 from backend.internal.expression_tree import Node, Mul, Pow, Add
 
 

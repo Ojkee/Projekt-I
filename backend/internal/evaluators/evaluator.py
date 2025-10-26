@@ -1,6 +1,6 @@
 import copy
 
-from backend.internal.builtins import BuiltIns
+from backend.internal.math_builtins import BuiltIns
 from backend.internal.objects import (
     Object,
     SubjectObject,

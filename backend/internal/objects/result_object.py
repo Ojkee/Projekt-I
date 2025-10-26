@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Callable
-from backend.internal.builtins import BuiltIns
+from backend.internal.math_builtins import BuiltIns
 from backend.internal.expression_tree import Node, Add, Mul, Pow
 from backend.internal.objects import TransformObject, AtomTransformObject
 from backend.internal.objects import Object
