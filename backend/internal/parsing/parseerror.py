@@ -23,4 +23,4 @@ class ParseErr:
         self._frames.append(StackFrame(frame, args))
 
     def stack(self) -> list[str]:
-        return list(map(str, self._frames))
+        return [str(frame) for frame in self._frames]
