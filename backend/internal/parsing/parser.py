@@ -294,6 +294,3 @@ class Parser:
         if not ttype in precedences:
             return Precedence.LOWEST
         return precedences[ttype]
-
-
-# --- IGNORE ---

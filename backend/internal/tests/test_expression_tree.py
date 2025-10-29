@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from backend.internal.lexing import Lexer
 from backend.internal.parsing import Parser
 from backend.internal.expression_tree import convert_to_expression_tree
+from backend.internal.statements import Subject
 from backend.internal.tokenstreams.tokenstream import TokenStream
 
 
@@ -156,19 +157,20 @@ CASES_SIMPLIFY_EXPRESSION_TREE = [
 ]
 
 EXPRESSION_TREE_UT: list[Case] = []
-EXPRESSION_TREE_UT .extend(CASES_CONVERT_AST_EXPRESSION)
-EXPRESSION_TREE_UT .extend(CASES_SIMPLIFY_EXPRESSION_TREE)
+EXPRESSION_TREE_UT.extend(CASES_CONVERT_AST_EXPRESSION)
+EXPRESSION_TREE_UT.extend(CASES_SIMPLIFY_EXPRESSION_TREE)
 
 
-@pytest.mark.parametrize(
-        "case", EXPRESSION_TREE_UT , ids=lambda c: c.name
-)
+@pytest.mark.parametrize("case", EXPRESSION_TREE_UT, ids=lambda c: c.name)
 def test_expression_tree(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)
     program = parser.parse()
 
-    for stmnt in program.get():
-        tree = convert_to_expression_tree(stmnt.expression()).reduce()
-        assert repr(tree) == case.expected
+    [stmnt] = program.get()
+    assert isinstance(stmnt, Subject)
+    node = convert_to_expression_tree(stmnt.expr)
+    assert node
+    tree = node.reduce()
+    assert repr(tree) == case.expected

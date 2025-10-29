@@ -12,8 +12,7 @@ class Infix(Expression):
     def __eq__(self, other):
         return (
             isinstance(other, Infix)
-            and self._op.ttype == other._op.ttype
-            and self._op.literal == other._op.literal
+            and self._op == other._op
             and self._lhs == other._lhs
             and self._rhs == other._rhs
         )
@@ -33,9 +32,3 @@ class Infix(Expression):
 
     def operator(self) -> Token:
         return self._op
-
-    def left(self) -> Expression:
-        return self._lhs
-
-    def right(self) -> Expression:
-        return self._rhs

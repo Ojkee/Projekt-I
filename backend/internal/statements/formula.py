@@ -16,3 +16,11 @@ class Formula(Statement):
             ", ".join(params_str),
         ]
         return "".join(buffer)
+
+    @property
+    def name(self) -> Token:
+        return self._name
+
+    @property
+    def params(self) -> list[Expression]:
+        return self._params

@@ -370,6 +370,7 @@ CASES_COMMANDS = [
     ),
 ]
 
+# TODO: populate
 CASES_FORMULA: list[Case] = [
     # Future formula test cases
 ]
@@ -443,9 +444,7 @@ PARSER_UT.extend(CASES_FORMULA) # TODO
 PARSER_UT.extend(CASES_ALGEBRAIC_MULTILINE)
 
 
-@pytest.mark.parametrize(
-        "case", PARSER_UT, ids=[c.name for c in PARSER_UT]
-)
+@pytest.mark.parametrize("case", PARSER_UT, ids=[c.name for c in PARSER_UT])
 def test_parser(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)

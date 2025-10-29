@@ -3,6 +3,7 @@ from backend.internal.tokens import Token, TokenType
 
 NULL_CODE: str = "\0"
 
+
 class Lexer:
     def __init__(self, input: str) -> None:
         self._input = input
@@ -113,7 +114,7 @@ class Lexer:
 
 
 def is_whitespace(code: str) -> bool:
-    whitespaces = set([" ", "\r", "\t"])
+    whitespaces: set[str] = {" ", "\r", "\t"}
     return code in whitespaces
 
 
