@@ -104,7 +104,7 @@ class Parser:
             case TokenType.ILLEGAL:
                 return self._parse_illegal()
             case TokenType.SLASH:
-                return self._parse_command()
+                return self._parse_atom_transform_statement()
             case TokenType.BANG:
                 return self._parse_formula()
         return self._parse_subject()
@@ -116,7 +116,7 @@ class Parser:
         err.append("parse_illegal")
         return err
 
-    def _parse_command(self) -> Statement | ParseErr:
+    def _parse_atom_transform_statement(self) -> Statement | ParseErr:
         assert self._current
         self._advance_token()
         match self._current.ttype:

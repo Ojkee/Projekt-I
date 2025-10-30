@@ -1,19 +1,7 @@
-from typing import NamedTuple, Optional
+from typing import Optional
 from backend.internal.math_builtins.formula_node import WildNode
 from backend.internal.expression_tree import Node, Mul, Pow, Add
-
-
-class FormulaEntry(NamedTuple):
-    to_match: Node
-    replacement: Node
-
-
-FORMULA_MAP: dict[str, FormulaEntry] = {
-    "product_power_rule": FormulaEntry(
-        Mul(Pow(WildNode("a"), WildNode("x")), Pow(WildNode("a"), WildNode("y"))),
-        Pow(WildNode("a"), Add(WildNode("x"), WildNode("y"))),
-    ),
-}
+from backend.internal.math_builtins.formulas import FORMULA_MAP
 
 
 class BuiltIns:
