@@ -21,8 +21,7 @@ class BuiltIns:
         if not to_replace:
             return None
 
-        cache: dict[str, Node] = {}
-        BuiltIns._bind_wildnodes(to_replace, entry.to_match, cache)
+        cache = BuiltIns._bind_wildnodes(to_replace, entry.to_match)
         return BuiltIns._build_node(entry.replacement, cache)
 
     @staticmethod
@@ -47,24 +46,30 @@ class BuiltIns:
         return None
 
     @staticmethod
-    def _bind_wildnodes(node: Node, to_match: Node, cache: dict[str, Node]) -> None:
+    def _bind_wildnodes(node: Node, to_match: Node) -> dict[str, Node]:
         """
         Recursively binds each WildNode in `to_match` to the corresponding node in `node`.
         Fills cache with {tag: Node} pair.
 
         Asserts that `node` matches structurally with `to_match`.
         """
-        match node, to_match:
-            case Pow() as lhs, Pow() as rhs:
-                BuiltIns._bind_wildnodes(lhs.base, rhs.base, cache)
-                BuiltIns._bind_wildnodes(lhs.exponent, rhs.exponent, cache)
+        cache: dict[str, Node] = {}
 
-            case (Add() as lhs, Add() as rhs) | (Mul() as lhs, Mul() as rhs):
-                BuiltIns._bind_wildnodes(lhs.left, rhs.left, cache)
-                BuiltIns._bind_wildnodes(lhs.right, rhs.right, cache)
+        def aux(node_, to_match_):
+            match node_, to_match_:
+                case Pow() as lhs, Pow() as rhs:
+                    aux(lhs.base, rhs.base)
+                    aux(lhs.exponent, rhs.exponent)
 
-            case lhs, WildNode(tag=tag):
-                cache[tag] = lhs
+                case (Add() as lhs, Add() as rhs) | (Mul() as lhs, Mul() as rhs):
+                    aux(lhs.left, rhs.left)
+                    aux(lhs.right, rhs.right)
+
+                case lhs, WildNode(tag=tag):
+                    cache[tag] = lhs
+
+        aux(node, to_match)
+        return cache
 
     @staticmethod
     def _build_node(node: Node, cache: dict[str, Node]) -> Node:

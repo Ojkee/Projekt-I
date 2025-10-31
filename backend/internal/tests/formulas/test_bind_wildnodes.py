@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import pytest
 
 from backend.internal.expression_tree import Node, Numeric, Add, Mul, Symbol, Pow
@@ -12,7 +12,6 @@ class Case:
     input: Node
     to_match: Node
     expected: dict[str, Node]
-    cache: dict[str, Node] = field(default_factory=dict)
 
 
 BIND_WILDNODES_CASES: list[Case] = [
@@ -138,5 +137,5 @@ BIND_WILDNODES_CASES: list[Case] = [
 
 @pytest.mark.parametrize("case", BIND_WILDNODES_CASES, ids=lambda c: c.name)
 def test_bind_wildnodes(case: Case) -> None:
-    BuiltIns._bind_wildnodes(case.input, case.to_match, case.cache)
-    assert case.cache == case.expected
+    result = BuiltIns._bind_wildnodes(case.input, case.to_match)
+    assert result == case.expected
