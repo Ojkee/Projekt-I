@@ -74,14 +74,6 @@ CASES_CATEGORIES = [
 ]
 
 
-@pytest.mark.parametrize(
-    "case", CASES_CATEGORIES, ids=[c.name for c in CASES_CATEGORIES]
-)
-def test_lexer(case: Case) -> None:
-    lexer = Lexer(case.input)
-    assert lexer.tokenize() == case.expected
-
-
 CASES_EXAMPLE_PROGRAMS = [
     Case(
         "Equation spreaded",
@@ -159,10 +151,8 @@ LEXER_UT: list[Case] = []
 LEXER_UT.extend(CASES_CATEGORIES)
 LEXER_UT.extend(CASES_EXAMPLE_PROGRAMS)
 
-@pytest.mark.parametrize(
-    "case", LEXER_UT, ids=[c.name for c in LEXER_UT]
-)
+
+@pytest.mark.parametrize("case", LEXER_UT, ids=lambda c: c.name)
 def test_lexer(case: Case) -> None:
     lexer = Lexer(case.input)
     assert lexer.tokenize() == case.expected
-

@@ -244,7 +244,7 @@ class Parser:
         assert self._peek
         if self._peek.ttype != TokenType.RPAREN:
             err = ParseErr("Parentheses should close, write: `)`")
-            err.append("parse_groped_expr", self._current)
+            err.append("parse_grouped_expr", self._current)
             return err
         self._advance_token()
         return expr
