@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.expression_tree import Node, Add, Mul, Pow
+from backend.internal.math_builtins.builtins_error import BuiltinsError
 from backend.internal.objects import TransformObject, AtomTransformObject
 from backend.internal.objects import Object
 from backend.internal.objects.transform_object import FormulaObject
@@ -51,8 +52,11 @@ class SubjectObject(Object, ABC):
 
         replacements: dict[Node, Node] = {}
         for param in formula.params:
-            if replace := BuiltIns.get(formula.name.literal, value, param):
-                replacements[param] = replace
+            match BuiltIns.get(formula.name.literal, value, param):
+                case Node() as node:
+                    replacements[param] = node
+                case BuiltinsError() as err:
+                    raise ValueError(err.msg)
 
         def dfs_replace(node: Node) -> Node:
             for pattern, replacement in replacements.items():
@@ -121,7 +125,10 @@ class EquationObject(SubjectObject):
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
-        self.lhs = transformer(self.lhs, t_obj)
+        try:
+            self.lhs = transformer(self.lhs, t_obj)
+        except ValueError:
+            pass  # Might find matches in rhs
         self.rhs = transformer(self.rhs, t_obj)
         self.lhs.reduce()
         self.rhs.reduce()

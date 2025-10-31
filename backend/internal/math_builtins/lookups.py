@@ -1,6 +1,11 @@
 from typing import Optional
+from backend.internal.math_builtins.builtins_error import (
+    BuiltinsError,
+    NotMatchingFormula,
+    NotMatchingParam,
+)
 from backend.internal.math_builtins.formula_node import WildNode
-from backend.internal.expression_tree import Node, Mul, Pow, Add
+from backend.internal.expression_tree import Node, Mul, Pow, Add, Numeric, Symbol
 from backend.internal.math_builtins.formulas import FORMULA_MAP
 
 
@@ -10,7 +15,7 @@ class BuiltIns:
         return name in FORMULA_MAP
 
     @staticmethod
-    def get(name: str, root: Node, param: Optional[Node]) -> Optional[Node]:
+    def get(name: str, root: Node, param: Optional[Node]) -> Node | BuiltinsError:
         if not param:
             raise NotImplementedError("Auto search param not implemented yet")
 
@@ -19,10 +24,13 @@ class BuiltIns:
 
         to_replace = BuiltIns._find_match(root, param)
         if not to_replace:
-            return None
+            return NotMatchingParam(f"no match for {param}")
 
-        cache = BuiltIns._bind_wildnodes(to_replace, entry.to_match)
-        return BuiltIns._build_node(entry.replacement, cache)
+        match BuiltIns._bind_wildnodes(to_replace, entry.to_match):
+            case NotMatchingFormula() as err:
+                return err
+            case cache:
+                return BuiltIns._build_node(entry.replacement, cache)
 
     @staticmethod
     def _find_match(node: Node, param: Node) -> Optional[Node]:
@@ -46,29 +54,41 @@ class BuiltIns:
         return None
 
     @staticmethod
-    def _bind_wildnodes(node: Node, to_match: Node) -> dict[str, Node]:
+    def _bind_wildnodes(
+        node: Node, to_match: Node
+    ) -> dict[str, Node] | NotMatchingFormula:
         """
         Recursively binds each WildNode in `to_match` to the corresponding node in `node`.
         Fills cache with {tag: Node} pair.
-
-        Asserts that `node` matches structurally with `to_match`.
         """
         cache: dict[str, Node] = {}
 
-        def aux(node_, to_match_):
+        def aux(node_, to_match_) -> Optional[NotMatchingFormula]:
             match node_, to_match_:
                 case Pow() as lhs, Pow() as rhs:
-                    aux(lhs.base, rhs.base)
-                    aux(lhs.exponent, rhs.exponent)
+                    if err := aux(lhs.base, rhs.base):
+                        return err
+                    if err := aux(lhs.exponent, rhs.exponent):
+                        return err
 
                 case (Add() as lhs, Add() as rhs) | (Mul() as lhs, Mul() as rhs):
-                    aux(lhs.left, rhs.left)
-                    aux(lhs.right, rhs.right)
+                    if err := aux(lhs.left, rhs.left):
+                        return err
+                    if err := aux(lhs.right, rhs.right):
+                        return err
 
-                case lhs, WildNode(tag=tag):
+                case lhs, WildNode(tag=tag) if tag in cache and lhs != cache[tag]:
+                    return NotMatchingFormula(
+                        f"Cannot use this formula because {lhs} and {cache[tag]} aren't the same"
+                    )
+
+                case lhs, WildNode(tag=tag) if not tag in cache:
                     cache[tag] = lhs
 
-        aux(node, to_match)
+            return None
+
+        if err := aux(node, to_match):
+            return err
         return cache
 
     @staticmethod
