@@ -1,20 +1,16 @@
 import React from "react";
+import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
 import { syntaxHighlighting } from "@codemirror/language";
-import CodeMirror from "@uiw/react-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { myLang, myLangHighlight } from "../highlighting.ts";
+import { myLang, myLangHighlight } from "../highlighting";
 
-interface CodeEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-}
-
-const CodeEditor: React.FC<CodeEditorProps> = ({ value, onChange }) => {
+const CodeEditor = ({ value, onChange }) => {
   return (
     <CodeMirror
       value={value}
-      height="200px"
+      height="500px"
+      width="500px"  
       theme={oneDark}
       extensions={[myLang, syntaxHighlighting(myLangHighlight), EditorView.lineWrapping]}
       onChange={onChange}
