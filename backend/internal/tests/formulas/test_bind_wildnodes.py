@@ -132,6 +132,15 @@ BIND_WILDNODES_CASES: list[Case] = [
         to_match=Add(WildNode("term"), WildNode("term")),
         expected={"term": Mul(Pow(Symbol("a"), Numeric(2.0)), Numeric(3.0))},
     ),
+    Case(
+        name="Binomial Expansion Formulas",
+        input=Pow(
+            Add(Symbol("x"), Numeric(2.0)),
+            Numeric(2.0),
+        ),
+        to_match=Pow(Add(WildNode("a"), WildNode("b")), Numeric(2.0)),
+        expected={"a": Symbol("x"), "b": Numeric(2.0)},
+    ),
 ]
 
 
