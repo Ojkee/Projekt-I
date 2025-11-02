@@ -52,7 +52,7 @@ class SubjectObject(Object, ABC):
 
         replacements: dict[Node, Node] = {}
         for param in formula.params:
-            match BuiltIns.get(formula.name.literal, value, param):
+            match BuiltIns.get_replacement(formula.name.literal, value, param):
                 case Node() as node:
                     replacements[param] = node
                 case BuiltinsError() as err:

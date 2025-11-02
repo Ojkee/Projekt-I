@@ -15,7 +15,9 @@ class BuiltIns:
         return name in FORMULA_MAP
 
     @staticmethod
-    def get(name: str, root: Node, param: Optional[Node]) -> Node | BuiltinsError:
+    def get_replacement(
+        name: str, root: Node, param: Optional[Node]
+    ) -> Node | BuiltinsError:
         if not param:
             raise NotImplementedError("Auto search param not implemented yet")
 

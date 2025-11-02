@@ -80,5 +80,5 @@ CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT_REVERSED)
 
 @pytest.mark.parametrize("case", CASES_BUILTIN_GET_REPLACEMENT_UT, ids=lambda c: c.name)
 def test_builtin_get(case: Case) -> None:
-    result = BuiltIns.get(case.formula_name, case.root, case.param)
-    assert result == case.expected
+    replacement = BuiltIns.get_replacement(case.formula_name, case.root, case.param)
+    assert replacement == case.expected

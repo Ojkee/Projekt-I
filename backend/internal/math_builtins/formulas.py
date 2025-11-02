@@ -32,7 +32,3 @@ FORMULA_MAP: dict[str, FormulaEntry] = {
     #     r"\frac{ a^r }{ a^s }", WildNode("TODO"), WildNode("TODO")
     # ),
 }
-
-
-def get_implemented_formulas() -> list[tuple[str, str]]:
-    return [(name, entry.latex_str) for name, entry in FORMULA_MAP.items()]
