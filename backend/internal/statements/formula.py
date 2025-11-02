@@ -8,14 +8,19 @@ class Formula(Statement):
         self._name = name
         self._params = params
 
+    def __repr__(self) -> str:
+        return f"FORMULA({str(self)})"
+
     def __str__(self) -> str:
-        params_str = map(str, self._params)
-        buffer = [
-            self._name.literal,
-            " ",
-            ", ".join(params_str),
-        ]
-        return "".join(buffer)
+        params_str = ", ".join(map(str, self._params))
+        return f"'{self._name.literal}' {params_str}"
+
+    def __eq__(self, other) -> bool:
+        return (
+            isinstance(other, Formula)
+            and self._name == other._name
+            and self.params == other.params
+        )
 
     @property
     def name(self) -> Token:

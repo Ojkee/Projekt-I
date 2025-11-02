@@ -372,13 +372,63 @@ CASES_COMMANDS = [
 ]
 
 CASES_FORMULA: list[Case] = [
-    # Case(
-    #     "Simple formula",
-    #     "!formula\n",
-    #     [
-    #         Formula(Token(TokenType.IDENT, "formula"), []),
-    #     ],
-    # ),
+    Case(
+        "Simple formula",
+        "!formula",
+        [
+            Formula(Token(TokenType.IDENT, "formula"), []),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula x",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [Identifier(Token(TokenType.IDENT, "x"))],
+            ),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula x, y, z",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [
+                    Identifier(Token(TokenType.IDENT, "x")),
+                    Identifier(Token(TokenType.IDENT, "y")),
+                    Identifier(Token(TokenType.IDENT, "z")),
+                ],
+            ),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula 2x, 3y, 4z",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(2.0),
+                        Identifier(Token(TokenType.IDENT, "x")),
+                    ),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(3.0),
+                        Identifier(Token(TokenType.IDENT, "y")),
+                    ),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(4.0),
+                        Identifier(Token(TokenType.IDENT, "z")),
+                    ),
+                ],
+            ),
+        ],
+    ),
 ]
 
 CASES_ALGEBRAIC_MULTILINE = [

@@ -155,7 +155,7 @@ class Parser:
     def _parse_comma_sep_params(self) -> list[Expression] | ParseErr:
         assert self._current
         params: list[Expression] = []
-        while self._new_line_or_eof(self._current):
+        while not self._new_line_or_eof(self._current):
             param = self._parse_expr(Precedence.LOWEST)
             if isinstance(param, ParseErr):
                 param.append("parse_comma_sep_params")
