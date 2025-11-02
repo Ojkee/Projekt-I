@@ -13,7 +13,7 @@ class Case(NamedTuple):
     expected: Node
 
 
-CASES_BUILTIN_GET: list[Case] = [
+CASES_BUILTIN_GET_REPLACEMENT: list[Case] = [
     Case(
         name="Product Power Rule",
         formula_name="product_power_rule",
@@ -43,8 +43,42 @@ CASES_BUILTIN_GET: list[Case] = [
     ),
 ]
 
+CASES_BUILTIN_GET_REPLACEMENT_REVERSED: list[Case] = [
+    Case(
+        name="Reversed Product Power Rule",
+        formula_name="product_power_rule",
+        root=Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+        param=Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+        expected=Mul(Pow(Symbol("a"), Numeric(2.0)), Pow(Symbol("a"), Numeric(3.0))),
+    ),
+    Case(
+        name="Reversed Product Power Rule nested lhs",
+        formula_name="product_power_rule",
+        root=Add(
+            Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+            Symbol("b"),
+        ),
+        param=Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+        expected=Mul(Pow(Symbol("a"), Numeric(2.0)), Pow(Symbol("a"), Numeric(3.0))),
+    ),
+    Case(
+        name="Reversed Product Power Rule nested rhs",
+        formula_name="product_power_rule",
+        root=Add(
+            Symbol("b"),
+            Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+        ),
+        param=Pow(Symbol("a"), Add(Numeric(2.0), Numeric(3.0))),
+        expected=Mul(Pow(Symbol("a"), Numeric(2.0)), Pow(Symbol("a"), Numeric(3.0))),
+    ),
+]
 
-@pytest.mark.parametrize("case", CASES_BUILTIN_GET, ids=lambda c: c.name)
+CASES_BUILTIN_GET_REPLACEMENT_UT: list[Case] = []
+CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT)
+CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT_REVERSED)
+
+
+@pytest.mark.parametrize("case", CASES_BUILTIN_GET_REPLACEMENT_UT, ids=lambda c: c.name)
 def test_builtin_get(case: Case) -> None:
     result = BuiltIns.get(case.formula_name, case.root, case.param)
     assert result == case.expected

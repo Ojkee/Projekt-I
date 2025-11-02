@@ -6,7 +6,7 @@ from backend.internal.math_builtins.builtins_error import (
 )
 from backend.internal.math_builtins.formula_node import WildNode
 from backend.internal.expression_tree import Node, Mul, Pow, Add, Numeric
-from backend.internal.math_builtins.formulas import FORMULA_MAP
+from backend.internal.math_builtins.formulas import FORMULA_MAP, FormulaEntry
 
 
 class BuiltIns:
@@ -26,9 +26,7 @@ class BuiltIns:
         if not to_replace:
             return NotMatchingParam(f"There is no {param} in {root}")
 
-        # TODO: match mechanism which part of formula needs to be matched
-
-        to_match, replacement = entry.lhs, entry.rhs
+        to_match, replacement = BuiltIns.get_match_and_replacement(param, entry)
 
         match BuiltIns._bind_wildnodes(to_replace, to_match):
             case NotMatchingFormula() as err:
@@ -56,6 +54,15 @@ class BuiltIns:
                 return dfs(a, b)
 
         return None
+
+    @staticmethod
+    def get_match_and_replacement(
+        param: Node, entry: FormulaEntry
+    ) -> tuple[Node, Node]:
+        to_match, replacement = entry.lhs, entry.rhs
+        if entry.rhs == param:
+            to_match, replacement = replacement, to_match
+        return to_match, replacement
 
     @staticmethod
     def _bind_wildnodes(
