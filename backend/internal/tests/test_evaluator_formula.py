@@ -13,7 +13,13 @@ class Case(NamedTuple):
     expected: list[str]
 
 
-CASES_EVALUATOR_FORMULA: list[Case] = []
+CASES_EVALUATOR_FORMULA: list[Case] = [
+    # Case(
+    #     name="Simple formula on expression",
+    #     input="a^3*a^4\n!product_of_powers a^3*a^4\n",
+    #     expected=["EXPR(((a^3.0)*(a^4.0)))", "EXPR(a^((3.0+4.0)))"],
+    # )
+]
 
 
 # TODO

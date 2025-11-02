@@ -58,37 +58,8 @@ class SubjectObject(Object, ABC):
                 case BuiltinsError() as err:
                     raise ValueError(err.msg)
 
-        def dfs_replace(node: Node) -> Node:
-            for pattern, replacement in replacements.items():
-                if node == pattern:
-                    return replacement
-
-            match node:
-                case Add(left=lhs, right=rhs):
-                    new_left = dfs_replace(lhs)
-                    new_right = dfs_replace(rhs)
-                    if new_left is not lhs or new_right is not rhs:
-                        return Add(new_left, new_right)
-                    return node
-
-                case Mul(left=lhs, right=rhs):
-                    new_left = dfs_replace(lhs)
-                    new_right = dfs_replace(rhs)
-                    if new_left is not lhs or new_right is not rhs:
-                        return Mul(new_left, new_right)
-                    return node
-
-                case Pow(base=base, exponent=exponent):
-                    new_base = dfs_replace(base)
-                    new_exponent = dfs_replace(exponent)
-                    if new_base is not base or new_exponent is not exponent:
-                        return Pow(new_base, new_exponent)
-                    return node
-
-                case _:
-                    return node
-
-        return dfs_replace(value)
+        # TODO: implement replacement
+        return value
 
 
 class ExpressionObject(SubjectObject):
