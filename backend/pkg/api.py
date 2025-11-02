@@ -29,9 +29,13 @@ def run_code(input: str) -> list[str]:
 
 
 def get_implemented_formulas_json() -> bytes:
-    Formula_tuple = NamedTuple("Formula_tuple", [("name", str), ("latex_str", str)])
+    Formula_tuple = NamedTuple(
+        "Formula_tuple",
+        [("display_name", str), ("box_name", str), ("latex_str", str)],
+    )
     formulas = (
-        Formula_tuple(name, entry.latex_str) for name, entry in FORMULA_MAP.items()
+        Formula_tuple(entry.display_name, box_name, entry.latex_str)
+        for box_name, entry in FORMULA_MAP.items()
     )
     formulas_dict = (formula._asdict() for formula in formulas)
     json_bytes = json.dumps(formulas_dict).encode("utf-8")
