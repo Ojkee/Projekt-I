@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, NamedTuple
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.expression_tree import Node, Add, Mul, Pow
 from backend.internal.math_builtins.builtins_error import BuiltinsError
@@ -50,15 +50,41 @@ class SubjectObject(Object, ABC):
     def _handle_formula(self, value: Node, formula: TransformObject) -> Node:
         assert isinstance(formula, FormulaObject)
 
-        replacements: dict[Node, Node] = {}
-        for param in formula.params:
-            match BuiltIns.get_replacement(formula.name.literal, value, param):
-                case Node() as node:
-                    replacements[param] = node
-                case BuiltinsError() as err:
-                    raise ValueError(err.msg)
+        ParamToReplace = NamedTuple(
+            "ParamToReplace", [("param", Node), ("replacement", Node)]
+        )
+        replacements = BuiltIns.get_replacements(
+            formula.name.literal,
+            value,
+            formula.params,
+            lambda p, r: ParamToReplace(p, r),
+        )
 
-        # TODO: implement replacement
+        if isinstance(replacements, BuiltinsError):
+            raise ValueError(replacements.msg)
+
+        def dfs_replace(node: Node, param: Node, replacement: Node) -> Node:
+            if node == param:
+                return replacement
+            match node:
+                case (
+                    Add(left=lhs, right=rhs)
+                    | Mul(left=lhs, right=rhs)
+                    | Pow(base=lhs, exponent=rhs) as N
+                ):
+                    return type(N)(
+                        dfs_replace(lhs, param, replacement),
+                        dfs_replace(rhs, param, replacement),
+                    )
+            return node
+
+        def replace(param: Node, replacement: Node) -> None:
+            nonlocal value
+            value = dfs_replace(value, param, replacement)
+
+        for replacement in replacements:
+            replace(*replacement)
+
         return value
 
 

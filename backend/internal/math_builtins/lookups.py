@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Callable, Optional, Protocol, TypeVar
 from backend.internal.math_builtins.builtins_error import (
     BuiltinsError,
     NotMatchingFormula,
@@ -9,10 +9,34 @@ from backend.internal.expression_tree import Node, Mul, Pow, Add, Numeric
 from backend.internal.math_builtins.formulas import FORMULA_MAP, FormulaEntry
 
 
+class TupleProtocol(Protocol):
+    @property
+    def param(self) -> Node: ...
+
+    @property
+    def replacement(self) -> Node: ...
+
+
+T = TypeVar("T", bound=TupleProtocol)
+
+
 class BuiltIns:
     @staticmethod
     def is_present(name: str) -> bool:
         return name in FORMULA_MAP
+
+    @staticmethod
+    def get_replacements(
+        name: str, root: Node, params: list[Node], make_tuple: Callable[[Node, Node], T]
+    ) -> list[T] | BuiltinsError:
+        replacements: list[T] = []
+        for param in params:
+            match BuiltIns.get_replacement(name, root, param):
+                case Node() as replacement:
+                    replacements.append(make_tuple(param, replacement))
+                case BuiltinsError() as err:
+                    return err
+        return replacements
 
     @staticmethod
     def get_replacement(
