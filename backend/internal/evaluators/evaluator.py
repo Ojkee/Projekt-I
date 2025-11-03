@@ -48,7 +48,11 @@ class Evaluator:
                 case SubjectObject() as sub:
                     subject_object = sub
                 case (AtomTransformObject() | FormulaObject()) as t_obj:
-                    subject_object.apply(t_obj)
+                    try:
+                        subject_object.apply(t_obj)
+                    except ValueError as e:
+                        subjects.append(ErrorObject(str(e)))
+                        break
                 case ErrorObject() as err:
                     subjects.append(err)
                     break

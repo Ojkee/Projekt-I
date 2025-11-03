@@ -33,7 +33,7 @@ class TokenStream:
             next = self._tokens[i + 1]
 
             if current.ttype == TokenType.BANG:
-                i += i
+                i += 2
                 tokens.append(current)
                 tokens.append(next)
                 continue

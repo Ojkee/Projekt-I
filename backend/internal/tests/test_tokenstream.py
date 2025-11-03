@@ -144,12 +144,40 @@ CASES_PREPROCESS = [
     ),
 ]
 
+CASES_TOKEN_FORMULA = [
+    Case(
+        name="Simple formula",
+        input="!formula",
+        expected=[
+            Token(TokenType.BANG, "!"),
+            Token(TokenType.IDENT, "formula"),
+            Token(TokenType.EOF, "EOF"),
+        ],
+    ),
+    Case(
+        name="Simple formula",
+        input="!formula x, y, 2x",
+        expected=[
+            Token(TokenType.BANG, "!"),
+            Token(TokenType.IDENT, "formula"),
+            Token(TokenType.IDENT, "x"),
+            Token(TokenType.COMMA, ","),
+            Token(TokenType.IDENT, "y"),
+            Token(TokenType.COMMA, ","),
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.ASTERISK, "*"),
+            Token(TokenType.IDENT, "x"),
+            Token(TokenType.EOF, "EOF"),
+        ],
+    ),
+]
+
 TOKEN_UT: list[Case] = []
 TOKEN_UT.extend(CASES_PREPROCESS)
+TOKEN_UT.extend(CASES_TOKEN_FORMULA)
 
-@pytest.mark.parametrize(
-    "case", TOKEN_UT, ids=[c.name for c in TOKEN_UT]
-)
+
+@pytest.mark.parametrize("case", TOKEN_UT, ids=[c.name for c in TOKEN_UT])
 def test_lexer(case: Case) -> None:
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)

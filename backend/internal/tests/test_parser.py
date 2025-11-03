@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from backend.internal.expressions import Prefix, Infix, Identifier, Number
 from backend.internal.lexing import Lexer
 from backend.internal.statements import Statement, Subject, AtomTransform
+from backend.internal.statements.formula import Formula
 from backend.internal.tokens import Token, TokenType
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
@@ -370,9 +371,64 @@ CASES_COMMANDS = [
     ),
 ]
 
-# TODO: populate
 CASES_FORMULA: list[Case] = [
-    # Future formula test cases
+    Case(
+        "Simple formula",
+        "!formula",
+        [
+            Formula(Token(TokenType.IDENT, "formula"), []),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula x",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [Identifier(Token(TokenType.IDENT, "x"))],
+            ),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula x, y, z",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [
+                    Identifier(Token(TokenType.IDENT, "x")),
+                    Identifier(Token(TokenType.IDENT, "y")),
+                    Identifier(Token(TokenType.IDENT, "z")),
+                ],
+            ),
+        ],
+    ),
+    Case(
+        "Simple formula",
+        "!formula 2x, 3y, 4z",
+        [
+            Formula(
+                Token(TokenType.IDENT, "formula"),
+                [
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(2.0),
+                        Identifier(Token(TokenType.IDENT, "x")),
+                    ),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(3.0),
+                        Identifier(Token(TokenType.IDENT, "y")),
+                    ),
+                    Infix(
+                        Token(TokenType.ASTERISK, "*"),
+                        Number(4.0),
+                        Identifier(Token(TokenType.IDENT, "z")),
+                    ),
+                ],
+            ),
+        ],
+    ),
 ]
 
 CASES_ALGEBRAIC_MULTILINE = [
@@ -440,7 +496,7 @@ CASES_ALGEBRAIC_MULTILINE = [
 PARSER_UT = []
 PARSER_UT.extend(CASES_ALGEBRAIC)
 PARSER_UT.extend(CASES_COMMANDS)
-PARSER_UT.extend(CASES_FORMULA) # TODO
+PARSER_UT.extend(CASES_FORMULA)
 PARSER_UT.extend(CASES_ALGEBRAIC_MULTILINE)
 
 

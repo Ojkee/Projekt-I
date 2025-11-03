@@ -8,7 +8,7 @@ class WildNode(Node):
         super().__init__()
         self.tag = tag
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Node) -> bool:
         _ = other
         return True
 

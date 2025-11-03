@@ -104,7 +104,7 @@ class Parser:
             case TokenType.ILLEGAL:
                 return self._parse_illegal()
             case TokenType.SLASH:
-                return self._parse_command()
+                return self._parse_atom_transform_statement()
             case TokenType.BANG:
                 return self._parse_formula()
         return self._parse_subject()
@@ -116,7 +116,7 @@ class Parser:
         err.append("parse_illegal")
         return err
 
-    def _parse_command(self) -> Statement | ParseErr:
+    def _parse_atom_transform_statement(self) -> Statement | ParseErr:
         assert self._current
         self._advance_token()
         match self._current.ttype:
@@ -155,7 +155,7 @@ class Parser:
     def _parse_comma_sep_params(self) -> list[Expression] | ParseErr:
         assert self._current
         params: list[Expression] = []
-        while self._new_line_or_eof(self._current):
+        while not self._new_line_or_eof(self._current):
             param = self._parse_expr(Precedence.LOWEST)
             if isinstance(param, ParseErr):
                 param.append("parse_comma_sep_params")
@@ -244,7 +244,7 @@ class Parser:
         assert self._peek
         if self._peek.ttype != TokenType.RPAREN:
             err = ParseErr("Parentheses should close, write: `)`")
-            err.append("parse_groped_expr", self._current)
+            err.append("parse_grouped_expr", self._current)
             return err
         self._advance_token()
         return expr

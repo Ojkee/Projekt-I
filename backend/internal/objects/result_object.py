@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, NamedTuple
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.expression_tree import Node, Add, Mul, Pow
+from backend.internal.math_builtins.builtins_error import BuiltinsError
 from backend.internal.objects import TransformObject, AtomTransformObject
 from backend.internal.objects import Object
 from backend.internal.objects.transform_object import FormulaObject
@@ -49,42 +50,42 @@ class SubjectObject(Object, ABC):
     def _handle_formula(self, value: Node, formula: TransformObject) -> Node:
         assert isinstance(formula, FormulaObject)
 
-        replacements: dict[Node, Node] = {}
-        for param in formula.params:
-            if replace := BuiltIns.get(formula.name.literal, value, param):
-                replacements[param] = replace
+        ParamToReplace = NamedTuple(
+            "ParamToReplace", [("param", Node), ("replacement", Node)]
+        )
+        replacements = BuiltIns.get_replacements(
+            formula.name.literal,
+            value,
+            formula.params,
+            lambda p, r: ParamToReplace(p, r),
+        )
 
-        def dfs_replace(node: Node) -> Node:
-            for pattern, replacement in replacements.items():
-                if node == pattern:
-                    return replacement
+        if isinstance(replacements, BuiltinsError):
+            raise ValueError(replacements.msg)
 
+        def dfs_replace(node: Node, param: Node, replacement: Node) -> Node:
+            if node == param:
+                return replacement
             match node:
-                case Add(left=lhs, right=rhs):
-                    new_left = dfs_replace(lhs)
-                    new_right = dfs_replace(rhs)
-                    if new_left is not lhs or new_right is not rhs:
-                        return Add(new_left, new_right)
-                    return node
+                case (
+                    Add(left=lhs, right=rhs)
+                    | Mul(left=lhs, right=rhs)
+                    | Pow(base=lhs, exponent=rhs) as N
+                ):
+                    return type(N)(
+                        dfs_replace(lhs, param, replacement),
+                        dfs_replace(rhs, param, replacement),
+                    )
+            return node
 
-                case Mul(left=lhs, right=rhs):
-                    new_left = dfs_replace(lhs)
-                    new_right = dfs_replace(rhs)
-                    if new_left is not lhs or new_right is not rhs:
-                        return Mul(new_left, new_right)
-                    return node
+        def replace(param: Node, replacement: Node) -> None:
+            nonlocal value
+            value = dfs_replace(value, param, replacement)
 
-                case Pow(base=base, exponent=exponent):
-                    new_base = dfs_replace(base)
-                    new_exponent = dfs_replace(exponent)
-                    if new_base is not base or new_exponent is not exponent:
-                        return Pow(new_base, new_exponent)
-                    return node
+        for replacement in replacements:
+            replace(*replacement)
 
-                case _:
-                    return node
-
-        return dfs_replace(value)
+        return value
 
 
 class ExpressionObject(SubjectObject):
@@ -121,7 +122,10 @@ class EquationObject(SubjectObject):
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
-        self.lhs = transformer(self.lhs, t_obj)
+        try:
+            self.lhs = transformer(self.lhs, t_obj)
+        except ValueError:
+            pass  # Might find matches in rhs
         self.rhs = transformer(self.rhs, t_obj)
         self.lhs.reduce()
         self.rhs.reduce()
