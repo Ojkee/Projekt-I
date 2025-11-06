@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 STATIC_FILES_DIR = os.path.join(os.getcwd(), "frontend", "dist")
 
+
 def run_server(port: int, DEV_MODE: bool = False) -> bool:
     app = create_app()
 
@@ -21,7 +22,8 @@ def run_server(port: int, DEV_MODE: bool = False) -> bool:
     )
 
     if not DEV_MODE:
-        app.mount("/", StaticFiles(directory=STATIC_FILES_DIR, html=True), name="frontend")
+        app.mount(
+            "/", StaticFiles(directory=STATIC_FILES_DIR, html=True), name="frontend"
+        )
 
     uvicorn.run(app, host="localhost", port=port, reload=False)
-

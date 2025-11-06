@@ -23,9 +23,12 @@ FORMULA_MAP: dict[str, FormulaEntry] = {
         Pow(Pow(WildNode("a"), WildNode("r")), WildNode("s")),
         Pow(WildNode("a"), Mul(WildNode("r"), WildNode("s"))),
     ),
-    # "quotient_of_powers": FormulaEntry(
-    #     r"\frac{ a^r }{ a^s }", WildNode("TODO"), WildNode("TODO")
-    # ),
+    "quotient_of_powers": FormulaEntry(
+        "Quotient of Powers",
+        r"\frac{ a^r }{ a^s }",
+        WildNode("TODO"),
+        WildNode("TODO"),
+    ),
     "power_of_a_product": FormulaEntry(
         "Power of a Product rule",
         r"( a \cdot b) ^ r",

@@ -28,16 +28,16 @@
 
 ## Parser
 - [x] Parse:
-    - [x] Numbers 
-    - [x] Identifiers 
+    - [x] Numbers
+    - [x] Identifiers
     - [x] Prefix
     - [x] Infix
     - [x] Grouped expressions
     - [x] Atom transformations
     - [x] Formulas
 - [x] Test:
-    - [x] Numbers 
-    - [x] Identifiers 
+    - [x] Numbers
+    - [x] Identifiers
     - [x] Prefix
     - [x] Infix
     - [x] Grouped expressions
@@ -72,5 +72,5 @@
 
 ## Extras
 - [x] Replace all 'ToString's with string builders
-- [x] Better __repl__ implementation of statments and expressions (more readable)
-- [ ] In case of complexity of multiple params in Formulas, It might be necessary to limit Formulas to 1 parameter at most
+- [x] Better `__repl__` implementation of statements and expressions (more readable)
+- [ ] In case of complexity of multiple parameters in Formulas, It might be necessary to limit Formulas to 1 parameter at most

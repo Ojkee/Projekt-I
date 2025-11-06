@@ -25,7 +25,7 @@ class Lexer:
         self._read_unicode()
 
         token = self._read_next_token()
-        while not token.ttype is TokenType.EOF:
+        while token.ttype is not TokenType.EOF:
             self._content.append(token)
             token = self._read_next_token()
         self._content.append(Token(TokenType.EOF, "EOF"))

@@ -17,3 +17,7 @@ class WildNode(Node):
 
     def reduce(self) -> Node:
         return self
+
+
+class WildNodeFraction(Node):
+    pass

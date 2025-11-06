@@ -114,7 +114,7 @@ class BuiltIns:
                     if err := aux(lhs.right, rhs.right):
                         return err
 
-                case lhs, WildNode(tag=tag) if not tag in cache:
+                case lhs, WildNode(tag=tag) if tag not in cache:
                     cache[tag] = lhs
 
                 case Numeric(value=lvalue), Numeric(value=rvalue) if lvalue != rvalue:

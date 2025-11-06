@@ -13,7 +13,7 @@ class Case(NamedTuple):
     expected: Node
 
 
-CASES_BUILTIN_GET_REPLACEMENT: list[Case] = [
+CASES_BUILTIN_GET_REPLACEMENT_POWERS: list[Case] = [
     # "a^r * a^s = a^(r + s)",
     Case(
         name="Product Power Rule",
@@ -92,7 +92,7 @@ CASES_BUILTIN_GET_REPLACEMENT: list[Case] = [
     ),
 ]
 
-CASES_BUILTIN_GET_REPLACEMENT_REVERSED: list[Case] = [
+CASES_BUILTIN_GET_REPLACEMENT_POWERS_REVERSED: list[Case] = [
     Case(
         name="Reversed Product Power Rule",
         formula_name="product_of_powers",
@@ -136,8 +136,8 @@ CASES_BUILTIN_GET_REPLACEMENT_REVERSED: list[Case] = [
 ]
 
 CASES_BUILTIN_GET_REPLACEMENT_UT: list[Case] = []
-CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT)
-CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT_REVERSED)
+CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT_POWERS)
+CASES_BUILTIN_GET_REPLACEMENT_UT.extend(CASES_BUILTIN_GET_REPLACEMENT_POWERS_REVERSED)
 
 
 @pytest.mark.parametrize("case", CASES_BUILTIN_GET_REPLACEMENT_UT, ids=lambda c: c.name)

@@ -115,7 +115,7 @@ class EquationObject(SubjectObject):
         self.rhs = rhs
 
     def __repr__(self) -> str:
-        return f"EQUATION({repr(self.rhs)} = {repr(self.lhs)})"
+        return f"EQUATION({repr(self.lhs)} = {repr(self.rhs)})"
 
     def __str__(self) -> str:
         return f"{str(self.lhs)} = {str(self.rhs)}"
@@ -127,8 +127,9 @@ class EquationObject(SubjectObject):
         except ValueError:
             pass  # Might find matches in rhs
         self.rhs = transformer(self.rhs, t_obj)
-        self.lhs.reduce()
-        self.rhs.reduce()
+
+        # self.lhs.reduce() # TODO: Imlement Simplify
+        # self.rhs.reduce()
 
 
 class ErrorObject(SubjectObject):

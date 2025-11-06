@@ -46,4 +46,3 @@ class Token(NamedTuple):
 
     def is_symbol(self) -> bool:
         return self.ttype == TokenType.IDENT and len(self.literal) == 1
-

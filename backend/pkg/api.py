@@ -7,7 +7,7 @@ from backend.internal.parsing import Parser
 from backend.internal.evaluators import Evaluator
 
 
-def run_code(input: str) -> list[str]:
+def compile_math_input(input: str) -> list[str]:
     """
     Runs the input code through the full pipeline: lexing, parsing, and evaluating.
     Returns the string representations of the resulting SubjectObjects or error messages.
