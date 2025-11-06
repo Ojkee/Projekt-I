@@ -81,6 +81,11 @@ CASES_EVAL_SUBJECT_ATOM = [
         "a + b\n/2",
         ["EXPR((a+b))", "EXPR(((a+b)*(2.0^-1)))"],
     ),
+    Case(
+        "AAAAAAA",
+        "a = 2\n2",
+        [],
+    ),
 ]
 
 

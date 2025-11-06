@@ -9,7 +9,6 @@ class RunRequest(BaseModel):
 
 class RunResponse(BaseModel):
     steps: list[str]
-    final: str
 
 router = APIRouter()
 
@@ -17,6 +16,6 @@ router = APIRouter()
 def interpret(req: RunRequest):
     try:
         result = run_code(req.code)
-        return RunResponse(steps=result[:-1], final=result[-1])
+        return RunResponse(steps=result)
     except Exception as e:
-        return RunResponse(steps=[f"Error: {str(e)}"], final="")
+        return RunResponse(steps=[f"Error: {str(e)}"])

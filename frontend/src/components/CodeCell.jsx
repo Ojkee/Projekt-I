@@ -12,28 +12,20 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
     if (!code.trim()) return;
     setRunning(true);
     const lines = code.split("\n").filter((l) => l.trim() !== "");
-    const results = [];
 
-    for (const line of lines) {
-      try {
-        const res = await sendText(line);
-        let output = "";
+    var res;
 
-        if (res && typeof res === "object") {
-          if (typeof res.final === "string") output = res.final;
-          else if (res.output) output = String(res.output);
-          else if (Array.isArray(res.steps)) output = res.steps.join(", ");
-          else output = JSON.stringify(res);
-        } else {
-          output = String(res);
-        }
-
-        results.push({ line, output });
+    try { 
+        res = await sendText(lines.join("\n"));
       } catch (err) {
-        console.error("Error on line:", line, err);
-        results.push({ line, output: "❌ Error executing line" });
-      }
+        console.error("Cannot connect to backend:", err);
     }
+
+    console.log("Response:", res.final);
+    const results = lines.map(function(e, i) {
+          return { line: e, output: res.steps[i] };
+        });
+
 
     setOutputs(results);
     setRunning(false);

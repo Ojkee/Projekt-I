@@ -16,7 +16,8 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
+  padding-left: 80px;
+  padding-top: 100px;
   min-height: 100%;
   background: linear-gradient(135deg, #1E1E2E 0%, #2C2C3A 100%);
   background-size: cover;
@@ -25,33 +26,32 @@ body {
   overflow-x: hidden;
 }
 
-
 .userpage-container {
   width: 100%;
   min-height: 100vh;
-  display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   color: var(--text-color);
-  padding: 40px 16px 70px;
 }
-
 
 .userpage-toolbar {
   display: flex;
+  position: fixed;
   justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
-  margin: 0 auto 30px;
+
   padding: 18px 26px;
-  width: 100%;
-  max-width: 1200px;
+  left: 80px;
+  right: 80px;
+  top: 20px;
   background: rgba(30, 30, 45, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   backdrop-filter: blur(20px) saturate(150%);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
+  z-index: 200;
 }
 
 .userpage-toolbar:hover {
@@ -97,13 +97,11 @@ body {
   background: rgba(255, 100, 120, 0.3);
 }
 
-
 .codecell {
   background: rgba(25, 25, 40, 0.9);
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(16px) saturate(160%);
-  margin: 0 auto 24px;
   width: 100%;
   max-width: 900px;
   padding: 24px 30px;
@@ -115,7 +113,6 @@ body {
   border-color: rgba(255, 255, 255, 0.25);
   transform: translateY(-3px);
 }
-
 
 .cm-editor {
   height: 180px;
@@ -200,89 +197,10 @@ body {
 .userpage-main {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 40px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  max-width: 1200px;
 }
 
 .codecells-column {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 300px;
+  max-width: 1500px;
+  width: 100%;
 }
 
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-@media (max-width: 1024px) {
-  .userpage-toolbar {
-    width: 90%;
-    padding: 14px;
-  }
-
-  .codecell {
-    max-width: 700px;
-  }
-
-  .userpage-main {
-    gap: 60px;
-  }
-}
-
-@media (max-width: 768px) {
-  .userpage-main {
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 16px;
-  }
-
-  .codecell {
-    padding: 18px;
-  }
-
-  .toolbar-btn {
-    font-size: 13px;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .userpage-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    padding: 12px;
-  }
-
-  .toolbar-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .codecell {
-    padding: 16px;
-  }
-
-  .cm-editor {
-    height: 250px;
-  }
-
-  .icon-btn {
-    flex: 1;
-    justify-content: center;
-  }
-}

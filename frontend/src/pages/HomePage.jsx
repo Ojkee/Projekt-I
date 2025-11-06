@@ -14,8 +14,6 @@ function HomePage() {
     navigate("/how-to-use");
   }
 
-
-
   return (
     <div className="page-container">
       <section className="hero-section">

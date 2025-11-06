@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CodeCell from "../components/CodeCell";
-import FormulasColumn from "../components/FormulasColumn";
+import FormulasViewer from "../components/FormulasViewer";
 import formulas from "../data/formulas.js";
 import "../styles/UserPage.css";
 
@@ -52,7 +52,7 @@ function UserPage() {
           ))}
         </div>
 
-        <FormulasColumn formulas={formulas} onInsert={insertFormula} />
+        <FormulasViewer formulas={formulas} onInsert={insertFormula} />
       </div>
     </div>
   );

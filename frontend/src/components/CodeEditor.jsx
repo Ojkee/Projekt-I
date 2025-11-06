@@ -9,8 +9,8 @@ const CodeEditor = ({ value, onChange }) => {
   return (
     <CodeMirror
       value={value}
-      height="500px"
-      width="500px"  
+      height="700px"
+      width="700px"  
       theme={oneDark}
       extensions={[myLang, syntaxHighlighting(myLangHighlight), EditorView.lineWrapping]}
       onChange={onChange}
