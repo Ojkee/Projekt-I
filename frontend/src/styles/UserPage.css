@@ -16,8 +16,7 @@ html {
 
 body {
   margin: 0;
-  padding-left: 80px;
-  padding-top: 100px;
+  padding: 0;
   min-height: 100%;
   background: linear-gradient(135deg, #1E1E2E 0%, #2C2C3A 100%);
   background-size: cover;
@@ -27,6 +26,7 @@ body {
 }
 
 .userpage-container {
+  display: flex;
   width: 100%;
   min-height: 100vh;
   flex-direction: column;
@@ -40,10 +40,9 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
-
-  padding: 18px 26px;
-  left: 80px;
-  right: 80px;
+  padding: 12px 26px;
+  left: 5vw;
+  right: 5vw;
   top: 20px;
   background: rgba(30, 30, 45, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -98,13 +97,13 @@ body {
 }
 
 .codecell {
+  padding-top: 22px;
   background: rgba(25, 25, 40, 0.9);
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(16px) saturate(160%);
-  width: 100%;
-  max-width: 900px;
-  padding: 24px 30px;
+  width: clamp(300px,70%,1100px);
+  padding: clamp(18px, 3vw, 36px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   transition: all 0.3s ease;
 }
@@ -197,10 +196,57 @@ body {
 .userpage-main {
   display: flex;
   flex-wrap: wrap;
-}
-
-.codecells-column {
-  max-width: 1500px;
+  gap: 24px;
   width: 100%;
 }
 
+.codecells-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 120px;
+  padding-left: clamp(30px, 5vw,100px);
+  max-width: min(97%, 1500px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .userpage-toolbar {
+    left: 3vw;
+    right: 3vw;
+    gap: 10px;
+    padding: 14px 20px;
+  }
+  .codecell {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .userpage-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 18px;
+  }
+  .toolbar-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .codecells-column {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .codecell {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .userpage-toolbar {
+    left: 0;
+    right: 0;
+    border-radius: 0;
+  }
+}

@@ -24,13 +24,13 @@ def run_dev():
     threading.Thread(target=run_server, args=(PORT, True), daemon=True).start()
 
     try:
-        subprocess.run(["npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
     except KeyboardInterrupt:
         print("\nStopping...")
 
 def run_prod():
     print("Building frontend for production...")
-    subprocess.run(["npm", "run", "build"], cwd=FRONTEND_DIR, check=True)
+    subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "build"], cwd=FRONTEND_DIR, check=True)
 
     print("Running backend server in production mode...")
     try:

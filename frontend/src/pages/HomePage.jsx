@@ -111,7 +111,30 @@ function HomePage() {
                 Od algebry po rachunek różniczkowy, trygonometrię po statystykę. Pomożemy Ci w każdym temacie jaki masz w szkole/liceum.
               </p>
             </div>
-          </div>
+            <div className="feature-card">
+              <div className="feature-icon feature-icon-accent">
+                <svg
+                  className="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="6" cy="6" r="3" />
+                  <circle cx="18" cy="6" r="3" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="18" r="3" />
+                  <path d="M9 6h6M6 9v6M18 9v6M9 18h6" />
+                </svg>
+              </div>
+              <h3 className="feature-title">Wielozadaniowość</h3>
+              <p className="feature-description">
+                Masz kilka zadań do zrobienia? Możesz rozwiązywać je wszystkie na raz i widzieć wyniki jednocześnie.
+              </p>
+            </div>
+          </div>          
         </div>
       </section>
 
