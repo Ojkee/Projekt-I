@@ -6,6 +6,9 @@
   --color-text-muted: #6b7280;
 }
 
+body {
+  
+}
 .page-container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #ffffff, var(--color-bg-light));
