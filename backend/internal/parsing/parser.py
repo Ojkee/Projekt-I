@@ -1,6 +1,7 @@
 from enum import IntEnum, auto, unique
 from typing import Callable, Optional
 
+from backend.internal.parsing.error_msgs import ParserErrorMsg
 from backend.internal.statements import (
     Statement,
     Formula,
@@ -53,6 +54,7 @@ class Parser:
             TokenType.NUMBER: self._parse_number,
             TokenType.MINUS: self._parse_prefix_epxr,
             TokenType.LPAREN: self._parse_grouped_expr,
+            TokenType.ILLEGAL: self._parse_illegal,
         }
         self._infix_fns: dict[TokenType, infix_expr_fn] = {
             TokenType.EQUALS: self._parse_infix_expr,
@@ -71,6 +73,7 @@ class Parser:
             TokenType.MINUS: self._parse_atom,
             TokenType.ASTERISK: self._parse_atom,
             TokenType.CARET: self._parse_atom,
+            TokenType.ILLEGAL: self._parse_illegal,
         }
 
         self._advance_token()
@@ -81,13 +84,21 @@ class Parser:
         program = Program()
         while self._current.ttype != TokenType.EOF:
             result = self._parse_statement()
-            stmt = self._bind_statemnt(result)
-            program.append(stmt)
+            stmt = self._bind_statement(result)
+            if isinstance(stmt, LineError):
+                program.append(stmt)
+                break
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
+            elif self._current.ttype != TokenType.EOF:
+                msg = ParserErrorMsg.extra_input_in_line(self._current.literal)
+                program.append(LineError(ParseErr(msg)))
+                break
+            program.append(stmt)
+
         return program
 
-    def _bind_statemnt(self, stmt: Statement | ParseErr) -> Statement:
+    def _bind_statement(self, stmt: Statement | ParseErr) -> Statement:
         match stmt:
             case Statement():
                 return stmt
@@ -101,8 +112,6 @@ class Parser:
     def _parse_statement(self) -> Statement | ParseErr:
         assert self._current
         match self._current.ttype:
-            case TokenType.ILLEGAL:
-                return self._parse_illegal()
             case TokenType.SLASH:
                 return self._parse_atom_transform_statement()
             case TokenType.BANG:
@@ -168,7 +177,7 @@ class Parser:
 
     def _parse_atom_transform(self) -> Statement | ParseErr:
         assert self._current
-        if not self._current.ttype in self._atom_fns:
+        if self._current.ttype not in self._atom_fns:
             msg = f"Error near: `{self._current.literal}`"
             err = ParseErr(msg)
             err.append("parse_atom_transform", self._current)
@@ -191,7 +200,7 @@ class Parser:
         try:
             num = float(self._current.literal)
             return Number(num)
-        except:
+        except ValueError:
             msg = f"Parsing number error for: {self._current.literal}"
             err = ParseErr(msg)
             err.append("parse_number", self._current)
@@ -199,7 +208,7 @@ class Parser:
 
     def _parse_expr(self, precedence: Precedence) -> Expression | ParseErr:
         assert self._current
-        if not self._current.ttype in self._prefix_fns:
+        if self._current.ttype not in self._prefix_fns:
             err = ParseErr(f"Error near `{self._current.literal}`")
             err.append("no prefix fn in parse_expr", self._current)
             return err
@@ -210,11 +219,15 @@ class Parser:
             return lhs
 
         assert self._peek
+        if self._peek.ttype == TokenType.ILLEGAL:
+            self._advance_token()
+            return self._parse_illegal()
+
         while (
             not self._new_line_or_eof(self._peek)
             and precedence < self._peek_precedence()
         ):
-            if not self._peek.ttype in self._infix_fns:
+            if self._peek.ttype not in self._infix_fns:
                 return lhs
             infix = self._infix_fns[self._peek.ttype]
             self._advance_token()
@@ -291,6 +304,6 @@ class Parser:
         return self._get_precedence(self._peek.ttype)
 
     def _get_precedence(self, ttype: TokenType) -> Precedence:
-        if not ttype in precedences:
+        if ttype not in precedences:
             return Precedence.LOWEST
         return precedences[ttype]

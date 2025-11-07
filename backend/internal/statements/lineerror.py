@@ -6,13 +6,10 @@ class LineError(Statement):
         self._err = err
 
     def __str__(self) -> str:
-        buffer: list[str] = [
-            "error `",
-            str(self._err),
-            "`",
-        ]
-        return "".join(buffer)
+        return str(self._err)
 
     def __repr__(self) -> str:
-        lines = map(lambda line: f"{line:>40}", self._err.stack())
-        return "\n".join(lines)
+        if self._err.stack():
+            lines = map(lambda line: f"{line:>40}", self._err.stack())
+            return "\n".join(lines)
+        return str(self._err)

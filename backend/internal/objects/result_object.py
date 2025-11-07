@@ -44,14 +44,20 @@ class SubjectObject(Object, ABC):
                 return value * atom.transform
             case TokenType.SLASH:
                 return value / atom.transform
+            case TokenType.CARET:
+                return (value) ** (atom.transform)
             case _:
-                raise ValueError(f"Unknown atom operator: {repr(atom.operator)}")
+                assert False, "Unreachable"
 
     def _handle_formula(self, value: Node, formula: TransformObject) -> Node:
         assert isinstance(formula, FormulaObject)
 
         ParamToReplace = NamedTuple(
-            "ParamToReplace", [("param", Node), ("replacement", Node)]
+            "ParamToReplace",
+            [
+                ("param", Node),
+                ("replacement", Node),
+            ],
         )
         replacements = BuiltIns.get_replacements(
             formula.name.literal,
@@ -122,14 +128,12 @@ class EquationObject(SubjectObject):
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
-        try:
-            self.lhs = transformer(self.lhs, t_obj)
-        except ValueError:
-            pass  # Might find matches in rhs
-        self.rhs = transformer(self.rhs, t_obj)
 
-        # self.lhs.reduce() # TODO: Imlement Simplify
-        # self.rhs.reduce()
+        try:
+            self.lhs = transformer(self.lhs, t_obj)  # TODO: Start here tommorow
+        except ValueError:
+            pass
+        self.rhs = transformer(self.rhs, t_obj)
 
 
 class ErrorObject(SubjectObject):

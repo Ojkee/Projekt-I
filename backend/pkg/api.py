@@ -31,7 +31,11 @@ def compile_math_input(input: str) -> list[str]:
 def get_implemented_formulas_json() -> bytes:
     Formula_tuple = NamedTuple(
         "Formula_tuple",
-        [("display_name", str), ("box_name", str), ("latex_str", str)],
+        [
+            ("display_name", str),
+            ("box_name", str),
+            ("latex_str", str),
+        ],
     )
     formulas = (
         Formula_tuple(entry.display_name, box_name, entry.latex_str)

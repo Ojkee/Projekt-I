@@ -22,6 +22,9 @@ class Node(ABC):
     def __truediv__(self, other):
         return Mul(self, Pow(other, Numeric(-1)))
 
+    def __pow__(self, other):
+        return Pow(self, other)
+
     @abstractmethod
     def __eq__(self, other) -> bool:
         pass

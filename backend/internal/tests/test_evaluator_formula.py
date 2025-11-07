@@ -17,17 +17,34 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
     Case(
         name="Product of powers rule",
         input="a^3*a^4\n!product_of_powers a^3*a^4\n",
-        expected=["EXPR(((a^3.0)*(a^4.0)))", "EXPR((a^(3.0+4.0)))"],
+        expected=[
+            "EXPR(((a^3.0)*(a^4.0)))",
+            "EXPR((a^(3.0+4.0)))",
+        ],
     ),
     Case(
         name="Product of powers rule reversed",
         input="a^(4 + x)\n!product_of_powers a^(4 + x)\n",
-        expected=["EXPR((a^(4.0+x)))", "EXPR(((a^4.0)*(a^x)))"],
+        expected=[
+            "EXPR((a^(4.0+x)))",
+            "EXPR(((a^4.0)*(a^x)))",
+        ],
     ),
     Case(
         name="Product of powers rule nested",
         input="a^(3y)*a^4\n!product_of_powers a^(3y)*a^4\n",
-        expected=["EXPR(((a^(3.0*y))*(a^4.0)))", "EXPR((a^((3.0*y)+4.0)))"],
+        expected=[
+            "EXPR(((a^(3.0*y))*(a^4.0)))",
+            "EXPR((a^((3.0*y)+4.0)))",
+        ],
+    ),
+    Case(
+        name="Product of powers rule in equation",
+        input="a^3*a^4=x\n!product_of_powers a^3*a^4\n",
+        expected=[
+            "EQUATION(((a^3.0)*(a^4.0)) = x)",
+            "EQUATION((a^(3.0+4.0)) = x)",
+        ],
     ),
 ]
 
