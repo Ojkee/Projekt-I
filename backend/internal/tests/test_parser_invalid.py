@@ -13,6 +13,9 @@ class AnyNonError(Statement):
     def __str__(self) -> str:
         return self.__class__.__name__
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def __eq__(self, other: Statement) -> bool:
         if isinstance(other, LineError):
             return False
@@ -115,19 +118,22 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
         input="@ 5",
         expected=[wrap(ParserErrorMsg.illegal_str("@"))],
     ),
-    # Case(
-    #     name="Illegal with valid multiline",
-    #     input="x + 2\ny @ z",
-    #     expected=[
-    #         AnyNonError(),
-    #         wrap(ParserErrorMsg.illegal_str("@")),
-    #     ],
-    # ),
-    # Case(
-    #     name="Multiple statements with illegal in second",
-    #     input="1 + 1\n@ + 2\n3 + 3",
-    #     expected=[AnyNonError(), LineError(None), AnyNonError()],
-    # ),
+    Case(
+        name="Illegal with valid multiline",
+        input="x + 2\ny @ z",
+        expected=[
+            AnyNonError(),
+            wrap(ParserErrorMsg.illegal_str("@")),
+        ],
+    ),
+    Case(
+        name="Multiple statements with illegal in second",
+        input="1 + 1\n@ + 2\n3 + 3",
+        expected=[
+            AnyNonError(),
+            wrap(ParserErrorMsg.illegal_str("@")),
+        ],
+    ),
 ]
 
 CASES_PARSER_INVALID: list[Case] = []
@@ -145,6 +151,4 @@ def test_parser_invalid(case: Case) -> None:
     stream = TokenStream(lexer)
     parser = Parser(stream)
     program = parser.parse()
-    program_strs = [str(stmt) for stmt in program.get()]
-    expected_strs = [str(stmt) for stmt in case.expected]
-    assert program_strs == expected_strs
+    assert case.expected == program.get()

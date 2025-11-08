@@ -19,6 +19,11 @@ class ParseErr:
     def __str__(self) -> str:
         return self._msg
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, ParseErr):
+            return False
+        return self._msg == other._msg
+
     def append(self, frame: str, *args) -> None:
         self._frames.append(StackFrame(frame, args))
 

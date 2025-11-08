@@ -130,7 +130,7 @@ class EquationObject(SubjectObject):
         transformer = self._get_transformer(t_obj)
 
         try:
-            self.lhs = transformer(self.lhs, t_obj)  # TODO: Start here tommorow
+            self.lhs = transformer(self.lhs, t_obj)  # TODO: HERE
         except ValueError:
             pass
         self.rhs = transformer(self.rhs, t_obj)
