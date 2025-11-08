@@ -8,7 +8,7 @@ class LineError(Statement):
     def __eq__(self, other, /) -> bool:
         if not isinstance(other, LineError):
             return False
-        return self._err == other._err
+        return str(self._err) == str(other._err)
 
     def __str__(self) -> str:
         return str(self._err)

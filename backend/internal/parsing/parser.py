@@ -1,7 +1,7 @@
 from enum import IntEnum, auto, unique
 from typing import Callable, Optional
 
-from backend.internal.parsing.error_msgs import ParserErrorUserMsg
+from backend.internal.parsing.error_msgs import ErrorPrecedence, ParserErrorUserMsg
 from backend.internal.statements import (
     Statement,
     Formula,
@@ -91,9 +91,10 @@ class Parser:
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
             elif self._current.ttype != TokenType.EOF:
+                assert self._peek
                 err = ParseErr(
-                    user_msg="TODO USER MSG parse",
-                    msg=ParserErrorUserMsg.extra_input_in_line(self._current.literal),
+                    user_msg=ParserErrorUserMsg.extra_input_in_line(self._peek.literal),
+                    msg=ParserErrorUserMsg.extra_input_in_line(self._peek.literal),
                 )
                 program.append(LineError(err))
                 break
@@ -126,6 +127,7 @@ class Parser:
         err = ParseErr(
             user_msg=ParserErrorUserMsg.illegal_str(self._current.literal),
             msg=ParserErrorUserMsg.illegal_str(self._current.literal),
+            precedence=ErrorPrecedence.ILLEGAL_CHAR,
         )
         err.append("parse_illegal")
         return err
@@ -220,9 +222,16 @@ class Parser:
 
     def _parse_expr(self, precedence: Precedence) -> Expression | ParseErr:
         assert self._current
+        if self._current.ttype == TokenType.EOF:
+            err = ParseErr(
+                user_msg=ParserErrorUserMsg.unexpected_eof(),
+                msg=f"Error near `{self._current.literal}`",
+            )
+            err.append("EOF parse_expr")
+            return err
         if self._current.ttype not in self._prefix_fns:
             err = ParseErr(
-                user_msg="TODO parse epxr",
+                user_msg=ParserErrorUserMsg.invalid_prefix(self._current.literal),
                 msg=f"Error near `{self._current.literal}`",
             )
             err.append("no prefix fn in parse_expr", self._current)
@@ -244,12 +253,21 @@ class Parser:
         ):
             if self._peek.ttype not in self._infix_fns:
                 return lhs
-            infix = self._infix_fns[self._peek.ttype]
+            operator = self._peek
+            infix = self._infix_fns[operator.ttype]
             self._advance_token()
-            lhs = infix(lhs)
-            if isinstance(lhs, ParseErr):
-                lhs.append("parse_expr")
-                return lhs
+            next_lhs = infix(lhs)
+            if isinstance(next_lhs, ParseErr):
+                next_lhs.append("parse_expr")
+                next_lhs.more_precise_user_msg(
+                    ParserErrorUserMsg.missing_rhs_in_expr(
+                        str(lhs),
+                        operator.literal,
+                    ),
+                    ErrorPrecedence.MISSING_RHS_EXPR,
+                )
+                return next_lhs
+            lhs = next_lhs
         return lhs
 
     def _parse_prefix_epxr(self) -> Expression | ParseErr:
@@ -267,13 +285,15 @@ class Parser:
         self._advance_token()
         expr = self._parse_expr(Precedence.LOWEST)
         if isinstance(expr, ParseErr):
-            expr.append("parse_groped_expr", self._current)
+            expr.append("parse_grouped_expr", self._current)
             return expr
+
         assert self._peek
         if self._peek.ttype != TokenType.RPAREN:
             err = ParseErr(
-                user_msg="Parentheses should close, write: `)`",
+                user_msg=ParserErrorUserMsg.no_rparen(),
                 msg="Missing `)` in expr",
+                precedence=ErrorPrecedence.MISSING_RPAREN,
             )
             err.append("parse_grouped_expr", self._current)
             return err
