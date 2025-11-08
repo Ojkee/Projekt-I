@@ -34,10 +34,13 @@ class Token(NamedTuple):
     ttype: TokenType
     literal: str
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Token({self.ttype}, {self.literal})"
 
-    def __eq__(self, value) -> bool:
+    def __str__(self) -> str:
+        return f"`{self.literal}`"
+
+    def __eq__(self, value, /) -> bool:
         return (
             isinstance(value, Token)
             and self.ttype == value.ttype

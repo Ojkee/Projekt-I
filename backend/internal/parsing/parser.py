@@ -1,7 +1,7 @@
 from enum import IntEnum, auto, unique
 from typing import Callable, Optional
 
-from backend.internal.parsing.error_msgs import ParserErrorMsg
+from backend.internal.parsing.error_msgs import ParserErrorUserMsg
 from backend.internal.statements import (
     Statement,
     Formula,
@@ -91,8 +91,11 @@ class Parser:
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
             elif self._current.ttype != TokenType.EOF:
-                msg = ParserErrorMsg.extra_input_in_line(self._current.literal)
-                program.append(LineError(ParseErr(msg)))
+                err = ParseErr(
+                    user_msg="TODO USER MSG parse",
+                    msg=ParserErrorUserMsg.extra_input_in_line(self._current.literal),
+                )
+                program.append(LineError(err))
                 break
             program.append(stmt)
 
@@ -120,8 +123,10 @@ class Parser:
 
     def _parse_illegal(self) -> ParseErr:
         assert self._current
-        msg = ParserErrorMsg.illegal_str(self._current.literal)
-        err = ParseErr(msg)
+        err = ParseErr(
+            user_msg=ParserErrorUserMsg.illegal_str(self._current.literal),
+            msg=ParserErrorUserMsg.illegal_str(self._current.literal),
+        )
         err.append("parse_illegal")
         return err
 
@@ -130,7 +135,10 @@ class Parser:
         self._advance_token()
         match self._current.ttype:
             case TokenType.NEW_LINE | TokenType.EOF:
-                err = ParseErr("Empty line")
+                err = ParseErr(
+                    user_msg="Empty line",
+                    msg="No input",
+                )
                 err.append("parse_command")
                 return err
 
@@ -178,8 +186,10 @@ class Parser:
     def _parse_atom_transform(self) -> Statement | ParseErr:
         assert self._current
         if self._current.ttype not in self._atom_fns:
-            msg = f"Error near: `{self._current.literal}`"
-            err = ParseErr(msg)
+            err = ParseErr(
+                user_msg="TODO parse atom transform",
+                msg=f"Error near: `{self._current.literal}`",
+            )
             err.append("parse_atom_transform", self._current)
             return err
 
@@ -201,15 +211,20 @@ class Parser:
             num = float(self._current.literal)
             return Number(num)
         except ValueError:
-            msg = f"Parsing number error for: {self._current.literal}"
-            err = ParseErr(msg)
+            err = ParseErr(
+                user_msg=f"{self._current} is not number",
+                msg=f"Parsing number error for: {self._current.literal}",
+            )
             err.append("parse_number", self._current)
             return err
 
     def _parse_expr(self, precedence: Precedence) -> Expression | ParseErr:
         assert self._current
         if self._current.ttype not in self._prefix_fns:
-            err = ParseErr(f"Error near `{self._current.literal}`")
+            err = ParseErr(
+                user_msg="TODO parse epxr",
+                msg=f"Error near `{self._current.literal}`",
+            )
             err.append("no prefix fn in parse_expr", self._current)
             return err
 
@@ -256,7 +271,10 @@ class Parser:
             return expr
         assert self._peek
         if self._peek.ttype != TokenType.RPAREN:
-            err = ParseErr("Parentheses should close, write: `)`")
+            err = ParseErr(
+                user_msg="Parentheses should close, write: `)`",
+                msg="Missing `)` in expr",
+            )
             err.append("parse_grouped_expr", self._current)
             return err
         self._advance_token()

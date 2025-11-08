@@ -4,7 +4,7 @@ from backend.internal.statements import Statement
 
 
 def wrap(msg: str) -> LineError:
-    return LineError(ParseErr(msg))
+    return LineError(ParseErr(msg, msg))
 
 
 class AnyNonError(Statement):

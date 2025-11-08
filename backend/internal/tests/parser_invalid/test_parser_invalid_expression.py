@@ -2,8 +2,7 @@ import pytest
 from typing import NamedTuple
 
 from backend.internal.lexing import Lexer
-from backend.internal.parsing.error_msgs import ParserErrorMsg
-from backend.internal.statements import Statement, LineError
+from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
@@ -17,11 +16,11 @@ class Case(NamedTuple):
 
 
 CASES_PARSER_INVALID_EXPR: list[Case] = [
-    # Case(
-    #     name="Missing right operand after plus",
-    #     input="2 +",
-    #     expected=[wrap("LMAO")],
-    # ),
+    Case(
+        name="Missing right operand after plus",
+        input="2 +",
+        expected=[wrap("LMAO")],
+    ),
     # Case(
     #     name="Missing right operand after minus",
     #     input="x -",
@@ -340,4 +339,5 @@ def test_parser_invalid_expr(case: Case) -> None:
     stream = TokenStream(lexer)
     parser = Parser(stream)
     program = parser.parse()
-    assert case.expected == program.get()
+    if case.expected != program.get():
+        assert [str(s) for s in case.expected] == [str(s) for s in program.get()]

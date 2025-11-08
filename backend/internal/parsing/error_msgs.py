@@ -1,4 +1,4 @@
-class ParserErrorMsg:
+class ParserErrorUserMsg:
     @staticmethod
     def illegal_str(illegal: str) -> str:
         return f"Illegal character: {illegal}"
