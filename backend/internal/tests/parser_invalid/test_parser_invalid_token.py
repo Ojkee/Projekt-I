@@ -136,11 +136,8 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
     ),
 ]
 
-CASES_PARSER_INVALID: list[Case] = []
-CASES_PARSER_INVALID.extend(CASES_PARSER_INVALID_TOKENS)
 
-
-@pytest.mark.parametrize("case", CASES_PARSER_INVALID, ids=lambda c: c.name)
+@pytest.mark.parametrize("case", CASES_PARSER_INVALID_TOKENS, ids=lambda c: c.name)
 def test_parser_invalid(case: Case) -> None:
     # if case.name == "Illegal after atom operator":
     #     import pdb
