@@ -120,7 +120,7 @@ class Parser:
 
     def _parse_illegal(self) -> ParseErr:
         assert self._current
-        msg = f"Illegal character: {self._current.literal}"
+        msg = ParserErrorMsg.illegal_str(self._current.literal)
         err = ParseErr(msg)
         err.append("parse_illegal")
         return err

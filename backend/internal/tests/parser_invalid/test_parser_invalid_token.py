@@ -123,11 +123,6 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
 
 @pytest.mark.parametrize("case", CASES_PARSER_INVALID_TOKENS, ids=lambda c: c.name)
 def test_parser_invalid_tokens(case: Case) -> None:
-    # if case.name == "Illegal after atom operator":
-    #     import pdb
-    #
-    #     pdb.set_trace()
-
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)
