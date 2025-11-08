@@ -9,6 +9,9 @@ from backend.internal.objects.transform_object import FormulaObject
 from backend.internal.tokens.token import TokenType
 
 
+TransformFn = Callable[[Node, TransformObject], Node | None]
+
+
 class SubjectObject(Object, ABC):
     @abstractmethod
     def __repr__(self) -> str:
@@ -22,9 +25,7 @@ class SubjectObject(Object, ABC):
     def apply(self, t_obj: TransformObject) -> None:
         pass
 
-    def _get_transformer(
-        self, t_obj: TransformObject
-    ) -> Callable[[Node, TransformObject], Node]:
+    def _get_transformer(self, t_obj: TransformObject) -> TransformFn:
         match t_obj:
             case AtomTransformObject():
                 return self._handle_atom_transform
@@ -49,7 +50,7 @@ class SubjectObject(Object, ABC):
             case _:
                 assert False, "Unreachable"
 
-    def _handle_formula(self, value: Node, formula: TransformObject) -> Node:
+    def _handle_formula(self, value: Node, formula: TransformObject) -> Node | None:
         assert isinstance(formula, FormulaObject)
 
         ParamToReplace = NamedTuple(
@@ -67,7 +68,7 @@ class SubjectObject(Object, ABC):
         )
 
         if isinstance(replacements, BuiltinsError):
-            raise ValueError(replacements.msg)
+            return None
 
         def dfs_replace(node: Node, param: Node, replacement: Node) -> Node:
             if node == param:
@@ -108,8 +109,10 @@ class ExpressionObject(SubjectObject):
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
-        self.value = transformer(self.value, t_obj)
-        self.value.reduce()
+        if result := transformer(self.value, t_obj):
+            self.value = result
+        else:
+            raise ValueError(f"Can't transform {str(t_obj)} on {str(self)}")
 
 
 class EquationObject(SubjectObject):
@@ -129,11 +132,16 @@ class EquationObject(SubjectObject):
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
 
-        try:
-            self.lhs = transformer(self.lhs, t_obj)  # TODO: HERE
-        except ValueError:
-            pass
-        self.rhs = transformer(self.rhs, t_obj)
+        result_lhs = transformer(self.lhs, t_obj)
+        result_rhs = transformer(self.rhs, t_obj)
+
+        if not (result_lhs or result_rhs):
+            raise ValueError(f"Can't transform {str(t_obj)} on {str(self)}")
+
+        if result_lhs:
+            self.lhs = result_lhs
+        if result_rhs:
+            self.rhs = result_rhs
 
 
 class ErrorObject(SubjectObject):

@@ -38,22 +38,30 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
             "EXPR((a^((3.0*y)+4.0)))",
         ],
     ),
-    # Case(
-    #     name="Product of powers rule in equation lhs",
-    #     input="a^3*a^4=x\n!product_of_powers a^3*a^4\n",
-    #     expected=[
-    #         "EQUATION(((a^3.0)*(a^4.0)) = x)",
-    #         "EQUATION((a^(3.0+4.0)) = x)",
-    #     ],
-    # ),
-    # Case(
-    #     name="Product of powers rule in equation rhs",
-    #     input="x=a^3*a^4\n!product_of_powers a^3*a^4\n",
-    #     expected=[
-    #         "EQUATION(x = ((a^3.0)*(a^4.0)))",
-    #         "EQUATION(x = (a^(3.0+4.0)))",
-    #     ],
-    # ),
+    Case(
+        name="Product of powers rule in equation lhs",
+        input="a^3*a^4=x\n!product_of_powers a^3*a^4\n",
+        expected=[
+            "EQUATION(((a^3.0)*(a^4.0)) = x)",
+            "EQUATION((a^(3.0+4.0)) = x)",
+        ],
+    ),
+    Case(
+        name="Product of powers rule in equation rhs",
+        input="x=a^3*a^4\n!product_of_powers a^3*a^4\n",
+        expected=[
+            "EQUATION(x = ((a^3.0)*(a^4.0)))",
+            "EQUATION(x = (a^(3.0+4.0)))",
+        ],
+    ),
+    Case(  # TODO: consult
+        name="Product of powers rule in equation rhs",
+        input="a^3*a^4 = a^3*a^4\n!product_of_powers a^3*a^4\n",
+        expected=[
+            "EQUATION(((a^3.0)*(a^4.0)) = ((a^3.0)*(a^4.0)))",
+            "EQUATION((a^(3.0+4.0)) = (a^(3.0+4.0)))",
+        ],
+    ),
 ]
 
 
