@@ -3,33 +3,17 @@ from typing import NamedTuple
 
 from backend.internal.lexing import Lexer
 from backend.internal.parsing.error_msgs import ParserErrorMsg
-from backend.internal.parsing.parseerror import ParseErr
-from backend.internal.statements import Statement, LineError
+from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
-
-class AnyNonError(Statement):
-    def __str__(self) -> str:
-        return self.__class__.__name__
-
-    def __repr__(self) -> str:
-        return str(self)
-
-    def __eq__(self, other: Statement) -> bool:
-        if isinstance(other, LineError):
-            return False
-        return True
+from backend.internal.tests.parser_invalid.util_parse_invalid import AnyNonError, wrap
 
 
 class Case(NamedTuple):
     name: str
     input: str
     expected: list[Statement]
-
-
-def wrap(msg: str) -> LineError:
-    return LineError(ParseErr(msg))
 
 
 CASES_PARSER_INVALID_TOKENS: list[Case] = [
@@ -138,7 +122,7 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
 
 
 @pytest.mark.parametrize("case", CASES_PARSER_INVALID_TOKENS, ids=lambda c: c.name)
-def test_parser_invalid(case: Case) -> None:
+def test_parser_invalid_tokens(case: Case) -> None:
     # if case.name == "Illegal after atom operator":
     #     import pdb
     #
