@@ -7,7 +7,10 @@ from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
-from backend.internal.tests.parser_invalid.util_parse_invalid import AnyNonError, wrap
+from backend.internal.tests.parser_invalid.util_parse_invalid import (
+    AnyNonErrorStatement,
+    wrap,
+)
 
 
 class Case(NamedTuple):
@@ -106,7 +109,7 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
         name="Illegal with valid multiline",
         input="x + 2\ny @ z",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.illegal_str("@")),
         ],
     ),
@@ -114,7 +117,7 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
         name="Multiple statements with illegal in second",
         input="1 + 1\n@ + 2\n3 + 3",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.illegal_str("@")),
         ],
     ),

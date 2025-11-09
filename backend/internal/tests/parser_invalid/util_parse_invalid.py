@@ -7,7 +7,7 @@ def wrap(msg: str) -> LineError:
     return LineError(ParseErr(msg, msg))
 
 
-class AnyNonError(Statement):
+class AnyNonErrorStatement(Statement):
     def __str__(self) -> str:
         return self.__class__.__name__
 

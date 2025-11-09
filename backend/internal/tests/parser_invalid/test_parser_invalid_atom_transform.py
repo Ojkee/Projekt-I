@@ -7,7 +7,10 @@ from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
-from backend.internal.tests.parser_invalid.util_parse_invalid import AnyNonError, wrap
+from backend.internal.tests.parser_invalid.util_parse_invalid import (
+    AnyNonErrorStatement,
+    wrap,
+)
 
 
 class Case(NamedTuple):
@@ -131,7 +134,7 @@ CASES_PARSER_INVALID_ATOM_TRANSFORM: list[Case] = [
         name="Empty atom in middle",
         input="/+ 1\n/\n/- 2",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.expected_expression_after("/")),
         ],
     ),

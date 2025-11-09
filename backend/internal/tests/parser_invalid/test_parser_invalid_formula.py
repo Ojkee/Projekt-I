@@ -7,7 +7,10 @@ from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
-from backend.internal.tests.parser_invalid.util_parse_invalid import AnyNonError, wrap
+from backend.internal.tests.parser_invalid.util_parse_invalid import (
+    AnyNonErrorStatement,
+    wrap,
+)
 
 
 class Case(NamedTuple):
@@ -206,7 +209,7 @@ CASES_PARSER_INVALID_FORMULA: list[Case] = [
         name="Valid expression then invalid formula",
         input="x + 2\n!",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.no_formula_name()),
         ],
     ),
@@ -221,7 +224,7 @@ CASES_PARSER_INVALID_FORMULA: list[Case] = [
         name="Mix of valid and invalid",
         input="x\n!func @\ny",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.illegal_str("@")),
         ],
     ),

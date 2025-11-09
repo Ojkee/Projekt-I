@@ -7,7 +7,10 @@ from backend.internal.statements import Statement
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 
-from backend.internal.tests.parser_invalid.util_parse_invalid import AnyNonError, wrap
+from backend.internal.tests.parser_invalid.util_parse_invalid import (
+    AnyNonErrorStatement,
+    wrap,
+)
 
 
 class Case(NamedTuple):
@@ -55,7 +58,7 @@ CASES_PARSER_INVALID_EXPR: list[Case] = [
     Case(
         name="Two operators in a row - multiply minus",
         input="x * - 5",
-        expected=[AnyNonError()],
+        expected=[AnyNonErrorStatement()],
     ),
     Case(
         name="Two operators in a row - divide plus",
@@ -196,7 +199,7 @@ CASES_PARSER_INVALID_EXPR: list[Case] = [
         name="First line valid, second error",
         input="2 + 3\n5 *",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.missing_rhs_in_expr("5", "*")),
         ],
     ),
@@ -204,7 +207,7 @@ CASES_PARSER_INVALID_EXPR: list[Case] = [
         name="Middle line error",
         input="1 + 1\n2 *\n3 + 3",
         expected=[
-            AnyNonError(),
+            AnyNonErrorStatement(),
             wrap(ParserErrorUserMsg.missing_rhs_in_expr("2", "*")),
         ],
     ),
