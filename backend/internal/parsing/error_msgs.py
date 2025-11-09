@@ -41,3 +41,7 @@ class ParserErrorUserMsg:
         if prev:
             ret += f" after: `{prev}`"
         return ret
+
+    @staticmethod
+    def invalid_atom_prefix(current: str) -> str:
+        return f"Can't do much with `{current}` after `/`, try `+`/`-`/`*`/`^`"

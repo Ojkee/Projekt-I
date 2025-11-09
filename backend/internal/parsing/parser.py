@@ -69,6 +69,7 @@ class Parser:
         self._atom_fns: dict[TokenType, prefix_atom_fn] = {
             TokenType.NUMBER: self._parse_atom_div,
             TokenType.IDENT: self._parse_atom_div,
+            TokenType.LPAREN: self._parse_atom_div,
             TokenType.PLUS: self._parse_atom,
             TokenType.MINUS: self._parse_atom,
             TokenType.ASTERISK: self._parse_atom,
@@ -189,8 +190,9 @@ class Parser:
         assert self._current
         if self._current.ttype not in self._atom_fns:
             err = ParseErr(
-                user_msg="TODO parse atom transform",
+                user_msg=ParserErrorUserMsg.invalid_atom_prefix(self._current.literal),
                 msg=f"Error near: `{self._current.literal}`",
+                precedence=ErrorPrecedence.ILLEGAL_CHAR,
             )
             err.append("parse_atom_transform", self._current)
             return err

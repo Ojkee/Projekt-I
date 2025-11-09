@@ -52,31 +52,21 @@ CASES_PARSER_INVALID_ATOM_TRANSFORM: list[Case] = [
         input="/+\n",
         expected=[wrap(ParserErrorUserMsg.expected_expression_after("+"))],
     ),
-    # Case(
-    #     name="Invalid operator - equals",
-    #     input="/= x",
-    #     expected=[wrap(ParserErrorUserMsg.invalid_atom_operator("="))],
-    # ),
-    # Case(
-    #     name="Invalid operator - less than",
-    #     input="/< 5",
-    #     expected=[wrap(ParserErrorUserMsg.invalid_atom_operator("<"))],
-    # ),
-    # Case(
-    #     name="Invalid operator - greater than",
-    #     input="/> 3",
-    #     expected=[wrap(ParserErrorUserMsg.invalid_atom_operator(">"))],
-    # ),
-    # Case(
-    #     name="Invalid operator - lparen",
-    #     input="/( x + 2)",
-    #     expected=[wrap(ParserErrorUserMsg.invalid_atom_operator("("))],
-    # ),
-    # Case(
-    #     name="Invalid operator - rparen",
-    #     input="/) x",
-    #     expected=[wrap(ParserErrorUserMsg.invalid_atom_operator(")"))],
-    # ),
+    Case(
+        name="Invalid operator - equals",
+        input="/= x",
+        expected=[wrap(ParserErrorUserMsg.invalid_atom_prefix("="))],
+    ),
+    Case(
+        name="Invalid operator - greater than",
+        input="/> 3",
+        expected=[wrap(ParserErrorUserMsg.invalid_atom_prefix(">"))],
+    ),
+    Case(
+        name="Invalid operator - rparen",
+        input="/) x",
+        expected=[wrap(ParserErrorUserMsg.invalid_atom_prefix(")"))],
+    ),
     # Case(
     #     name="Invalid operator - comma",
     #     input="/, x",
@@ -192,7 +182,8 @@ CASES_PARSER_INVALID_ATOM_TRANSFORM: list[Case] = [
     "case", CASES_PARSER_INVALID_ATOM_TRANSFORM, ids=lambda c: c.name
 )
 def test_parser_invalid_atom_transform(case: Case) -> None:
-    # if case.name == "Plus operator with newline":
+    # test_name = "Plus operator with newline"
+    # if case.name == test_name:
     #     import pdb
     #
     #     pdb.set_trace()
