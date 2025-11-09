@@ -5,6 +5,7 @@ from enum import IntEnum, unique, auto
 class ErrorPrecedence(IntEnum):
     LOWEST = auto()
     MISSING_EXPR = auto()
+    MISSING_FORMULA_NAME = auto()
     MISSING_RHS_EXPR = auto()
     MISSING_RPAREN = auto()
     ILLEGAL_CHAR = auto()
@@ -21,11 +22,11 @@ class ParserErrorUserMsg:
 
     @staticmethod
     def missing_rhs_in_expr(lhs: str, op: str) -> str:
-        return f"The expression `{lhs} {op}` is incomplete, something should come after the operator."
+        return f"The expression `{lhs} {op}` is incomplete, something should come after the operator"
 
     @staticmethod
     def invalid_prefix(current: str) -> str:
-        return f"The expression starts with `{current}`, but there's nothing before it."
+        return f"Expression can't start with `{current}`"
 
     @staticmethod
     def no_rparen() -> str:
@@ -33,7 +34,7 @@ class ParserErrorUserMsg:
 
     @staticmethod
     def unexpected_eof() -> str:
-        return "It looks like the expression ended before it was complete."
+        return "It looks like the expression ended before it was complete"
 
     @staticmethod
     def expected_expression_after(prev: str | None = None) -> str:
@@ -45,3 +46,11 @@ class ParserErrorUserMsg:
     @staticmethod
     def invalid_atom_prefix(current: str) -> str:
         return f"Can't do much with `{current}` after `/`, try `+`/`-`/`*`/`^`"
+
+    @staticmethod
+    def no_formula_name() -> str:
+        return "There should be formula name after `!`"
+
+    @staticmethod
+    def missing_comma_in_formula() -> str:
+        return "There should be comma `,` between parameters"

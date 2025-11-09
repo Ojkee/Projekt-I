@@ -11,7 +11,7 @@ from backend.internal.statements import (
 )
 from backend.internal.expressions import Expression, Identifier, Number, Prefix, Infix
 from backend.internal.parsing.parseerror import ParseErr
-from backend.internal.tokens import Token, TokenType
+from backend.internal.tokens import Token, TokenType, token
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.ast import Program
 
@@ -155,12 +155,28 @@ class Parser:
         assert self._current
         self._advance_token()
         ident = self._current
+        if err := self._check_formula_ident(ident):
+            return err
+
         self._advance_token()
         params = self._parse_comma_sep_params()
         if isinstance(params, ParseErr):
             params.append("parse_formula")
             return params
         return Formula(ident, params)
+
+    def _check_formula_ident(self, ident: Token) -> ParseErr | None:
+        match ident.ttype:
+            case TokenType.IDENT:
+                return None
+            case TokenType.ILLEGAL:
+                return self._parse_illegal()
+            case _:
+                return ParseErr(
+                    user_msg=ParserErrorUserMsg.no_formula_name(),
+                    msg="No input after `!`",
+                    precedence=ErrorPrecedence.MISSING_FORMULA_NAME,
+                )
 
     def _parse_subject(self) -> Statement | ParseErr:
         expr = self._parse_expr(Precedence.LOWEST)
@@ -184,6 +200,12 @@ class Parser:
             self._advance_token()
             if self._current.ttype == TokenType.COMMA:
                 self._advance_token()
+            elif not self._new_line_or_eof(self._current):
+                err = ParseErr(
+                    user_msg=ParserErrorUserMsg.missing_comma_in_formula(),
+                    msg="No comma between params in formula",
+                )
+                return err
         return params
 
     def _parse_atom_transform(self) -> Statement | ParseErr:

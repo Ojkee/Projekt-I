@@ -142,12 +142,6 @@ CASES_PARSER_INVALID_ATOM_TRANSFORM: list[Case] = [
     "case", CASES_PARSER_INVALID_ATOM_TRANSFORM, ids=lambda c: c.name
 )
 def test_parser_invalid_atom_transform(case: Case) -> None:
-    # test_name = "Plus operator with newline"
-    # if case.name == test_name:
-    #     import pdb
-    #
-    #     pdb.set_trace()
-
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)
