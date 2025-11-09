@@ -31,7 +31,7 @@ class ParseErr:
     def __repr__(self) -> str:
         if self._frames:
             lines = "\n".join(f"|{repr(frame):>60}|" for frame in self._frames)
-            return f"{lines}\n|{self._msg:>60}|\n|STR: {str(self._user_msg)}|"
+            return f"{lines}\n|{self._msg:>60}|\n| STR:{str(self._user_msg):>55}|"
         return self._msg
 
     def __eq__(self, other) -> bool:

@@ -138,15 +138,15 @@ class Parser:
         match self._current.ttype:
             case TokenType.NEW_LINE | TokenType.EOF:
                 err = ParseErr(
-                    user_msg="Empty line",
-                    msg="No input",
+                    user_msg=ParserErrorUserMsg.expected_expression_after("/"),
+                    msg="No input after `/`",
                 )
-                err.append("parse_command")
+                err.append("_parse_atom_transform_statement")
                 return err
 
         result = self._parse_atom_transform()
         if isinstance(result, ParseErr):
-            result.append("parse_command")
+            result.append("_parse_atom_transform_statement")
         self._advance_token()
         return result
 
@@ -196,12 +196,10 @@ class Parser:
             return err
 
         prefix = self._atom_fns[self._current.ttype]
-        match prefix():
-            case ParseErr() as err:
-                err.append("parse_atom_transform")
-                return err
-            case stmt:
-                return stmt
+        result = prefix()
+        if isinstance(result, ParseErr):
+            result.append("parse_atom_transform")
+        return result
 
     def _parse_identifier(self) -> Identifier:
         assert self._current
@@ -326,7 +324,11 @@ class Parser:
         self._advance_token()
         expr = self._parse_expr(Precedence.LOWEST)
         if isinstance(expr, ParseErr):
-            expr.append("parse_atom_div", self._current)
+            expr.append("parse_atom", self._current)
+            expr.more_precise_user_msg(
+                ParserErrorUserMsg.expected_expression_after(operator.literal),
+                ErrorPrecedence.MISSING_EXPR,
+            )
             return expr
         return AtomTransform(operator, expr)
 

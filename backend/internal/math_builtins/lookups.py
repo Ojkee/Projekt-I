@@ -114,7 +114,7 @@ class BuiltIns:
                     if err := aux(lhs.right, rhs.right):
                         return err
 
-                case lhs, WildNode(tag=tag) if tag not in cache:
+                case lhs, WildNode(tag) if tag not in cache:
                     cache[tag] = lhs
 
                 case Numeric(value=lvalue), Numeric(value=rvalue) if lvalue != rvalue:
@@ -122,7 +122,7 @@ class BuiltIns:
                         f"Cannot use this formula because {lvalue} and {rvalue} aren't the same"
                     )
 
-                case lhs, WildNode(tag=tag) if tag in cache and lhs != cache[tag]:
+                case lhs, WildNode(tag) if tag in cache and lhs != cache[tag]:
                     return NotMatchingFormula(
                         f"Cannot use this formula because {lhs} and {cache[tag]} aren't the same"
                     )
