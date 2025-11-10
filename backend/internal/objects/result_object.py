@@ -155,6 +155,9 @@ class ErrorObject(SubjectObject):
     def __str__(self) -> str:
         return self.msg
 
+    def __eq__(self, value, /) -> bool:
+        return isinstance(value, ErrorObject) and self.msg == value.msg
+
     def apply(self, t_obj: TransformObject) -> None:
         _ = t_obj
         assert False, "Can't transform error"

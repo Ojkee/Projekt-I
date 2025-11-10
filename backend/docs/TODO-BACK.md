@@ -1,7 +1,7 @@
 # Main Objectives
-- [ ] [Lexer](#lexer)
+- [x] [Lexer](#lexer)
 - [x] [Token Stream](#token-stream)
-- [ ] [Parser](#parser)
+- [x] [Parser](#parser)
 - [ ] [Evaluator](#evaluator)
 - [ ] [Extras](#extras)
 
@@ -18,8 +18,6 @@
     - [x] Identifiers
     - [x] Parentheses
     - [x] New lines
-- [ ] Test invalid:
-    - [ ] Invalid characters
 
 ## Token Stream
 - [x] Preprocess:
@@ -43,31 +41,32 @@
     - [x] Grouped expressions
     - [x] Atom transformations
     - [x] Formulas
-- [ ] Test invalid:
-    - [ ] Invalid characters
-    - [ ] Missing characters
+- [x] Test invalid:
+    - [x] Invalid characters
+    - [x] Missing characters
 
 ## Evaluator
 - [x] Translate Prefix/Infix into Math Nodes (Add, Mul, Pow...)
-- [ ] Evaluate:
-    - [ ] Subjects
+- [x] Evaluate:
+    - [x] Subjects
         - [x] Equation
         - [x] Expression
-        - [ ] ???
     - [x] Atom transformations
-    - [ ] Formulas
-- [ ] Test:
+    - [x] Formulas
+- [x] Test:
     - [x] Translation
     - [x] Evaluation:
-        - [ ] Subjects
+        - [x] Subjects
             - [x] Equation
             - [x] Expression
-            - [ ] ???
     - [x] Atom transformations
-    - [ ] Formulas
+    - [x] Formulas
 - [ ] Test invalid:
     - [x] Empty input
-    - [ ] ???
+    - [ ] First line errors
+    - [ ] Errors deep lines
+    - [ ] Invalid Atom Transformations
+    - [ ] Invalid Formula Transformations
 
 
 ## Extras

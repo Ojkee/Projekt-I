@@ -24,7 +24,7 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
     console.log("Response:", res.final);
     const results = lines.map(function(e, i) {
           return { line: e, output: res.steps[i] };
-        });
+    });
 
 
     setOutputs(results);

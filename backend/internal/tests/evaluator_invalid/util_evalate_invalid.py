@@ -4,7 +4,7 @@ from backend.internal.objects.result_object import ErrorObject
 
 class AnyNonErrorObject(Object):
     def __str__(self) -> str:
-        return self.__class__.__name__
+        return type(self).__name__
 
     def __repr__(self) -> str:
         return str(self)
@@ -15,5 +15,5 @@ class AnyNonErrorObject(Object):
         return True
 
 
-def wrap(msg: str) -> ErrorObject:
+def wrap_obj(msg: str) -> ErrorObject:
     return ErrorObject(msg)

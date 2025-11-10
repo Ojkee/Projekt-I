@@ -1,5 +1,6 @@
 import copy
 
+from backend.internal.evaluators.error_msgs import EvaluatorErrorUserMsg
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.objects import (
     Object,
@@ -31,7 +32,7 @@ class Evaluator:
             case [Subject() as subject, *stmts]:
                 return self._eval_statements(subject, stmts)
             case stmts if not stmts:
-                return [ErrorObject("No input")]
+                return [ErrorObject(EvaluatorErrorUserMsg.no_input())]
             case _:
                 return [ErrorObject("First line must be equation or expression")]
 
