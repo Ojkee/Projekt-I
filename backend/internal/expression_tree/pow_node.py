@@ -42,7 +42,7 @@ class Pow(Node):
 
 class FlattenPow(FlattenNode):
     PRECEDENCE = 3
-    def __init__(self, base: Node, exponent: Node) -> None:
+    def __init__(self, base: FlattenNode, exponent: FlattenNode) -> None:
         self.base = base
         self.exponent = exponent
 
@@ -50,11 +50,15 @@ class FlattenPow(FlattenNode):
         self.base.constant_fold()
         self.exponent.constant_fold()
 
-        if isinstance(self.base, FlattenNumeric) and isinstance(self.exponent, FlattenNumeric):
-            base_value = self.base.value
-            exponent_value = self.exponent.value
-            folded_value = base_value ** exponent_value
-            return FlattenNumeric(folded_value)
+        match self.base, self.exponent:
+            case (FlattenNumeric(lv), FlattenNumeric(rv)):
+                return FlattenNumeric(lv ** rv)
+
+            case (_, FlattenNumeric(value=0)):
+                return FlattenNumeric(1)
+
+            case (_, FlattenNumeric(value=1)):
+                return self.base
 
         return self
 

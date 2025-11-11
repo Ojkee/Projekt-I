@@ -68,6 +68,8 @@ class Evaluator:
                     break
                 case obj:
                     raise ValueError(f"Unimplemented transform type: {type(obj)}")
+            print("SUBJ OBJ AFTER STMT:", subject_object)
+
 
             if err_msg := Validator.check(subject_object):
                 return subjects + [ErrorObject(err_msg)]

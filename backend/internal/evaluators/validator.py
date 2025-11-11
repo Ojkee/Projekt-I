@@ -18,7 +18,6 @@ def register(msg: str):
 
     return decorate
 
-
 class Validator:
     @staticmethod
     def check(obj: Object) -> str | None:

@@ -5,8 +5,6 @@ from abc import ABC, abstractmethod
 from backend.internal.expressions import Expression, Infix, Number, Prefix, Identifier
 from backend.internal.tokens.token import Token, TokenType
 
-
-
 class Node(ABC):
     def __init__(self) -> None:
         super().__init__()
@@ -28,6 +26,7 @@ class Node(ABC):
         return Mul(self, Pow(other, Numeric(-1)))
 
     def __pow__(self, other):
+        from backend.internal.expression_tree import Pow
         return Pow(self, other)
 
     @abstractmethod
@@ -36,6 +35,10 @@ class Node(ABC):
 
     @abstractmethod
     def __repr__(self) -> str:
+        pass
+
+    @abstractmethod
+    def reduce(self) -> Node: # Will be removed and implemented in FlattenNode
         pass
 
     @abstractmethod
@@ -81,19 +84,6 @@ class FlattenNode(ABC):
 #    def simplify(self):
 #        pass
 
-        match base, exponent:
-            # x^0 => 1
-            case _, Numeric(0):
-                return Numeric(1)
-
-            # x^1 => x
-            case _, Numeric(1):
-                return base
-
-            case Numeric(a), Numeric(b) if 0 < a:
-                return Numeric(a**b)
-
-        return Pow(base, exponent)
     @abstractmethod
     def __eq__(self, other) -> bool:
         pass

@@ -18,5 +18,8 @@ class WildNode(Node):
     def flatten(self):
         pass
 
+    def reduce(self):
+        pass
+
 class WildNodeFraction(Node):
     pass

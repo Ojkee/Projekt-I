@@ -16,7 +16,7 @@ class AnyNonErrorObject(Object):
             return False
         return True
 
-    def __iter__(self) -> Generator[Node]:
+    def __iter__(self) -> Generator[Node, None, None]:
         yield from ()
 
 
