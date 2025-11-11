@@ -25,19 +25,19 @@ class Validator:
         for root in obj:
             reduced = deepcopy(root).reduce()
             for checker, msg in checkers:
-                if Validator.dfs_check(reduced, checker):
+                if Validator._dfs_check(reduced, checker):
                     return msg
         return None
 
     @staticmethod
-    def dfs_check(node: Node, checker: CheckerFn) -> bool:
+    def _dfs_check(node: Node, checker: CheckerFn) -> bool:
         if checker(node):
             return True
 
         match node:
             case Add(a, b) | Mul(a, b) | Pow(a, b):
-                lhs = Validator.dfs_check(a, checker)
-                rhs = Validator.dfs_check(b, checker)
+                lhs = Validator._dfs_check(a, checker)
+                rhs = Validator._dfs_check(b, checker)
                 return lhs or rhs
 
         return False

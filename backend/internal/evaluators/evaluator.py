@@ -50,7 +50,11 @@ class Evaluator:
         subjects: list[SubjectObject] = [copy.deepcopy(subject_object)]
 
         for stmt in stmts:
-            match self._eval_statement(stmt):
+            obj = self._eval_statement(stmt)
+            if err_msg := Validator.check(obj):
+                return subjects + [ErrorObject(err_msg)]
+
+            match obj:
                 case SubjectObject() as sub:
                     subject_object = sub
                 case (AtomTransformObject() | FormulaObject()) as t_obj:
@@ -65,6 +69,8 @@ class Evaluator:
                 case obj:
                     raise ValueError(f"Unimplemented transform type: {type(obj)}")
 
+            if err_msg := Validator.check(subject_object):
+                return subjects + [ErrorObject(err_msg)]
             subjects.append(copy.deepcopy(subject_object))
 
         return subjects
@@ -108,7 +114,7 @@ class Evaluator:
     def _eval_formula(self, formula: Formula) -> FormulaObject | ErrorObject:
         name = formula.name.literal
         if not BuiltIns.is_present(name):
-            return ErrorObject(f"No formula `{name}`")
+            return ErrorObject(EvaluatorErrorUserMsg.no_formula(name))
 
         param_nodes = [self._convert_expression(expr) for expr in formula.params]
         return FormulaObject(formula.name, param_nodes)

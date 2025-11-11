@@ -109,46 +109,54 @@ CASES_EVALUATOR_INVALID_FIRST_LINE: list[Case] = [
             wrap_obj(EvaluatorErrorUserMsg.zero_division()),
         ],
     ),
-    # Case(
-    #     name="Divide equation by zero",
-    #     input="x = y + 5\n/0",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Divide by zero expression",
-    #     input="x = 10\n/(5 - 5)",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Power to invalid exponent in transform",
-    #     input="x = 0\n/^ -1",
-    #     expected_error="zero",
-    # ),
-    # Case(
-    #     name="Non-existent formula",
-    #     input="x = 5\n!nonexistent x",
-    #     expected_error="No formula",
-    # ),
-    # Case(
-    #     name="Empty formula name with params",
-    #     input="x = 1\n! x",
-    #     expected_error="No formula",  # To może być parser error
-    # ),
-    # Case(
-    #     name="Too many parameters",
-    #     input="x = 5\n!solve x, y, z",  # Jeśli solve przyjmuje max 2
-    #     expected_error="parameters",
-    # ),
-    # Case(
-    #     name="Formula with division by zero in param",
-    #     input="x = 5\n!solve 10/0",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Formula with invalid math in param",
-    #     input="x = 2\n!expand 0^-1",
-    #     expected_error="zero",
-    # ),
+    Case(
+        name="Divide equation by zero",
+        input="x = y + 5\n/0",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.zero_division()),
+        ],
+    ),
+    Case(
+        name="Divide by zero expression",
+        input="x = 10\n/(5 - 5)",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.zero_division()),
+        ],
+    ),
+    Case(
+        name="Power to invalid exponent in transform",
+        input="x = 0\n/^ -1",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.zero_division()),
+        ],
+    ),
+    Case(
+        name="Non-existent formula",
+        input="x = 5\n!nonexistent x",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.no_formula("nonexistent")),
+        ],
+    ),
+    Case(
+        name="Non-existent formula with division by zero in param",
+        input="x = 5\n!nonexistent 10/0",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.no_formula("nonexistent")),
+        ],
+    ),
+    Case(
+        name="Formula with division by zero in param",
+        input="x = 5\n!product_of_powers 10/0",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.zero_division()),
+        ],
+    ),
 ]
 
 

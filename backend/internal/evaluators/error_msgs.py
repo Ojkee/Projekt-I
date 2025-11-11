@@ -22,3 +22,7 @@ class EvaluatorErrorUserMsg:
     @staticmethod
     def negative_root() -> str:
         return "Can't be negative value under root"
+
+    @staticmethod
+    def no_formula(name: str) -> str:
+        return f"No formula `{name}`"
