@@ -2,11 +2,11 @@ from backend.internal.expression_tree import Node
 
 
 class WildNode(Node):
-    tag: str
-
     def __init__(self, tag: str) -> None:
         super().__init__()
         self.tag = tag
+
+    __match_args__ = ("tag",)
 
     def __eq__(self, other: Node) -> bool:
         _ = other

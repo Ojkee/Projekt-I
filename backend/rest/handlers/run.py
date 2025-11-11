@@ -7,10 +7,13 @@ from backend.pkg.api import compile_math_input
 class RunRequest(BaseModel):
     code: str
 
+
 class RunResponse(BaseModel):
     steps: list[str]
 
+
 router = APIRouter()
+
 
 @router.post("/interpret", response_model=RunResponse)
 def interpret(req: RunRequest):
@@ -19,3 +22,4 @@ def interpret(req: RunRequest):
         return RunResponse(steps=result)
     except Exception as e:
         return RunResponse(steps=[f"Error: {str(e)}"])
+

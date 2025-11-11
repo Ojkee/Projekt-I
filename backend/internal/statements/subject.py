@@ -3,6 +3,8 @@ from backend.internal.statements import Statement
 
 
 class Subject(Statement):
+    __match_args__ = ("expr",)
+
     def __init__(self, expr: Expression) -> None:
         super().__init__()
         self._expr = expr

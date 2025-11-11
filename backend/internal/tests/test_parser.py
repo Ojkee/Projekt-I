@@ -292,7 +292,7 @@ CASES_ALGEBRAIC = [
     ),
 ]
 
-CASES_COMMANDS = [
+CASES_ATOM_TRANSFORM = [
     Case(
         "Atom plus",
         "/+2",
@@ -367,6 +367,20 @@ CASES_COMMANDS = [
                     ),
                 ),
             ),
+        ],
+    ),
+    Case(
+        "Atom div with grouped",
+        "/(2 + x)",
+        [
+            AtomTransform(
+                Token(TokenType.SLASH, "/"),
+                Infix(
+                    Token(TokenType.PLUS, "+"),
+                    Number(2.0),
+                    Identifier(Token(TokenType.IDENT, "x")),
+                ),
+            )
         ],
     ),
 ]
@@ -495,7 +509,7 @@ CASES_ALGEBRAIC_MULTILINE = [
 
 PARSER_UT: list[Case] = []
 PARSER_UT.extend(CASES_ALGEBRAIC)
-PARSER_UT.extend(CASES_COMMANDS)
+PARSER_UT.extend(CASES_ATOM_TRANSFORM)
 PARSER_UT.extend(CASES_FORMULA)
 PARSER_UT.extend(CASES_ALGEBRAIC_MULTILINE)
 

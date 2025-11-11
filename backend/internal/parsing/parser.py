@@ -1,6 +1,7 @@
 from enum import IntEnum, auto, unique
 from typing import Callable, Optional
 
+from backend.internal.parsing.error_msgs import ErrorPrecedence, ParserErrorUserMsg
 from backend.internal.statements import (
     Statement,
     Formula,
@@ -10,7 +11,7 @@ from backend.internal.statements import (
 )
 from backend.internal.expressions import Expression, Identifier, Number, Prefix, Infix
 from backend.internal.parsing.parseerror import ParseErr
-from backend.internal.tokens import Token, TokenType
+from backend.internal.tokens import Token, TokenType, token
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.ast import Program
 
@@ -53,6 +54,7 @@ class Parser:
             TokenType.NUMBER: self._parse_number,
             TokenType.MINUS: self._parse_prefix_epxr,
             TokenType.LPAREN: self._parse_grouped_expr,
+            TokenType.ILLEGAL: self._parse_illegal,
         }
         self._infix_fns: dict[TokenType, infix_expr_fn] = {
             TokenType.EQUALS: self._parse_infix_expr,
@@ -67,10 +69,12 @@ class Parser:
         self._atom_fns: dict[TokenType, prefix_atom_fn] = {
             TokenType.NUMBER: self._parse_atom_div,
             TokenType.IDENT: self._parse_atom_div,
+            TokenType.LPAREN: self._parse_atom_div,
             TokenType.PLUS: self._parse_atom,
             TokenType.MINUS: self._parse_atom,
             TokenType.ASTERISK: self._parse_atom,
             TokenType.CARET: self._parse_atom,
+            TokenType.ILLEGAL: self._parse_illegal,
         }
 
         self._advance_token()
@@ -81,13 +85,25 @@ class Parser:
         program = Program()
         while self._current.ttype != TokenType.EOF:
             result = self._parse_statement()
-            stmt = self._bind_statemnt(result)
-            program.append(stmt)
+            stmt = self._bind_statement(result)
+            if isinstance(stmt, LineError):
+                program.append(stmt)
+                break
             if self._current.ttype == TokenType.NEW_LINE:
                 self._advance_token()
+            elif self._current.ttype != TokenType.EOF:
+                assert self._peek
+                err = ParseErr(
+                    user_msg=ParserErrorUserMsg.extra_input_in_line(self._peek.literal),
+                    msg=ParserErrorUserMsg.extra_input_in_line(self._peek.literal),
+                )
+                program.append(LineError(err))
+                break
+            program.append(stmt)
+
         return program
 
-    def _bind_statemnt(self, stmt: Statement | ParseErr) -> Statement:
+    def _bind_statement(self, stmt: Statement | ParseErr) -> Statement:
         match stmt:
             case Statement():
                 return stmt
@@ -101,8 +117,6 @@ class Parser:
     def _parse_statement(self) -> Statement | ParseErr:
         assert self._current
         match self._current.ttype:
-            case TokenType.ILLEGAL:
-                return self._parse_illegal()
             case TokenType.SLASH:
                 return self._parse_atom_transform_statement()
             case TokenType.BANG:
@@ -111,8 +125,11 @@ class Parser:
 
     def _parse_illegal(self) -> ParseErr:
         assert self._current
-        msg = f"Illegal character: {self._current.literal}"
-        err = ParseErr(msg)
+        err = ParseErr(
+            user_msg=ParserErrorUserMsg.illegal_str(self._current.literal),
+            msg=ParserErrorUserMsg.illegal_str(self._current.literal),
+            precedence=ErrorPrecedence.ILLEGAL_CHAR,
+        )
         err.append("parse_illegal")
         return err
 
@@ -121,13 +138,16 @@ class Parser:
         self._advance_token()
         match self._current.ttype:
             case TokenType.NEW_LINE | TokenType.EOF:
-                err = ParseErr("Empty line")
-                err.append("parse_command")
+                err = ParseErr(
+                    user_msg=ParserErrorUserMsg.expected_expression_after("/"),
+                    msg="No input after `/`",
+                )
+                err.append("_parse_atom_transform_statement")
                 return err
 
         result = self._parse_atom_transform()
         if isinstance(result, ParseErr):
-            result.append("parse_command")
+            result.append("_parse_atom_transform_statement")
         self._advance_token()
         return result
 
@@ -135,12 +155,28 @@ class Parser:
         assert self._current
         self._advance_token()
         ident = self._current
+        if err := self._check_formula_ident(ident):
+            return err
+
         self._advance_token()
         params = self._parse_comma_sep_params()
         if isinstance(params, ParseErr):
             params.append("parse_formula")
             return params
         return Formula(ident, params)
+
+    def _check_formula_ident(self, ident: Token) -> ParseErr | None:
+        match ident.ttype:
+            case TokenType.IDENT:
+                return None
+            case TokenType.ILLEGAL:
+                return self._parse_illegal()
+            case _:
+                return ParseErr(
+                    user_msg=ParserErrorUserMsg.no_formula_name(),
+                    msg="No input after `!`",
+                    precedence=ErrorPrecedence.MISSING_FORMULA_NAME,
+                )
 
     def _parse_subject(self) -> Statement | ParseErr:
         expr = self._parse_expr(Precedence.LOWEST)
@@ -164,23 +200,30 @@ class Parser:
             self._advance_token()
             if self._current.ttype == TokenType.COMMA:
                 self._advance_token()
+            elif not self._new_line_or_eof(self._current):
+                err = ParseErr(
+                    user_msg=ParserErrorUserMsg.missing_comma_in_formula(),
+                    msg="No comma between params in formula",
+                )
+                return err
         return params
 
     def _parse_atom_transform(self) -> Statement | ParseErr:
         assert self._current
-        if not self._current.ttype in self._atom_fns:
-            msg = f"Error near: `{self._current.literal}`"
-            err = ParseErr(msg)
+        if self._current.ttype not in self._atom_fns:
+            err = ParseErr(
+                user_msg=ParserErrorUserMsg.invalid_atom_prefix(self._current.literal),
+                msg=f"Error near: `{self._current.literal}`",
+                precedence=ErrorPrecedence.ILLEGAL_CHAR,
+            )
             err.append("parse_atom_transform", self._current)
             return err
 
         prefix = self._atom_fns[self._current.ttype]
-        match prefix():
-            case ParseErr() as err:
-                err.append("parse_atom_transform")
-                return err
-            case stmt:
-                return stmt
+        result = prefix()
+        if isinstance(result, ParseErr):
+            result.append("parse_atom_transform")
+        return result
 
     def _parse_identifier(self) -> Identifier:
         assert self._current
@@ -191,16 +234,28 @@ class Parser:
         try:
             num = float(self._current.literal)
             return Number(num)
-        except:
-            msg = f"Parsing number error for: {self._current.literal}"
-            err = ParseErr(msg)
+        except ValueError:
+            err = ParseErr(
+                user_msg=f"{self._current} is not number",
+                msg=f"Parsing number error for: {self._current.literal}",
+            )
             err.append("parse_number", self._current)
             return err
 
     def _parse_expr(self, precedence: Precedence) -> Expression | ParseErr:
         assert self._current
-        if not self._current.ttype in self._prefix_fns:
-            err = ParseErr(f"Error near `{self._current.literal}`")
+        if self._current.ttype == TokenType.EOF:
+            err = ParseErr(
+                user_msg=ParserErrorUserMsg.unexpected_eof(),
+                msg=f"Error near `{self._current.literal}`",
+            )
+            err.append("EOF parse_expr")
+            return err
+        if self._current.ttype not in self._prefix_fns:
+            err = ParseErr(
+                user_msg=ParserErrorUserMsg.invalid_prefix(self._current.literal),
+                msg=f"Error near `{self._current.literal}`",
+            )
             err.append("no prefix fn in parse_expr", self._current)
             return err
 
@@ -210,18 +265,31 @@ class Parser:
             return lhs
 
         assert self._peek
+        if self._peek.ttype == TokenType.ILLEGAL:
+            self._advance_token()
+            return self._parse_illegal()
+
         while (
             not self._new_line_or_eof(self._peek)
             and precedence < self._peek_precedence()
         ):
-            if not self._peek.ttype in self._infix_fns:
+            if self._peek.ttype not in self._infix_fns:
                 return lhs
-            infix = self._infix_fns[self._peek.ttype]
+            operator = self._peek
+            infix = self._infix_fns[operator.ttype]
             self._advance_token()
-            lhs = infix(lhs)
-            if isinstance(lhs, ParseErr):
-                lhs.append("parse_expr")
-                return lhs
+            next_lhs = infix(lhs)
+            if isinstance(next_lhs, ParseErr):
+                next_lhs.append("parse_expr")
+                next_lhs.more_precise_user_msg(
+                    ParserErrorUserMsg.missing_rhs_in_expr(
+                        str(lhs),
+                        operator.literal,
+                    ),
+                    ErrorPrecedence.MISSING_RHS_EXPR,
+                )
+                return next_lhs
+            lhs = next_lhs
         return lhs
 
     def _parse_prefix_epxr(self) -> Expression | ParseErr:
@@ -239,11 +307,16 @@ class Parser:
         self._advance_token()
         expr = self._parse_expr(Precedence.LOWEST)
         if isinstance(expr, ParseErr):
-            expr.append("parse_groped_expr", self._current)
+            expr.append("parse_grouped_expr", self._current)
             return expr
+
         assert self._peek
         if self._peek.ttype != TokenType.RPAREN:
-            err = ParseErr("Parentheses should close, write: `)`")
+            err = ParseErr(
+                user_msg=ParserErrorUserMsg.no_rparen(),
+                msg="Missing `)` in expr",
+                precedence=ErrorPrecedence.MISSING_RPAREN,
+            )
             err.append("parse_grouped_expr", self._current)
             return err
         self._advance_token()
@@ -275,7 +348,11 @@ class Parser:
         self._advance_token()
         expr = self._parse_expr(Precedence.LOWEST)
         if isinstance(expr, ParseErr):
-            expr.append("parse_atom_div", self._current)
+            expr.append("parse_atom", self._current)
+            expr.more_precise_user_msg(
+                ParserErrorUserMsg.expected_expression_after(operator.literal),
+                ErrorPrecedence.MISSING_EXPR,
+            )
             return expr
         return AtomTransform(operator, expr)
 
@@ -291,6 +368,6 @@ class Parser:
         return self._get_precedence(self._peek.ttype)
 
     def _get_precedence(self, ttype: TokenType) -> Precedence:
-        if not ttype in precedences:
+        if ttype not in precedences:
             return Precedence.LOWEST
         return precedences[ttype]

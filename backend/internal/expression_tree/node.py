@@ -27,6 +27,9 @@ class Node(ABC):
         from backend.internal.expression_tree import Mul, Numeric, Pow
         return Mul(self, Pow(other, Numeric(-1)))
 
+    def __pow__(self, other):
+        return Pow(self, other)
+
     @abstractmethod
     def __eq__(self, other) -> bool:
         pass
@@ -78,6 +81,19 @@ class FlattenNode(ABC):
 #    def simplify(self):
 #        pass
 
+        match base, exponent:
+            # x^0 => 1
+            case _, Numeric(0):
+                return Numeric(1)
+
+            # x^1 => x
+            case _, Numeric(1):
+                return base
+
+            case Numeric(a), Numeric(b) if 0 < a:
+                return Numeric(a**b)
+
+        return Pow(base, exponent)
     @abstractmethod
     def __eq__(self, other) -> bool:
         pass
