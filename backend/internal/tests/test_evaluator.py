@@ -69,7 +69,7 @@ CASES_EVAL_SUBJECT_ATOM = [
     Case(
         "Subtraction",
         "a + b\n/-2",
-        ["EXPR((a+b))", "EXPR(((a+b)+(2.0*-1)))"],
+        ["EXPR((a+b))", "EXPR(((a+b)+(-1*2.0)))"],
     ),
     Case(
         "Multiplication",

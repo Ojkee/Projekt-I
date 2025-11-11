@@ -6,20 +6,25 @@ from backend.internal.expressions import Expression, Infix, Number, Prefix, Iden
 from backend.internal.tokens.token import Token, TokenType
 
 
+
 class Node(ABC):
     def __init__(self) -> None:
         super().__init__()
 
     def __add__(self, other):
+        from backend.internal.expression_tree import Add
         return Add(self, other)
 
     def __sub__(self, other):
-        return Add(self, Mul(other, Numeric(-1)))
+        from backend.internal.expression_tree import Add, Mul, Numeric
+        return Add(self, Mul(Numeric(-1), other))
 
     def __mul__(self, other):
+        from backend.internal.expression_tree import Mul
         return Mul(self, other)
 
     def __truediv__(self, other):
+        from backend.internal.expression_tree import Mul, Numeric, Pow
         return Mul(self, Pow(other, Numeric(-1)))
 
     @abstractmethod
@@ -31,134 +36,63 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def reduce(self) -> Node:
+    def flatten(self) -> FlattenNode:
         pass
 
 
-class Add(Node):
-    def __init__(self, left: Node, right: Node) -> None:
-        self.left = left
-        self.right = right
+class FlattenNode(ABC):
+    #@abstractmethod
+    #def canonicical_form(self)
+    #    pass`
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, Add)
-            and self.left == other.left
-            and self.right == other.right
-        )
+    @abstractmethod
+    def __str__(self) -> str:
+        pass    
 
-    def __repr__(self):
-        return "(" + repr(self.left) + "+" + repr(self.right) + ")"
+    @abstractmethod
+    def constant_fold(self) -> FlattenNode:
+        """
+        Performs constant folding on the expression tree node.
 
-    def reduce(self) -> Node:
-        left = self.left.reduce()
-        right = self.right.reduce()
+        - If the node has child nodes that can be constant folded, it recursively
+          applies constant folding to those child nodes.
 
-        match left, right:
-            # 0 + x or x + 0 => x
-            case (Numeric(value=0), other) | (other, Numeric(value=0)):
-                return other
+        - If the node represents a numeric operation (e.g., addition, multiplication)
+          and both operands are numeric constants, it computes the result and
+          replaces the node with a single numeric constant node.
+        
+        Example:
+            For an addition node with two numeric children (3 + 5 + 12), it will replace
+            the addition node with a single numeric node representing the value 20.
 
-            case Numeric(value=lvalue), Numeric(value=rvalue):
-                return Numeric(lvalue + rvalue)
+        Returns:
+            FlattenNode: A new FlattenNode that represents the constant-folded expression.
+        """
+        pass
 
-        return Add(left, right)
+#    @abstractmethod
+#    def reduce(self):
+#        pass
 
+#    @abstractmethod
+#    def simplify(self):
+#        pass
 
-class Mul(Node):
-    def __init__(self, left: Node, right: Node) -> None:
-        self.left = left
-        self.right = right
+    @abstractmethod
+    def __eq__(self, other) -> bool:
+        pass
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, Mul)
-            and self.left == other.left
-            and self.right == other.right
-        )
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
 
-    def __repr__(self):
-        return "(" + repr(self.left) + "*" + repr(self.right) + ")"
-
-    def reduce(self) -> Node:
-        left = self.left.reduce()
-        right = self.right.reduce()
-
-        match left, right:
-            # 0*x or x*0 => 0
-            case (Numeric(value=0), _) | (_, Numeric(value=0)):
-                return Numeric(0)
-
-            # 1*x or x*1  => x
-            case (Numeric(value=1), other) | (other, Numeric(value=1)):
-                return other
-
-            case Numeric(value=lhs), Numeric(value=rhs):
-                return Numeric(lhs * rhs)
-
-        return Mul(left, right)
-
-
-class Symbol(Node):
-    def __init__(self, name: str) -> None:
-        self.name = name
-
-    def __eq__(self, other):
-        return isinstance(other, Symbol) and self.name == other.name
-
-    def __repr__(self):
-        return self.name
-
-    def reduce(self) -> Node:
-        return self
-
-
-class Numeric(Node):
-    def __init__(self, value: float) -> None:
-        self.value = value
-
-    def __eq__(self, other):
-        return isinstance(other, Numeric) and self.value == other.value
-
-    def __repr__(self):
-        return str(self.value)
-
-    def reduce(self) -> Node:
-        return self
-
-
-class Pow(Node):
-    def __init__(self, base: Node, exponent: Node) -> None:
-        self.base = base
-        self.exponent = exponent
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, Pow)
-            and self.base == other.base
-            and self.exponent == other.exponent
-        )
-
-    def __repr__(self):
-        return "(" + repr(self.base) + "^" + str(self.exponent) + ")"
-
-    def reduce(self) -> Node:
-        base = self.base.reduce()
-        exponent = self.exponent.reduce()
-
-        match exponent:
-            # x^0 => 1
-            case Numeric(value=0):
-                return Numeric(1)
-
-            # x^1 => x
-            case Numeric(value=1):
-                return base
-
-        return Pow(base, exponent)
+    @abstractmethod
+    def precedence(self) -> int:
+        pass
 
 
 def convert_to_expression_tree(expression: Optional[Expression]) -> Optional[Node]:
+    from backend.internal.expression_tree import Mul, Numeric, Add, Pow, Symbol
     if expression is None:
         return None
 

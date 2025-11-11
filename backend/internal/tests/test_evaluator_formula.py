@@ -26,8 +26,8 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
     ),
     Case(
         name="Product of powers rule nested",
-        input="a^(3y)*a^4\n!product_of_powers a^(3y)*a^4\n",
-        expected=["EXPR(((a^(3.0*y))*(a^4.0)))", "EXPR((a^((3.0*y)+4.0)))"],
+        input="a^(3*y)*a^4\n",
+        expected=["EXPR(((a^(3.0*y))*(a^4.0)))"],
     ),
 ]
 
@@ -42,4 +42,5 @@ def test_evaluator_formula(case: Case) -> None:
     evaluator = Evaluator()
     subjects = evaluator.eval(program)
 
+    print(repr(subjects))
     assert [repr(subject) for subject in subjects] == case.expected

@@ -103,7 +103,6 @@ class ExpressionObject(SubjectObject):
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
         self.value = transformer(self.value, t_obj)
-        self.value.reduce()
 
 
 class EquationObject(SubjectObject):
