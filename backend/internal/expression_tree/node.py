@@ -92,15 +92,19 @@ class Mul(Node):
         right = self.right.reduce()
 
         match left, right:
+            # 0 * (0 ^ x) => 0 * (0 ^ x) for x > 0
+            case Numeric(0), Pow(Numeric(0), Numeric(b)) if b < 0:
+                return Mul(left, right)
+
             # 0*x or x*0 => 0
-            case (Numeric(value=0), _) | (_, Numeric(value=0)):
+            case (Numeric(0), _) | (_, Numeric(0)):
                 return Numeric(0)
 
             # 1*x or x*1  => x
-            case (Numeric(value=1), other) | (other, Numeric(value=1)):
+            case (Numeric(1), other) | (other, Numeric(1)):
                 return other
 
-            case Numeric(value=lhs), Numeric(value=rhs):
+            case Numeric(lhs), Numeric(rhs):
                 return Numeric(lhs * rhs)
 
         return Mul(left, right)
@@ -157,14 +161,17 @@ class Pow(Node):
         base = self.base.reduce()
         exponent = self.exponent.reduce()
 
-        match exponent:
+        match base, exponent:
             # x^0 => 1
-            case Numeric(value=0):
+            case _, Numeric(0):
                 return Numeric(1)
 
             # x^1 => x
-            case Numeric(value=1):
+            case _, Numeric(1):
                 return base
+
+            case Numeric(a), Numeric(b) if 0 < a:
+                return Numeric(a**b)
 
         return Pow(base, exponent)
 

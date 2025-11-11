@@ -61,51 +61,54 @@ CASES_EVALUATOR_INVALID_FIRST_LINE: list[Case] = [
         input="5 / 0",
         expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
     ),
-    # Case(
-    #     name="Division by zero in equation",
-    #     input="x = 10 / 0",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Division by zero result",
-    #     input="x = 5 / (2 - 2)",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Nested division by zero",
-    #     input="(5 + 3) / (10 - 5 * 2)",
-    #     expected_error="division by zero",
-    # ),
-    # Case(
-    #     name="Zero to negative power",
-    #     input="0 ^ -1",
-    #     expected_error="zero",
-    # ),
-    # Case(
-    #     name="Zero to negative power complex",
-    #     input="(5 - 5) ^ -2",
-    #     expected_error="zero",
-    # ),
-    # Case(
-    #     name="Negative base fractional exponent",
-    #     input="(-4) ^ 0.5",
-    #     expected_error="negative",
-    # ),
-    # Case(
-    #     name="Complex fractional power",
-    #     input="(-2) ^ (1/3)",
-    #     expected_error="negative",
-    # ),
-    # Case(
-    #     name="Invalid operation result",
-    #     input="0 / 0",
-    #     expected_error="undefined",  # lub "NaN" lub "indeterminate"
-    # ),
-    # Case(
-    #     name="Divide by zero in atom transform",
-    #     input="x = 2\n/0",
-    #     expected_error="division by zero",
-    # ),
+    Case(
+        name="Division by zero in equation",
+        input="x = 10 / 0",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Division by zero result",
+        input="x = 5 / (2 - 2)",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Nested division by zero",
+        input="(5 + 3) / (10 - 5 * 2)",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Zero to negative power",
+        input="0 ^ -1",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Zero to negative power complex",
+        input="(5 - 5) ^ -2",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Negative base fractional exponent",
+        input="(-4) ^ 0.5",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.negative_root())],
+    ),
+    Case(
+        name="Complex fractional power",
+        input="(-2) ^ (1/3)",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.negative_root())],
+    ),
+    Case(
+        name="Invalid operation result",
+        input="0 / 0",
+        expected=[wrap_obj(EvaluatorErrorUserMsg.zero_division())],
+    ),
+    Case(
+        name="Divide by zero in atom transform",
+        input="x = 2\n/0",
+        expected=[
+            AnyNonErrorObject(),
+            wrap_obj(EvaluatorErrorUserMsg.zero_division()),
+        ],
+    ),
     # Case(
     #     name="Divide equation by zero",
     #     input="x = y + 5\n/0",

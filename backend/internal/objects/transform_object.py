@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Generator
 from backend.internal.expression_tree import Node
 from backend.internal.objects import Object
 from backend.internal.tokens import Token
@@ -16,6 +17,9 @@ class AtomTransformObject(TransformObject):
         self.operator = operator
         self.transform = transform
 
+    def __iter__(self) -> Generator[Node]:
+        return (n for n in (self.transform,))
+
     def __repr__(self) -> str:
         return f"ATOM({repr(self.operator)}, {repr(self.transform)})"
 
@@ -29,3 +33,6 @@ class FormulaObject(TransformObject):
     def __repr__(self) -> str:
         params_repr = ", ".join(map(repr, self.params))
         return f"{repr(self.name)}({params_repr})"
+
+    def __iter__(self) -> Generator[Node]:
+        return (param for param in self.params)

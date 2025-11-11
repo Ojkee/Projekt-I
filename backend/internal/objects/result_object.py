@@ -112,7 +112,7 @@ class ExpressionObject(SubjectObject):
         return str(self.value)
 
     def __iter__(self) -> Generator[Node]:
-        return (i for i in (self.value,))
+        yield self.value
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)

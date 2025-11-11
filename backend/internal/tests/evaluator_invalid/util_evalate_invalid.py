@@ -1,3 +1,5 @@
+from typing import Generator
+from _pytest.nodes import Node
 from backend.internal.objects.eval_object import Object
 from backend.internal.objects.result_object import ErrorObject
 
@@ -13,6 +15,9 @@ class AnyNonErrorObject(Object):
         if isinstance(other, ErrorObject):
             return False
         return True
+
+    def __iter__(self) -> Generator[Node]:
+        yield from ()
 
 
 def wrap_obj(msg: str) -> ErrorObject:

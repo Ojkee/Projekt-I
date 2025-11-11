@@ -18,3 +18,7 @@ class EvaluatorErrorUserMsg:
     @staticmethod
     def zero_division() -> str:
         return "Can't divide by zero"
+
+    @staticmethod
+    def negative_root() -> str:
+        return "Can't be negative value under root"

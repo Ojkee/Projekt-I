@@ -3,43 +3,57 @@ from typing import Callable, TypeAlias
 
 from backend.internal.evaluators.error_msgs import EvaluatorErrorUserMsg
 from backend.internal.expression_tree.node import Node, Pow, Numeric, Mul, Add
-from backend.internal.objects.result_object import SubjectObject
+from backend.internal.objects.eval_object import Object
 
 
 CheckerFn: TypeAlias = Callable[[Node], bool]
 
 
-def is_zero_div(node: Node) -> bool:
-    match node:
-        case Pow(base, exponent):
-            base = deepcopy(base).reduce()
-            exponent = deepcopy(exponent).reduce()
-            if not valid_pow(base, exponent):
-                return True
-            return is_zero_div(base) or is_zero_div(exponent)
-        case Mul(left, right):
-            return is_zero_div(left) or is_zero_div(right)
-        case Add(left, right):
-            return is_zero_div(left) or is_zero_div(right)
-    return False
+checkers: list[tuple[CheckerFn, str]] = []
+
+
+def register(msg: str):
+    def decorate(func: CheckerFn):
+        checkers.append((func, msg))
+
+    return decorate
 
 
 class Validator:
-    checkers: list[tuple[CheckerFn, str]] = [
-        (is_zero_div, EvaluatorErrorUserMsg.zero_division()),
-    ]
-
     @staticmethod
-    def check(subject: SubjectObject) -> str | None:
-        for root in subject:
-            for checker, msg in Validator.checkers:
-                if checker(root):
+    def check(obj: Object) -> str | None:
+        for root in obj:
+            reduced = deepcopy(root).reduce()
+            for checker, msg in checkers:
+                if Validator.dfs_check(reduced, checker):
                     return msg
         return None
 
+    @staticmethod
+    def dfs_check(node: Node, checker: CheckerFn) -> bool:
+        if checker(node):
+            return True
 
-def valid_pow(base: Node, exponent: Node) -> bool:
-    match base, exponent:
-        case Numeric(0.0), Numeric(value) if value < 0:
-            return False
-    return True
+        match node:
+            case Add(a, b) | Mul(a, b) | Pow(a, b):
+                lhs = Validator.dfs_check(a, checker)
+                rhs = Validator.dfs_check(b, checker)
+                return lhs or rhs
+
+        return False
+
+
+@register(EvaluatorErrorUserMsg.zero_division())
+def is_zero_div(node: Node) -> bool:
+    match node:
+        case Pow(Numeric(0.0), Numeric(b)) if b < 0:
+            return True
+    return False
+
+
+@register(EvaluatorErrorUserMsg.negative_root())
+def is_negative_root(node: Node) -> bool:
+    match node:
+        case Pow(Numeric(a), Numeric(b)) if a < 0 and 0 < b and b < 1:
+            return True
+    return False
