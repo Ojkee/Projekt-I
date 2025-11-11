@@ -120,6 +120,7 @@ class ExpressionObject(SubjectObject):
             self.value = result
         else:
             raise ValueError(f"Can't transform {str(t_obj)} on {str(self)}")
+        self.value = transformer(self.value, t_obj)
 
 
 class EquationObject(SubjectObject):

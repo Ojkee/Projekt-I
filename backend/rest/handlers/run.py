@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from fastapi import APIRouter
 from backend.pkg.api import compile_math_input
 
-
 # TODO
 class RunRequest(BaseModel):
     code: str

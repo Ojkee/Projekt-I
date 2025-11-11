@@ -15,9 +15,8 @@ class WildNode(Node):
     def __repr__(self) -> str:
         return f"WILDNODE({self.tag!r})"
 
-    def reduce(self) -> Node:
-        return self
-
+    def flatten(self):
+        pass
 
 class WildNodeFraction(Node):
     pass

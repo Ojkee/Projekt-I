@@ -105,7 +105,7 @@ class Evaluator:
     def _convert_expression(self, expr: Expression) -> Node:
         tree = convert_to_expression_tree(expr)
         assert tree
-        return tree.reduce()
+        return tree
 
     def _eval_atom_transform(self, transform: AtomTransform) -> AtomTransformObject:
         expr_node = self._convert_expression(transform.expr)
