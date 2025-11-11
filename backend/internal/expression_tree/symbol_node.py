@@ -1,6 +1,8 @@
 from backend.internal.expression_tree import Node, FlattenNode
 
 class Symbol(Node):
+    __match_args__ = ("name",)
+
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -15,6 +17,9 @@ class Symbol(Node):
 
     def flatten(self) -> FlattenNode:
         return FlattenSymbol(self.name)
+
+    def reduce(self) -> Node:
+        return self
 
 class FlattenSymbol(FlattenNode):
     PRECEDENCE = 999

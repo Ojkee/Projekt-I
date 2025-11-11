@@ -61,8 +61,6 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
             "EQUATION(((a^3.0)*(a^4.0)) = ((a^3.0)*(a^4.0)))",
             "EQUATION((a^(3.0+4.0)) = (a^(3.0+4.0)))",
         ],
-        input="a^(3*y)*a^4\n",
-        expected=["EXPR(((a^(3.0*y))*(a^4.0)))"],
     ),
 ]
 

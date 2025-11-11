@@ -18,7 +18,7 @@ class AtomTransformObject(TransformObject):
         self.operator = operator
         self.transform = transform
 
-    def __iter__(self) -> Generator[Node]:
+    def __iter__(self) -> Generator[Node, None, None]:
         match self.operator.ttype:
             case TokenType.PLUS:
                 yield Add(Numeric(0), self.transform)
@@ -47,5 +47,5 @@ class FormulaObject(TransformObject):
         params_repr = ", ".join(map(repr, self.params))
         return f"{repr(self.name)}({params_repr})"
 
-    def __iter__(self) -> Generator[Node]:
+    def __iter__(self) -> Generator[Node, None, None]:
         return (param for param in self.params)

@@ -6,5 +6,5 @@ from backend.internal.expression_tree.node import Node
 
 class Object(ABC):
     @abstractmethod
-    def __iter__(self) -> Generator[Node]:
+    def __iter__(self) -> Generator[Node, None, None]:
         yield from ()

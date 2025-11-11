@@ -1,6 +1,8 @@
 from backend.internal.expression_tree import Node, FlattenNode
 
 class Numeric(Node):
+    __match_args__ = ("value",)
+
     def __init__(self, value: float) -> None:
         self.value = value
 
@@ -15,6 +17,9 @@ class Numeric(Node):
 
     def flatten(self) -> FlattenNode:
         return FlattenNumeric(self.value)
+
+    def reduce(self) -> Node:
+        return self
 
 class FlattenNumeric(FlattenNode):
     PRECEDENCE = 999

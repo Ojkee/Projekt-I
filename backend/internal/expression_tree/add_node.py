@@ -1,9 +1,11 @@
 from .node import Node, FlattenNode
-from backend.internal.expression_tree.numeric_node import FlattenNumeric
+from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
 from backend.internal.expression_tree.mul_node import FlattenMul
 
 
 class Add(Node):
+    __match_args__ = ("left", "right")
+
     def __init__(self, left: Node, right: Node) -> None:
         self.left = left
         self.right = right
@@ -17,7 +19,7 @@ class Add(Node):
 
     def __repr__(self):
         return "(" + repr(self.left) + "+" + repr(self.right) + ")"
-    
+
     def __str__(self) -> str:
         return self.flatten().__str__()
 
@@ -35,6 +37,22 @@ class Add(Node):
         _flat_node(self.right)
 
         return FlattenAdd(childrens)
+
+    def reduce(self) -> Node:
+        left = self.left.reduce()
+        right = self.right.reduce()
+
+        match left, right:
+            # 0 + x or x + 0 => x
+            case (Numeric(value=0), other) | (other, Numeric(value=0)):
+                return other
+
+            case Numeric(value=lvalue), Numeric(value=rvalue):
+                return Numeric(lvalue + rvalue)
+
+        return Add(left, right)
+
+
 
 class FlattenAdd(FlattenNode):
     PRECEDENCE = 1
@@ -81,7 +99,6 @@ class FlattenAdd(FlattenNode):
         return result
 
     def __eq__(self, other):
-        print("EQ ADD", self.childrens, other.childrens)
         return (isinstance(other, FlattenAdd) and self.childrens == other.childrens)
 
     def precedence(self):

@@ -1,8 +1,10 @@
 from backend.internal.expression_tree import Node, FlattenNode
-from backend.internal.expression_tree.numeric_node import FlattenNumeric
+from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
 
 
 class Mul(Node):
+    __match_args__ = ("left", "right")
+
     def __init__(self, left: Node, right: Node) -> None:
         self.left = left
         self.right = right
@@ -34,6 +36,24 @@ class Mul(Node):
         _flat_node(self.right)
 
         return FlattenMul(childrens)
+
+    def reduce(self) -> Node:
+        left = self.left.reduce()
+        right = self.right.reduce()
+
+        match left, right:
+            # 0*x or x*0 => 0
+            case (Numeric(value=0), _) | (_, Numeric(value=0)):
+                return Numeric(0)
+
+            # 1*x or x*1  => x
+            case (Numeric(value=1), other) | (other, Numeric(value=1)):
+                return other
+
+            case Numeric(value=lhs), Numeric(value=rhs):
+                return Numeric(lhs * rhs)
+
+        return Mul(left, right)
 
 class FlattenMul(FlattenNode):
     PRECEDENCE = 2

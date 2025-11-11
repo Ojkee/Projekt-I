@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import Callable, TypeAlias
 
 from backend.internal.evaluators.error_msgs import EvaluatorErrorUserMsg
-from backend.internal.expression_tree.node import Node, Pow, Numeric, Mul, Add
+from backend.internal.expression_tree import Node, Pow, Numeric, Mul, Add
 from backend.internal.objects.eval_object import Object
 
 

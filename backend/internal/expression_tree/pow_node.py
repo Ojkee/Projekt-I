@@ -1,7 +1,9 @@
 from backend.internal.expression_tree import Node, FlattenNode
-from backend.internal.expression_tree.numeric_node import FlattenNumeric
+from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
 
 class Pow(Node):
+    __match_args__ = ("base", "exponent")
+
     def __init__(self, base: Node, exponent: Node) -> None:
         self.base = base
         self.exponent = exponent
@@ -21,6 +23,21 @@ class Pow(Node):
 
     def flatten(self) -> FlattenNode:
         return FlattenPow(self.base.flatten(), self.exponent.flatten())
+
+    def reduce(self) -> Node:
+        base = self.base.reduce()
+        exponent = self.exponent.reduce()
+
+        match exponent:
+            # x^0 => 1
+            case Numeric(value=0):
+                return Numeric(1)
+
+            # x^1 => x
+            case Numeric(value=1):
+                return base
+
+        return Pow(base, exponent)
 
 
 class FlattenPow(FlattenNode):
