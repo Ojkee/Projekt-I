@@ -1,6 +1,7 @@
 import copy
 
 from backend.internal.evaluators.error_msgs import EvaluatorErrorUserMsg
+from backend.internal.evaluators.validator import Validator
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.objects import (
     Object,
@@ -29,18 +30,22 @@ from backend.internal.expression_tree import Node, convert_to_expression_tree
 class Evaluator:
     def eval(self, program: Program) -> list[SubjectObject]:
         match program.get():
+            case []:
+                return [ErrorObject(EvaluatorErrorUserMsg.no_input())]
             case [Subject() as subject, *stmts]:
                 return self._eval_statements(subject, stmts)
-            case stmts if not stmts:
-                return [ErrorObject(EvaluatorErrorUserMsg.no_input())]
+            case [LineError(perr) as err, *stmts] if perr.highest_precedence():
+                return [ErrorObject(str(err))]
             case _:
-                return [ErrorObject("First line must be equation or expression")]
+                return [ErrorObject(EvaluatorErrorUserMsg.no_expr())]
 
     def _eval_statements(
         self, subject: Subject, stmts: list[Statement]
     ) -> list[SubjectObject]:
         subject_object = self._eval_expression(subject.expr)
         assert isinstance(subject_object, SubjectObject)
+        if err_msg := Validator.check(subject_object):
+            return [ErrorObject(err_msg)]
 
         subjects: list[SubjectObject] = [copy.deepcopy(subject_object)]
 
@@ -66,7 +71,7 @@ class Evaluator:
 
     def _eval_statement(self, stmt: Statement) -> Object:
         match stmt:
-            case Subject(_expr=expr):
+            case Subject(expr):
                 return self._eval_expression(expr)
             case AtomTransform() as atom:
                 return self._eval_atom_transform(atom)
@@ -81,7 +86,7 @@ class Evaluator:
 
     def _eval_expression(self, expr: Expression) -> Object:
         match expr:
-            case Infix(_op=op, _lhs=lhs, _rhs=rhs) if op.ttype == TokenType.EQUALS:
+            case Infix(op, lhs, rhs) if op.ttype == TokenType.EQUALS:
                 return EquationObject(
                     self._convert_expression(lhs),
                     self._convert_expression(rhs),

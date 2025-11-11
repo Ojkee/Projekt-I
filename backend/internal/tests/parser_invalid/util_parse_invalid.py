@@ -3,7 +3,7 @@ from backend.internal.statements import LineError
 from backend.internal.statements import Statement
 
 
-def wrap(msg: str) -> LineError:
+def wrap_stmt(msg: str) -> LineError:
     return LineError(ParseErr(msg, msg))
 
 

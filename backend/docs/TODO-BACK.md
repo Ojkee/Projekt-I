@@ -73,3 +73,4 @@
 - [x] Replace all 'ToString's with string builders
 - [x] Better `__repl__` implementation of statements and expressions (more readable)
 - [ ] In case of complexity of multiple parameters in Formulas, It might be necessary to limit Formulas to 1 parameter at most
+- [ ] Use `Decimal` as Numeric value for better precision

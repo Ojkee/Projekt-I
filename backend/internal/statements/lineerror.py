@@ -2,6 +2,8 @@ from backend.internal.statements import Statement
 
 
 class LineError(Statement):
+    __match_args__ = ("perr",)
+
     def __init__(self, err) -> None:
         self._err = err
 
@@ -15,3 +17,7 @@ class LineError(Statement):
 
     def __repr__(self) -> str:
         return repr(self._err)
+
+    @property
+    def perr(self):
+        return self._err

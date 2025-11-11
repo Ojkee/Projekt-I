@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, NamedTuple
+from typing import Callable, Generator, NamedTuple
 from backend.internal.math_builtins import BuiltIns
 from backend.internal.expression_tree import Node, Add, Mul, Pow
 from backend.internal.math_builtins.builtins_error import BuiltinsError
@@ -19,6 +19,10 @@ class SubjectObject(Object, ABC):
 
     @abstractmethod
     def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def __iter__(self) -> Generator[Node]:
         pass
 
     @abstractmethod
@@ -107,6 +111,9 @@ class ExpressionObject(SubjectObject):
     def __str__(self) -> str:
         return str(self.value)
 
+    def __iter__(self) -> Generator[Node]:
+        return (i for i in (self.value,))
+
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
         if result := transformer(self.value, t_obj):
@@ -128,6 +135,9 @@ class EquationObject(SubjectObject):
 
     def __str__(self) -> str:
         return f"{str(self.lhs)} = {str(self.rhs)}"
+
+    def __iter__(self) -> Generator[Node]:
+        return (i for i in (self.lhs, self.rhs))
 
     def apply(self, t_obj: TransformObject) -> None:
         transformer = self._get_transformer(t_obj)
@@ -157,6 +167,9 @@ class ErrorObject(SubjectObject):
 
     def __eq__(self, value, /) -> bool:
         return isinstance(value, ErrorObject) and self.msg == value.msg
+
+    def __iter__(self) -> Generator[Node]:
+        yield from ()
 
     def apply(self, t_obj: TransformObject) -> None:
         _ = t_obj

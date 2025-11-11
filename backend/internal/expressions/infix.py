@@ -3,6 +3,8 @@ from backend.internal.tokens import Token
 
 
 class Infix(Expression):
+    __match_args__ = ("op", "lhs", "rhs")
+
     def __init__(self, operator: Token, lhs: Expression, rhs: Expression) -> None:
         super().__init__()
         self._op = operator
@@ -30,5 +32,14 @@ class Infix(Expression):
         ]
         return "".join(buffer)
 
-    def operator(self) -> Token:
+    @property
+    def op(self) -> Token:
         return self._op
+
+    @property
+    def lhs(self) -> Expression:
+        return self._lhs
+
+    @property
+    def rhs(self) -> Expression:
+        return self._rhs

@@ -39,6 +39,8 @@ class Node(ABC):
 
 
 class Add(Node):
+    __match_args__ = ("left", "right")
+
     def __init__(self, left: Node, right: Node) -> None:
         self.left = left
         self.right = right
@@ -69,6 +71,8 @@ class Add(Node):
 
 
 class Mul(Node):
+    __match_args__ = ("left", "right")
+
     def __init__(self, left: Node, right: Node) -> None:
         self.left = left
         self.right = right
@@ -117,6 +121,8 @@ class Symbol(Node):
 
 
 class Numeric(Node):
+    __match_args__ = ("value",)
+
     def __init__(self, value: float) -> None:
         self.value = value
 
@@ -131,6 +137,8 @@ class Numeric(Node):
 
 
 class Pow(Node):
+    __match_args__ = ("base", "exponent")
+
     def __init__(self, base: Node, exponent: Node) -> None:
         self.base = base
         self.exponent = exponent

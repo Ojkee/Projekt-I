@@ -45,3 +45,6 @@ class ParseErr:
     def more_precise_user_msg(self, msg: str, precedence: ErrorPrecedence) -> None:
         if precedence > self._precedence:
             self._user_msg = msg
+
+    def highest_precedence(self) -> bool:
+        return self._precedence == ErrorPrecedence.ILLEGAL_CHAR

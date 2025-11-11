@@ -9,7 +9,7 @@ from backend.internal.parsing import Parser
 
 from backend.internal.tests.parser_invalid.util_parse_invalid import (
     AnyNonErrorStatement,
-    wrap,
+    wrap_stmt,
 )
 
 
@@ -23,94 +23,94 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
     Case(
         name="Illegal at start of line",
         input="@",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal in middle of expression",
         input="2 + @ * 3",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal after operator",
         input="x + $ - 5",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("$"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("$"))],
     ),
     Case(
         name="Illegal before operator",
         input="x # + 5",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("#"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("#"))],
     ),
     Case(
         name="Illegal inside parentheses",
         input="(2 + &)",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("&"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("&"))],
     ),
     Case(
         name="Illegal after opening paren",
         input="(@ + 2)",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal before closing paren",
         input="(2 + 3 $)",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("$"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("$"))],
     ),
     Case(
         name="Illegal at end of expression",
         input="2 + 3 @",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Multiple illegals in line",
         input="x @ y # z",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal in formula parameters",
         input="!func x, #, y",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("#"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("#"))],
     ),
     Case(
         name="Illegal in atom transform",
         input="/+ x & 2",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("&"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("&"))],
     ),
     Case(
         name="Illegal after atom operator",
         input="/$ x",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("$"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("$"))],
     ),
     Case(
         name="Illegal in nested parentheses",
         input="(2 + (3 @ 4))",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal between identifiers",
         input="abc $ def",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("$"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("$"))],
     ),
     Case(
         name="Illegal in number",
         input="3.14$59",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("$"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("$"))],
     ),
     Case(
         name="Illegal after comma",
         input="!func a, @, b",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal as prefix operator",
         input="@ 5",
-        expected=[wrap(ParserErrorUserMsg.illegal_str("@"))],
+        expected=[wrap_stmt(ParserErrorUserMsg.illegal_str("@"))],
     ),
     Case(
         name="Illegal with valid multiline",
         input="x + 2\ny @ z",
         expected=[
             AnyNonErrorStatement(),
-            wrap(ParserErrorUserMsg.illegal_str("@")),
+            wrap_stmt(ParserErrorUserMsg.illegal_str("@")),
         ],
     ),
     Case(
@@ -118,7 +118,7 @@ CASES_PARSER_INVALID_TOKENS: list[Case] = [
         input="1 + 1\n@ + 2\n3 + 3",
         expected=[
             AnyNonErrorStatement(),
-            wrap(ParserErrorUserMsg.illegal_str("@")),
+            wrap_stmt(ParserErrorUserMsg.illegal_str("@")),
         ],
     ),
 ]
