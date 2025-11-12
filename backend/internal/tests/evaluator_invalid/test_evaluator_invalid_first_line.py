@@ -164,6 +164,10 @@ CASES_EVALUATOR_INVALID_FIRST_LINE: list[Case] = [
     "case", CASES_EVALUATOR_INVALID_FIRST_LINE, ids=lambda c: c.name
 )
 def test_cases_evaluator_invalid(case: Case) -> None:
+    # if case.name == "Complex fractional power":
+    #     import pdb
+    #
+    #     pdb.set_trace()
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)

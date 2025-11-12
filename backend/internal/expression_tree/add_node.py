@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .node import Node, FlattenNode
 from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
 from backend.internal.expression_tree.mul_node import FlattenMul
@@ -23,20 +24,20 @@ class Add(Node):
     def __str__(self) -> str:
         return self.flatten().__str__()
 
-    def flatten(self) -> FlattenNode:
-        childrens: list[FlattenNode] = []
+    def flatten(self) -> FlattenAdd:
+        children: list[FlattenNode] = []
 
-        def _flat_node(n: Node) -> list[FlattenNode]:
+        def _flat_node(n: Node) -> None:
             if isinstance(n, Add):
                 flat = n.flatten()
-                childrens.extend(flat.childrens)
+                children.extend(flat.children)
             else:
-                childrens.append(n.flatten())
+                children.append(n.flatten())
 
         _flat_node(self.left)
         _flat_node(self.right)
 
-        return FlattenAdd(childrens)
+        return FlattenAdd(children)
 
     def reduce(self) -> Node:
         left = self.left.reduce()
@@ -44,48 +45,47 @@ class Add(Node):
 
         match left, right:
             # 0 + x or x + 0 => x
-            case (Numeric(value=0), other) | (other, Numeric(value=0)):
+            case (Numeric(0), other) | (other, Numeric(0)):
                 return other
 
-            case Numeric(value=lvalue), Numeric(value=rvalue):
-                return Numeric(lvalue + rvalue)
+            case Numeric(a), Numeric(b):
+                return Numeric(a + b)
 
         return Add(left, right)
-
 
 
 class FlattenAdd(FlattenNode):
     PRECEDENCE = 1
 
-    def __init__(self, childrens: list[FlattenNode]) -> None:
-        self.childrens = childrens
+    def __init__(self, chidren: list[FlattenNode]) -> None:
+        self.children = chidren
 
     def constant_fold(self):
         numeric_sum = 0.0
-        childrens_to_remove = []
+        chidren_to_remove = []
 
-        for child in self.childrens:
+        for child in self.children:
             child.constant_fold()
             if isinstance(child, FlattenNumeric):
                 numeric_sum += child.value
-                childrens_to_remove.append(child)
+                chidren_to_remove.append(child)
 
-        for child in childrens_to_remove:
-            self.childrens.remove(child)
+        for child in chidren_to_remove:
+            self.children.remove(child)
 
-        self.childrens.append(FlattenNumeric(numeric_sum))
+        self.children.append(FlattenNumeric(numeric_sum))
 
-        if len(self.childrens) == 1:
-            return self.childrens[0]
+        if len(self.children) == 1:
+            return self.children[0]
 
         return self
 
     def __str__(self) -> str:
         parts = []
-        for c in self.childrens:
+        for c in self.children:
             if isinstance(c, FlattenNumeric) and c.value < 0:
                 parts.append(f"- {abs(c.value)}")
-            elif isinstance(c, FlattenMul) and c.childrens[0] == FlattenNumeric(-1):
+            elif isinstance(c, FlattenMul) and c.children[0] == FlattenNumeric(-1):
                 parts.append(f"- {c}")
             elif c.precedence() < self.PRECEDENCE:
                 parts.append(f"({c})")
@@ -99,7 +99,7 @@ class FlattenAdd(FlattenNode):
         return result
 
     def __eq__(self, other):
-        return (isinstance(other, FlattenAdd) and self.childrens == other.childrens)
+        return isinstance(other, FlattenAdd) and self.children == other.children
 
     def precedence(self):
         return self.PRECEDENCE

@@ -5,28 +5,34 @@ from abc import ABC, abstractmethod
 from backend.internal.expressions import Expression, Infix, Number, Prefix, Identifier
 from backend.internal.tokens.token import Token, TokenType
 
+
 class Node(ABC):
     def __init__(self) -> None:
         super().__init__()
 
     def __add__(self, other):
         from backend.internal.expression_tree import Add
+
         return Add(self, other)
 
     def __sub__(self, other):
         from backend.internal.expression_tree import Add, Mul, Numeric
+
         return Add(self, Mul(Numeric(-1), other))
 
     def __mul__(self, other):
         from backend.internal.expression_tree import Mul
+
         return Mul(self, other)
 
     def __truediv__(self, other):
         from backend.internal.expression_tree import Mul, Numeric, Pow
+
         return Mul(self, Pow(other, Numeric(-1)))
 
     def __pow__(self, other):
         from backend.internal.expression_tree import Pow
+
         return Pow(self, other)
 
     @abstractmethod
@@ -38,7 +44,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def reduce(self) -> Node: # Will be removed and implemented in FlattenNode
+    def reduce(self) -> Node:  # Will be removed and implemented in FlattenNode
         pass
 
     @abstractmethod
@@ -47,13 +53,9 @@ class Node(ABC):
 
 
 class FlattenNode(ABC):
-    #@abstractmethod
-    #def canonicical_form(self)
+    # @abstractmethod
+    # def canonicical_form(self)
     #    pass`
-
-    @abstractmethod
-    def __str__(self) -> str:
-        pass    
 
     @abstractmethod
     def constant_fold(self) -> FlattenNode:
@@ -66,7 +68,7 @@ class FlattenNode(ABC):
         - If the node represents a numeric operation (e.g., addition, multiplication)
           and both operands are numeric constants, it computes the result and
           replaces the node with a single numeric constant node.
-        
+
         Example:
             For an addition node with two numeric children (3 + 5 + 12), it will replace
             the addition node with a single numeric node representing the value 20.
@@ -76,13 +78,13 @@ class FlattenNode(ABC):
         """
         pass
 
-#    @abstractmethod
-#    def reduce(self):
-#        pass
+    #    @abstractmethod
+    #    def reduce(self):
+    #        pass
 
-#    @abstractmethod
-#    def simplify(self):
-#        pass
+    #    @abstractmethod
+    #    def simplify(self):
+    #        pass
 
     @abstractmethod
     def __eq__(self, other) -> bool:
@@ -99,6 +101,7 @@ class FlattenNode(ABC):
 
 def convert_to_expression_tree(expression: Optional[Expression]) -> Optional[Node]:
     from backend.internal.expression_tree import Mul, Numeric, Add, Pow, Symbol
+
     if expression is None:
         return None
 

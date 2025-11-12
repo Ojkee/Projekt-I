@@ -29,7 +29,7 @@ class AtomTransformObject(TransformObject):
             case TokenType.SLASH:
                 yield Mul(Numeric(1), Pow(self.transform, Numeric(-1)))
             case TokenType.CARET:
-                yield Pow(self.transform, Numeric(1))
+                yield Pow(Numeric(1), self.transform)
 
         yield from ()
 

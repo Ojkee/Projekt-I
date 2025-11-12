@@ -1,5 +1,6 @@
 from backend.internal.expression_tree import Node, FlattenNode
 
+
 class Numeric(Node):
     __match_args__ = ("value",)
 
@@ -21,8 +22,10 @@ class Numeric(Node):
     def reduce(self) -> Node:
         return self
 
+
 class FlattenNumeric(FlattenNode):
     PRECEDENCE = 999
+    __match_args__ = ("value",)
 
     def __init__(self, value: float) -> None:
         self.value = value
@@ -31,16 +34,11 @@ class FlattenNumeric(FlattenNode):
         return self
 
     def __eq__(self, other):
-        return (
-            isinstance(other, FlattenNumeric)
-            and self.value == other.value
-        )
+        return isinstance(other, FlattenNumeric) and self.value == other.value
 
     def __str__(self):
         return str(self.value)
 
-    def __eq__(self, value):
-        return isinstance(value, FlattenNumeric) and self.value == value.value
-
     def precedence(self):
         return self.PRECEDENCE
+

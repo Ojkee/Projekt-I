@@ -15,8 +15,10 @@ checkers: list[tuple[CheckerFn, str]] = []
 def register(msg: str):
     def decorate(func: CheckerFn):
         checkers.append((func, msg))
+        return func
 
     return decorate
+
 
 class Validator:
     @staticmethod
