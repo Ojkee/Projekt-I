@@ -21,7 +21,7 @@ class Pow(Node):
         return "(" + repr(self.base) + "^" + repr(self.exponent) + ")"
 
     def __str__(self) -> str:
-        return self.flatten().__str__()
+        return str(self.flatten())
 
     def flatten(self) -> FlattenPow:
         return FlattenPow(self.base.flatten(), self.exponent.flatten())

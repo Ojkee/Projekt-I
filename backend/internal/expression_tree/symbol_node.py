@@ -1,5 +1,6 @@
 from backend.internal.expression_tree import Node, FlattenNode
 
+
 class Symbol(Node):
     __match_args__ = ("name",)
 
@@ -21,8 +22,12 @@ class Symbol(Node):
     def reduce(self) -> Node:
         return self
 
+
 class FlattenSymbol(FlattenNode):
+    __match_args__ = ("name",)
+
     PRECEDENCE = 999
+
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -33,10 +38,7 @@ class FlattenSymbol(FlattenNode):
         return self.name
 
     def __eq__(self, other):
-        return (
-            isinstance(other, FlattenSymbol)
-            and self.name == other.name
-            )
+        return isinstance(other, FlattenSymbol) and self.name == other.name
 
     def precedence(self):
         return self.PRECEDENCE
