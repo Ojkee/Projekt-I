@@ -1,6 +1,7 @@
 from __future__ import annotations
 from backend.internal.expression_tree import Node, FlattenNode
 from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
+from backend.internal.expression_tree.pow_node import Pow
 
 
 class Mul(Node):
@@ -43,16 +44,19 @@ class Mul(Node):
         right = self.right.reduce()
 
         match left, right:
+            case Numeric(0), Pow(Numeric(0), Numeric(a)) if a < 1:
+                pass
+
             # 0*x or x*0 => 0
-            case (Numeric(value=0), _) | (_, Numeric(value=0)):
+            case (Numeric(0), _) | (_, Numeric(0)):
                 return Numeric(0)
 
             # 1*x or x*1  => x
-            case (Numeric(value=1), other) | (other, Numeric(value=1)):
+            case (Numeric(1), other) | (other, Numeric(1)):
                 return other
 
-            case Numeric(value=lhs), Numeric(value=rhs):
-                return Numeric(lhs * rhs)
+            case Numeric(a), Numeric(b):
+                return Numeric(a * b)
 
         return Mul(left, right)
 

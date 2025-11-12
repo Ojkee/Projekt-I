@@ -30,13 +30,20 @@ class Pow(Node):
         base = self.base.reduce()
         exponent = self.exponent.reduce()
 
-        match exponent:
+        match base, exponent:
+            case Numeric(a), Numeric(b) if a < 0 and b == int(b):
+                return Numeric(a**b)
+            case Numeric(0), Numeric(b) if 0 < b:
+                return Numeric(0)
+            case Numeric(a), Numeric(b) if 0 < a:
+                return Numeric(a**b)
+
             # x^0 => 1
-            case Numeric(value=0):
+            case _, Numeric(0):
                 return Numeric(1)
 
             # x^1 => x
-            case Numeric(value=1):
+            case _, Numeric(1):
                 return base
 
         return Pow(base, exponent)
