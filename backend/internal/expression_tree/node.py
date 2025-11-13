@@ -53,6 +53,7 @@ class Node(ABC):
 
 
 class FlattenNode(ABC):
+    PRECEDENCE = 999
     # @abstractmethod
     # def canonicical_form(self)
     #    pass`
