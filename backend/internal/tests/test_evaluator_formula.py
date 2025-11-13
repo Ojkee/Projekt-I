@@ -54,7 +54,7 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
             "EQUATION(x = (a^(3.0+4.0)))",
         ],
     ),
-    Case(  # TODO: consult
+    Case(
         name="Product of powers rule in equation rhs",
         input="a^3*a^4 = a^3*a^4\n!product_of_powers a^3*a^4\n",
         expected=[

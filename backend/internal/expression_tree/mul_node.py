@@ -1,5 +1,7 @@
+from __future__ import annotations
 from backend.internal.expression_tree import Node, FlattenNode
 from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
+from backend.internal.expression_tree.pow_node import Pow
 
 
 class Mul(Node):
@@ -9,7 +11,7 @@ class Mul(Node):
         self.left = left
         self.right = right
 
-        self.childrens = []
+        self.children = []
 
     def __eq__(self, other):
         return (
@@ -22,83 +24,91 @@ class Mul(Node):
         print(repr(self.left), type(self.left))
         return "(" + repr(self.left) + "*" + repr(self.right) + ")"
 
-    def flatten(self) -> FlattenNode:
-        childrens = []
+    def flatten(self) -> FlattenMul:
+        children = []
 
-        def _flat_node(n: Node) -> list[FlattenNode]:
+        def _flat_node(n: Node) -> None:
             if isinstance(n, Mul):
                 flat = n.flatten()
-                childrens.extend(flat.childrens)
+                children.extend(flat.children)
             else:
-                childrens.append(n.flatten())
+                children.append(n.flatten())
 
         _flat_node(self.left)
         _flat_node(self.right)
 
-        return FlattenMul(childrens)
+        return FlattenMul(children)
 
     def reduce(self) -> Node:
         left = self.left.reduce()
         right = self.right.reduce()
 
         match left, right:
+            case Numeric(0), Pow(Numeric(0), Numeric(a)) if a < 1:
+                pass
+
             # 0*x or x*0 => 0
-            case (Numeric(value=0), _) | (_, Numeric(value=0)):
+            case (Numeric(0), _) | (_, Numeric(0)):
                 return Numeric(0)
 
             # 1*x or x*1  => x
-            case (Numeric(value=1), other) | (other, Numeric(value=1)):
+            case (Numeric(1), other) | (other, Numeric(1)):
                 return other
 
-            case Numeric(value=lhs), Numeric(value=rhs):
-                return Numeric(lhs * rhs)
+            case Numeric(a), Numeric(b):
+                return Numeric(a * b)
 
         return Mul(left, right)
 
+
 class FlattenMul(FlattenNode):
     PRECEDENCE = 2
-    def __init__(self, childrens: list[FlattenNode]) -> None:
-        self.childrens = childrens
+
+    def __init__(self, children: list[FlattenNode]) -> None:
+        self.children = children
 
     def constant_fold(self) -> FlattenNode:
         numeric_product = 1.0
-        childrens_to_remove = []
+        children_to_remove = []
 
-        for child in self.childrens:
+        for child in self.children:
             child.constant_fold()
             if isinstance(child, FlattenNumeric):
                 numeric_product *= child.value
-                childrens_to_remove.append(child)
+                children_to_remove.append(child)
 
-        for child in childrens_to_remove:
-            self.childrens.remove(child)
+        for child in children_to_remove:
+            self.children.remove(child)
 
-        self.childrens.append(FlattenNumeric(numeric_product))
+        self.children.append(FlattenNumeric(numeric_product))
 
-        if len(self.childrens) == 1:
-            return self.childrens[0]
+        if len(self.children) == 1:
+            return self.children[0]
 
         return self
 
     def __str__(self) -> str:
         parts = []
-        is_negative = (isinstance(self.childrens[0], FlattenNumeric) and self.childrens[0] == FlattenNumeric(-1))
+        is_negative = isinstance(self.children[0], FlattenNumeric) and self.children[
+            0
+        ] == FlattenNumeric(-1)
         start = 1 if is_negative else 0
-    
-        for c in self.childrens[start:]:
+
+        for c in self.children[start:]:
             print(type(c), c)
-            if is_negative and isinstance(c, FlattenNumeric) and c.value < 0: # example case: x - (-3)
+            if (
+                is_negative and isinstance(c, FlattenNumeric) and c.value < 0
+            ):  # example case: x - (-3)
                 parts.append(f"({c.value})")
             elif c.precedence() < self.PRECEDENCE:
                 parts.append(f"({c})")
             else:
                 parts.append(f"{c}")
-        
 
         return " * ".join(parts)
 
     def __eq__(self, other):
-        return (isinstance(other, FlattenMul) and self.childrens == other.childrens)
+        return isinstance(other, FlattenMul) and self.children == other.children
 
     def precedence(self):
         return self.PRECEDENCE

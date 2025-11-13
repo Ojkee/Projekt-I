@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Protocol, TypeVar
+from typing import Callable, Protocol, TypeVar
 from backend.internal.math_builtins.builtins_error import (
     BuiltinsError,
     NotMatchingFormula,
@@ -40,7 +40,7 @@ class BuiltIns:
 
     @staticmethod
     def get_replacement(
-        name: str, root: Node, param: Optional[Node]
+        name: str, root: Node, param: Node | None
     ) -> Node | BuiltinsError:
         if not param:
             raise NotImplementedError("Auto search param not implemented yet")
@@ -61,7 +61,7 @@ class BuiltIns:
                 return BuiltIns._build_node(replacement, cache)
 
     @staticmethod
-    def _find_match(node: Node, param: Node) -> Optional[Node]:
+    def _find_match(node: Node, param: Node) -> Node | None:
         """
         Finds an exact subtree match of `param` within `node`.
 
@@ -71,12 +71,12 @@ class BuiltIns:
         if node == param:
             return node
 
-        def dfs(lhs: Node, rhs: Node) -> Optional[Node]:
+        def dfs(lhs: Node, rhs: Node) -> Node | None:
             node = BuiltIns._find_match(lhs, param)
             return node if node else BuiltIns._find_match(rhs, param)
 
         match node:
-            case Add(left=a, right=b) | Mul(left=a, right=b) | Pow(base=a, exponent=b):
+            case Add(a, b) | Mul(a, b) | Pow(a, b):
                 return dfs(a, b)
 
         return None
@@ -100,7 +100,7 @@ class BuiltIns:
         """
         cache: dict[str, Node] = {}
 
-        def aux(node_, to_match_) -> Optional[NotMatchingFormula]:
+        def aux(node_, to_match_) -> NotMatchingFormula | None:
             match node_, to_match_:
                 case Pow() as lhs, Pow() as rhs:
                     if err := aux(lhs.base, rhs.base):
@@ -117,7 +117,7 @@ class BuiltIns:
                 case lhs, WildNode(tag) if tag not in cache:
                     cache[tag] = lhs
 
-                case Numeric(value=lvalue), Numeric(value=rvalue) if lvalue != rvalue:
+                case Numeric(lvalue), Numeric(rvalue) if lvalue != rvalue:
                     return NotMatchingFormula(
                         f"Cannot use this formula because {lvalue} and {rvalue} aren't the same"
                     )
