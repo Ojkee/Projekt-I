@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter
 from backend.pkg.api import compile_math_input
 
+
 # TODO
 class RunRequest(BaseModel):
     code: str
@@ -22,4 +23,3 @@ def interpret(req: RunRequest):
         return RunResponse(steps=result)
     except Exception as e:
         return RunResponse(steps=[f"Error: {str(e)}"])
-
