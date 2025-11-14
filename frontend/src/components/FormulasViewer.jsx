@@ -22,7 +22,7 @@ const FormulasViewer = ({ formulas, onInsert }) => {
         <div className="formula-search-background">
         <input
           type="text"
-          placeholder="Szukaj wzoru..."
+          placeholder="Search formula..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="formula-search"
@@ -35,16 +35,20 @@ const FormulasViewer = ({ formulas, onInsert }) => {
 
           {cat.items.map((item) =>
             Array.isArray(item.latex) ? (
-              item.latex.map((eq, i) => (
+              item.latex.map((eq, i) => {
+                const eqName = eq.eq_name || "";
+                const eqLatex = eq.eq || eq;
+                return (
                 <div
                   key={i}
                   className="formula-item"
-                  onClick={() => onInsert(eq)}
+                  onClick={() => onInsert(eqName)}
                 >
                   <strong>{item.name}</strong>
-                  <BlockMath math={eq} />
-                </div>
-              ))
+                    <BlockMath math={eqLatex} />
+                  </div>
+                );
+              })
             ) : (
               <div
                 key={item.name}
