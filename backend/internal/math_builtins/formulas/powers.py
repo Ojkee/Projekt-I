@@ -1,16 +1,11 @@
-from typing import NamedTuple
+from collections.abc import Mapping
+from backend.internal.math_builtins.formula_handler import FORMULA_MAP
+from backend.internal.math_builtins.formula_entry import FormulaEntry
 from backend.internal.math_builtins.formula_node import WildNode
-from backend.internal.expression_tree import Node, Pow, Mul, Add
+from backend.internal.expression_tree import Pow, Mul, Add
 
 
-class FormulaEntry(NamedTuple):
-    display_name: str
-    latex_str: str
-    lhs: Node
-    rhs: Node
-
-
-FORMULA_MAP: dict[str, FormulaEntry] = {
+_FORMULAS_POWER: Mapping[str, FormulaEntry] = {
     "product_of_powers": FormulaEntry(
         "Product of powers rule",
         r"a^r \cdot a^s = a^{r + s}",
@@ -25,7 +20,7 @@ FORMULA_MAP: dict[str, FormulaEntry] = {
     ),
     "quotient_of_powers": FormulaEntry(
         "Quotient of Powers",
-        r"\frac{ a^r }{ a^s }",
+        r"\frac{ a^r }{ a^s } = a^{r - s}",
         WildNode("TODO"),
         WildNode("TODO"),
     ),
@@ -35,7 +30,15 @@ FORMULA_MAP: dict[str, FormulaEntry] = {
         Pow(Mul(WildNode("a"), WildNode("b")), WildNode("r")),
         Mul(Pow(WildNode("a"), WildNode("r")), Pow(WildNode("b"), WildNode("r"))),
     ),
-    # "power_of_a_quotient": FormulaEntry(
-    #     r"\frac{ a^r }{ a^s }", WildNode("TODO"), WildNode("TODO")
-    # ),
+    "power_of_a_quotient": FormulaEntry(
+        "Power of a Quotient",
+        r"\frac{ a^r }{ a^s }",
+        WildNode("TODO"),
+        WildNode("TODO"),
+    ),
 }
+
+
+@FORMULA_MAP.formula_category("Powers")
+def formula_powers_fn() -> Mapping[str, FormulaEntry]:
+    return _FORMULAS_POWER
