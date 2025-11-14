@@ -2,7 +2,7 @@ from collections.abc import Mapping
 from backend.internal.math_builtins.formula_handler import FORMULA_MAP
 from backend.internal.math_builtins.formula_entry import FormulaEntry
 from backend.internal.math_builtins.formula_node import WildNode
-from backend.internal.expression_tree import Pow, Mul, Add
+from backend.internal.expression_tree import Pow, Mul, Add, Numeric
 
 
 _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
@@ -21,8 +21,20 @@ _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
     "quotient_of_powers": FormulaEntry(
         "Quotient of Powers",
         r"\frac{ a^r }{ a^s } = a^{r - s}",
-        WildNode("TODO"),
-        WildNode("TODO"),
+        Mul(
+            Pow(WildNode("a"), WildNode("r")),
+            Pow(
+                Pow(WildNode("a"), WildNode("s")),
+                Numeric(-1.0),
+            ),
+        ),
+        Pow(
+            WildNode("a"),
+            Add(
+                WildNode("r"),
+                Mul(Numeric(-1.0), WildNode("s")),
+            ),
+        ),
     ),
     "power_of_a_product": FormulaEntry(
         "Power of a Product rule",
@@ -32,9 +44,15 @@ _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
     ),
     "power_of_a_quotient": FormulaEntry(
         "Power of a Quotient",
-        r"\frac{ a^r }{ a^s }",
-        WildNode("TODO"),
-        WildNode("TODO"),
+        r"\frac{ a }{ b } ^ r = \frac{ a^r }{ b^r }",
+        Pow(
+            Mul(WildNode("a"), Pow(WildNode("b"), Numeric(-1.0))),
+            WildNode("r"),
+        ),
+        Mul(
+            Pow(WildNode("a"), WildNode("r")),
+            Pow(WildNode("r"), Mul(Numeric(-1.0), WildNode("r"))),
+        ),
     ),
 }
 

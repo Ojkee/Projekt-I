@@ -13,7 +13,7 @@ class Case(NamedTuple):
     expected: list[str]
 
 
-CASES_EVALUATOR_FORMULA: list[Case] = [
+CASES_EVALUATOR_FORMULA_POWERS: list[Case] = [
     Case(
         name="Product of powers rule",
         input="a^3*a^4\n!product_of_powers a^3*a^4\n",
@@ -63,6 +63,21 @@ CASES_EVALUATOR_FORMULA: list[Case] = [
         ],
     ),
 ]
+
+CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS: list[Case] = [
+    Case(
+        name="Quotient of Powers rule in expression",
+        input="a^5/a^3\n!quotient_of_powers a^5/a^3\n",
+        expected=[
+            "EXPR(((a^5.0)*((a^3.0)^-1)))",
+            "EXPR((a^(5.0+(-1.0*3.0))))",
+        ],
+    ),
+]
+
+CASES_EVALUATOR_FORMULA: list[Case] = []
+CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_POWERS)
+CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS)
 
 
 @pytest.mark.parametrize("case", CASES_EVALUATOR_FORMULA, ids=lambda c: c.name)
