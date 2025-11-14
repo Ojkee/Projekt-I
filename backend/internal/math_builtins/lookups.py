@@ -4,9 +4,10 @@ from backend.internal.math_builtins.builtins_error import (
     NotMatchingFormula,
     NotMatchingParam,
 )
+from backend.internal.math_builtins.formula_entry import FormulaEntry
+from backend.internal.math_builtins.formula_handler import FORMULA_MAP
 from backend.internal.math_builtins.formula_node import WildNode
 from backend.internal.expression_tree import Node, Mul, Pow, Add, Numeric
-from backend.internal.math_builtins.formulas import FORMULA_MAP, FormulaEntry
 
 
 class TupleProtocol(Protocol):
@@ -45,8 +46,7 @@ class BuiltIns:
         if not param:
             raise NotImplementedError("Auto search param not implemented yet")
 
-        entry = FORMULA_MAP.get(name)
-        assert entry, f"{name}, not present in builtins, use `BuiltIns.is_present`"
+        entry = FORMULA_MAP[name]
 
         to_replace = BuiltIns._find_match(root, param)
         if not to_replace:

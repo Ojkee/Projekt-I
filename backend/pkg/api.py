@@ -1,7 +1,8 @@
 import json
 from typing import NamedTuple
 from backend.internal.lexing import Lexer
-from backend.internal.math_builtins.formulas import FORMULA_MAP
+from backend.internal.math_builtins.formula_entry import FormulaEntry
+from backend.internal.math_builtins.formula_handler import FORMULA_MAP
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
 from backend.internal.evaluators import Evaluator
@@ -37,10 +38,22 @@ def get_implemented_formulas_json() -> bytes:
             ("latex_str", str),
         ],
     )
-    formulas = (
-        Formula_tuple(entry.display_name, box_name, entry.latex_str)
-        for box_name, entry in FORMULA_MAP.items()
+    Category_tuple = NamedTuple(
+        "Category_tuple",
+        [
+            ("name", str),
+            ("formulas", list[Formula_tuple]),
+        ],
     )
-    formulas_dict = (formula._asdict() for formula in formulas)
-    json_bytes = json.dumps(formulas_dict).encode("utf-8")
+
+    def to_formula_tuple(fk: str, fv: FormulaEntry):
+        return Formula_tuple(fv.display_name, fk, fv.latex_str)
+
+    categories = []
+    for cat_name, forms in FORMULA_MAP.items():
+        form_tuples = [to_formula_tuple(*form) for form in forms.items()]
+        cat = Category_tuple(cat_name, form_tuples)
+        categories.append(cat)
+
+    json_bytes = json.dumps(categories).encode("utf-8")
     return json_bytes

@@ -21,7 +21,6 @@ class Mul(Node):
         )
 
     def __repr__(self):
-        print(repr(self.left), type(self.left))
         return "(" + repr(self.left) + "*" + repr(self.right) + ")"
 
     def flatten(self) -> FlattenMul:
@@ -95,12 +94,11 @@ class FlattenMul(FlattenNode):
         start = 1 if is_negative else 0
 
         for c in self.children[start:]:
-            print(type(c), c)
             if (
                 is_negative and isinstance(c, FlattenNumeric) and c.value < 0
             ):  # example case: x - (-3)
                 parts.append(f"({c.value})")
-            elif c.precedence() < self.PRECEDENCE:
+            elif c is not None and c.precedence() < self.PRECEDENCE:
                 parts.append(f"({c})")
             else:
                 parts.append(f"{c}")
