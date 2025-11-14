@@ -32,7 +32,7 @@ _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
             WildNode("a"),
             Add(
                 WildNode("r"),
-                Mul(Numeric(-1.0), WildNode("s")),
+                Mul(WildNode("s"), Numeric(-1.0)),
             ),
         ),
     ),
@@ -51,7 +51,7 @@ _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
         ),
         Mul(
             Pow(WildNode("a"), WildNode("r")),
-            Pow(WildNode("r"), Mul(Numeric(-1.0), WildNode("r"))),
+            Pow(Pow(WildNode("b"), WildNode("r")), Numeric(-1.0)),
         ),
     ),
 }

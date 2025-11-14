@@ -98,7 +98,7 @@ class FlattenMul(FlattenNode):
                 is_negative and isinstance(c, FlattenNumeric) and c.value < 0
             ):  # example case: x - (-3)
                 parts.append(f"({c.value})")
-            elif c.precedence() < self.PRECEDENCE:
+            elif c is not None and c.precedence() < self.PRECEDENCE:
                 parts.append(f"({c})")
             else:
                 parts.append(f"{c}")

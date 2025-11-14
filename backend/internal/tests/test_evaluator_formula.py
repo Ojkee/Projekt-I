@@ -70,7 +70,7 @@ CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS: list[Case] = [
         input="a^5/a^3\n!quotient_of_powers a^5/a^3\n",
         expected=[
             "EXPR(((a^5.0)*((a^3.0)^-1)))",
-            "EXPR((a^(5.0+(-1.0*3.0))))",
+            "EXPR((a^(5.0+(3.0*-1.0))))",
         ],
     ),
     Case(
@@ -78,7 +78,23 @@ CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS: list[Case] = [
         input="(a/b)^(3x)\n!power_of_a_quotient (a/b)^(3x)",
         expected=[
             "EXPR(((a*(b^-1))^(3.0*x)))",
-            "EXPR(((a^(3.0*x))*((3.0*x)^(-1.0*(3.0*x)))))",
+            "EXPR(((a^(3.0*x))*((b^(3.0*x))^-1.0)))",
+        ],
+    ),
+    Case(
+        name="Quotient of Powers rule in expression reversed",
+        input="a^(4-x)\n!quotient_of_powers a^(4-x)\n",
+        expected=[
+            "EXPR((a^(4.0+(x*-1))))",
+            "EXPR(((a^4.0)*((a^x)^-1.0)))",
+        ],
+    ),
+    Case(
+        name="Power of a quotient in expression reversed",
+        input="(a^9)/(b^9)\n!power_of_a_quotient (a^9)/(b^9)",
+        expected=[
+            "EXPR(((a^9.0)*((b^9.0)^-1)))",
+            "EXPR(((a*(b^-1.0))^9.0))",
         ],
     ),
 ]
@@ -90,7 +106,10 @@ CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS)
 
 @pytest.mark.parametrize("case", CASES_EVALUATOR_FORMULA, ids=lambda c: c.name)
 def test_evaluator_formula(case: Case) -> None:
-
+    # if case.name == "Power of a quotient in expression reversed":
+    #     import pdb
+    #
+    #     pdb.set_trace()
     lexer = Lexer(case.input)
     stream = TokenStream(lexer)
     parser = Parser(stream)
