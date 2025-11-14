@@ -73,6 +73,14 @@ CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS: list[Case] = [
             "EXPR((a^(5.0+(-1.0*3.0))))",
         ],
     ),
+    Case(
+        name="Power of a quotient in expression",
+        input="(a/b)^(3x)\n!power_of_a_quotient (a/b)^(3x)",
+        expected=[
+            "EXPR(((a*(b^-1))^(3.0*x)))",
+            "EXPR(((a^(3.0*x))*((3.0*x)^(-1.0*(3.0*x)))))",
+        ],
+    ),
 ]
 
 CASES_EVALUATOR_FORMULA: list[Case] = []
