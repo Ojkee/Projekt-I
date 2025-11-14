@@ -27,6 +27,9 @@ class FormulaHandler:
     def __contains__(self, formula_name: str) -> bool:
         return any(formula_name in category for category in self._formulas.values())
 
+    def items(self):
+        return self._formulas.items()
+
 
 FORMULA_MAP = FormulaHandler()
 
