@@ -22,7 +22,7 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
     }
 
     console.log("Response:", res.final);
-    const results = lines.map(function(e, i) {
+    const results = res.steps.map(function(e, i) {
           return { line: e, output: res.steps[i] };
     });
 
@@ -50,21 +50,26 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
       {isRemovable && (
         <button
           onClick={() => onRemove && onRemove(cellId)}
-          style={removeButtonStyle}
-          title="Usuń komórkę"
+          className="remove-cell-btn"
+          title="Remove cell"
         >
-          X
+          <svg className="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       )}
 
       <div onClick={() => onFocus && onFocus()} style={{ cursor: "text" }}>
-        <CodeEditor value={code} onChange={setCode} />
+        <CodeEditor value={code} onChange={setCode} onEnter={handleRun} />
       </div>
 
       <div className="codecell-buttons">
-        <button onClick={handleRun} className="icon-btn" title="Uruchom">
-          <LucidePlay size={16} />
-          {running ? " Uruchamianie..." : ""}
+        <button onClick={handleRun} className="icon-btn" title="Run">
+          <svg className="solve-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          Solve
+          {running ? " Running..." : ""}
         </button>
       </div>
 
@@ -82,18 +87,5 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
   );
 };
 
-const removeButtonStyle = {
-  position: "absolute",
-  top: "8px",
-  right: "8px",
-  border: "none",
-  background: "rgba(255,0,0,0.3)",
-  color: "#fff",
-  borderRadius: "50%",
-  width: "28px",
-  height: "28px",
-  cursor: "pointer",
-  fontWeight: "bold",
-};
 
 export default CodeCell;

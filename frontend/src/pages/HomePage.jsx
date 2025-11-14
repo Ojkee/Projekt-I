@@ -21,24 +21,24 @@ function HomePage() {
           <div className="hero-grid">
             <div className="hero-content">
               <h1 className="hero-title">
-                Rozwiązuj zadania z{" "}
-                <span className="hero-title-highlight">Matiką</span>
+                Solve problems with{" "}
+                <span className="hero-title-highlight">Matika</span>
               </h1>
               <p className="hero-description">
-                Matika to narzędzie, które pomoże Ci w zagadnieniach matematycznych. Przetestuj i zobacz jakie to proste.
+                Matika is a tool that will help you with math challenges. Try it and see how simple it can be.
               </p>
               <div className="hero-buttons">
                 <button 
                   className="btn btn-primary"
                   onClick={() => navigate("/user")}
                 >
-                  Zacznij teraz
+                  Get Started
                 </button>
                 <button 
                   className="btn btn-secondary"
                   onClick={() => navigate("/how-to-use")}
                 >
-                  Jak używać?
+                  How to Use?
                 </button>
               </div>
             </div>
@@ -58,10 +58,10 @@ function HomePage() {
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">
-              Dlaczego Matika?
+              Why Matika?
             </h2>
             <p className="section-description">
-              Wszystko czego potrzebujesz, aby osiągnąć sukces w matematyce - w jednym miejscu
+              Everything you need to succed in math - all in one place
             </p>
           </div>
           
@@ -72,7 +72,7 @@ function HomePage() {
                     className="icon"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="currentColor"
+                    stroke="white"
                   >
                     <path
                       d="M4 6h16M4 12h16M4 18h16"
@@ -82,10 +82,9 @@ function HomePage() {
                     />
                   </svg>
                 </div>
-              <h3 className="feature-title">Rozwiązania krok po kroku</h3>
+              <h3 className="feature-title">Step-by-Step Solutions</h3>
               <p className="feature-description">
-                Otrzymaj szczegółowe wyjaśnienia dla każdego problemu. Zrozum "dlaczego" za każdym krokiem, 
-                nie tylko odpowiedź.
+                Get detailed explanations for every problem. Understand the "why" behind each step, not just the answer.
               </p>
             </div>
 
@@ -95,7 +94,7 @@ function HomePage() {
                   className="icon"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="white"
                 >
                   <circle cx="12" cy="12" r="10" strokeWidth="2" />
                   <path
@@ -106,9 +105,9 @@ function HomePage() {
                   />
                 </svg>
               </div>
-              <h3 className="feature-title">Wszechstronne tematy</h3>
+              <h3 className="feature-title">Versatile Topics</h3>
               <p className="feature-description">
-                Od algebry po rachunek różniczkowy, trygonometrię po statystykę. Pomożemy Ci w każdym temacie jaki masz w szkole/liceum.
+                From algebra to calculus, trigonometry to statistics. We'll help you with every topic in school.
               </p>
             </div>
             <div className="feature-card">
@@ -117,7 +116,7 @@ function HomePage() {
                   className="icon"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="white"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -129,9 +128,9 @@ function HomePage() {
                   <path d="M9 6h6M6 9v6M18 9v6M9 18h6" />
                 </svg>
               </div>
-              <h3 className="feature-title">Wielozadaniowość</h3>
+              <h3 className="feature-title">Multitasking</h3>
               <p className="feature-description">
-                Masz kilka zadań do zrobienia? Możesz rozwiązywać je wszystkie na raz i widzieć wyniki jednocześnie.
+                Have multiple problems to solve? You can solve them all at once and see results simultaneously.
               </p>
             </div>
           </div>          
@@ -142,7 +141,7 @@ function HomePage() {
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">
-              Otrzymaj pomoc w 3 prostych krokach
+              Get result in 3 simple steps
             </h2>
           </div>
           
@@ -150,8 +149,8 @@ function HomePage() {
             <div className="step-item">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h3 className="step-title">Wprowadź swoje zadanie</h3>
-                <p className="step-description">Wpisz wyrażenie, równanie lub skorzystaj z gotowych wzorów</p>
+                <h3 className="step-title">Enter your problem</h3>
+                <p className="step-description">Type an expression, equation, or use ready-made formulas</p>
               </div>
               <svg className="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -161,8 +160,8 @@ function HomePage() {
             <div className="step-item">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h3 className="step-title">Otrzymaj natychmiastowe rozwiązania</h3>
-                <p className="step-description">Otrzymaj szczegółowe wyjaśnienia krok po kroku w ciągu kilku sekund</p>
+                <h3 className="step-title">Get instant solutions</h3>
+                <p className="step-description">Receive detailed step-by-step explanations in just a few seconds</p>
               </div>
               <svg className="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -172,8 +171,8 @@ function HomePage() {
             <div className="step-item">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h3 className="step-title">Ucz się i doskonal</h3>
-                <p className="step-description">Opanuj koncepcje i zrozum dane zagadnienie</p>
+                <h3 className="step-title">Learn and improve</h3>
+                <p className="step-description">Master concepts and understand the topic thoroughly</p>
               </div>
               <svg className="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -186,13 +185,13 @@ function HomePage() {
       <section className="cta-section">
         <div className="container cta-content">
           <h2 className="cta-title">
-            Gotowy, aby zdobyć piątkę z matematyki?
+            Ready to ace your math?
           </h2>
           <p className="cta-description">
-            Wpisz przykład i Ci pomożemy
+            Enter a problem and we'll help you
           </p>
           <button className="btn btn-cta" onClick={() => navigate("/user")}>
-            Rozpocznij za darmo
+            Start for Free
           </button>
         </div>
       </section>

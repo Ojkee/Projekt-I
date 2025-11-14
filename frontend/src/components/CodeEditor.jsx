@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
-import { EditorView } from "@codemirror/view";
 import { syntaxHighlighting } from "@codemirror/language";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { myLang, myLangHighlight } from "../highlighting";
 
-const CodeEditor = ({ value, onChange }) => {
+const CodeEditor = ({ value, onChange, onEnter }) => {
+  const editorRef = useRef(null);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); 
+      if (onEnter) onEnter();
+    }
+  };
+
   return (
-    <CodeMirror
-      value={value}
-      height="700px"
-      width="700px"  
-      theme={oneDark}
-      extensions={[myLang, syntaxHighlighting(myLangHighlight), EditorView.lineWrapping]}
-      onChange={onChange}
-    />
+    <div
+      ref={editorRef}
+      onKeyDown={handleKeyDown}
+      style={{ outline: "none" }} 
+    >
+      <CodeMirror
+        value={value}
+        height="700px"
+        width="700px"
+        theme={oneDark}
+        extensions={[myLang, syntaxHighlighting(myLangHighlight)]}
+        onChange={onChange}
+      />
+    </div>
   );
 };
 

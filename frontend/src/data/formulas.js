@@ -3,24 +3,25 @@ const formulas = [
     category: "Algebra",
     items: [
       {
-        name: "Równanie kwadratowe",
-        latex: ["x_1 = \\frac{-b - \\sqrt{b^2 - 4ac}}{2a}",
+        name: "Quadratic Equation",
+        latex: [
+          "x_1 = \\frac{-b - \\sqrt{b^2 - 4ac}}{2a}",
           "x_2 = \\frac{-b + \\sqrt{b^2 - 4ac}}{2a}",
-        ]
+        ],
       },
       {
-        name: "Delta",
+        name: "Discriminant (Delta)",
         latex: "\\Delta = b^2 - 4ac",
       },
       {
-        name: "Suma i iloczyn pierwiastków",
+        name: "Sum and Product of Roots",
         latex: [
-          "x_1 + x_2 = -\\frac{b}{a}", 
+          "x_1 + x_2 = -\\frac{b}{a}",
           "\\quad x_1 x_2 = \\frac{c}{a}",
-        ]
+        ],
       },
       {
-        name: "Wzory skróconego mnożenia",
+        name: "Binomial Identities",
         latex: [
           "(a+b)^2 = a^2 + 2ab + b^2",
           "(a-b)^2 = a^2 - 2ab + b^2",
@@ -30,7 +31,7 @@ const formulas = [
         ],
       },
       {
-        name: "Logarytmy",
+        name: "Logarithms",
         latex: [
           "\\log_a(xy) = \\log_a x + \\log_a y",
           "\\log_a(x/y) = \\log_a x - \\log_a y",
@@ -38,7 +39,7 @@ const formulas = [
         ],
       },
       {
-        name: "Ciągi",
+        name: "Sequences",
         latex: [
           "a_n = a_1 + (n-1)d",
           "S_n = \\frac{n(a_1 + a_n)}{2}",
@@ -46,13 +47,19 @@ const formulas = [
           "S_n = a_1 \\frac{1-r^n}{1-r}, r \\neq 1",
         ],
       },
+      {
+        name: "Product of Powers",
+        latex: [
+          { eq_name: "!product_of_powers", eq: "a^r \\cdot a^s = a^{r + s}" },
+        ],
+      },
     ],
   },
   {
-    category: "Trygonometria",
+    category: "Trigonometry",
     items: [
       {
-        name: "Podstawowe tożsamości",
+        name: "Basic Identities",
         latex: [
           "\\sin^2 x + \\cos^2 x = 1",
           "\\tan x = \\frac{\\sin x}{\\cos x}",
@@ -60,7 +67,7 @@ const formulas = [
         ],
       },
       {
-        name: "Wzory redukcyjne",
+        name: "Reduction Formulas",
         latex: [
           "\\sin(-x) = -\\sin x",
           "\\cos(-x) = \\cos x",
@@ -69,7 +76,7 @@ const formulas = [
         ],
       },
       {
-        name: "Wzory na sumę i różnicę kątów",
+        name: "Sum and Difference Formulas",
         latex: [
           "\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b",
           "\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b",
@@ -77,7 +84,7 @@ const formulas = [
         ],
       },
       {
-        name: "Wzory podwójnego kąta",
+        name: "Double Angle Formulas",
         latex: [
           "\\sin 2x = 2 \\sin x \\cos x",
           "\\cos 2x = \\cos^2 x - \\sin^2 x",
@@ -87,71 +94,62 @@ const formulas = [
     ],
   },
   {
-    category: "Geometria",
+    category: "Geometry",
     items: [
       {
-        name: "Twierdzenie Pitagorasa",
+        name: "Pythagorean Theorem",
         latex: "a^2 + b^2 = c^2",
       },
       {
-        name: "Pole trójkąta (Herona)",
-        latex: "S = \\sqrt{p(p-a)(p-b)(p-c)}, \\quad p = \\frac{a+b+c}{2}",
-      },
-      {
-        name: "Pole koła",
+        name: "Area of a Circle",
         latex: "S = \\pi r^2",
       },
       {
-        name: "Obwód koła",
+        name: "Circumference of a Circle",
         latex: "C = 2\\pi r",
       },
       {
-        name: "Objętość brył",
+        name: "Volume of Solids",
         latex: [
-          "V_{sześcian} = a^3",
-          "V_{prostopadłościan} = a b c",
-          "V_{stożek} = \\frac{1}{3} \\pi r^2 h",
-          "V_{walec} = \\pi r^2 h",
-          "V_{kula} = \\frac{4}{3} \\pi r^3",
+          "V_{cube} = a^3",
+          "V_{cuboid} = a b c",
+          "V_{cone} = \\frac{1}{3} \\pi r^2 h",
+          "V_{cylinder} = \\pi r^2 h",
+          "V_{sphere} = \\frac{4}{3} \\pi r^3",
         ],
       },
     ],
   },
   {
-    category: "Analiza",
+    category: "Calculus",
     items: [
       {
-        name: "Pochodna",
+        name: "Derivative",
         latex: "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}",
       },
       {
-        name: "Całka nieoznaczona",
+        name: "Indefinite Integral",
         latex: "\\int f(x) dx",
       },
       {
-        name: "Granica funkcji",
+        name: "Limit of a Function",
         latex: "\\lim_{x \\to a} f(x)",
       },
     ],
   },
   {
-    category: "Kombinatoryka i Statystyka",
+    category: "Combinatorics and Statistics",
     items: [
       {
-        name: "Permutacje",
+        name: "Permutations",
         latex: "P_n = n!",
       },
       {
-        name: "Kombinacje",
+        name: "Combinations",
         latex: "C_n^k = \\frac{n!}{k!(n-k)!}",
       },
       {
-        name: "Prawdopodobieństwo zdarzenia",
-        latex:
-          "P(A) = \\frac{liczba\\ zdarzeń\\ sprzyjających}{liczba\\ zdarzeń\\ możliwych}",
-      },
-      {
-        name: "Średnia i wariancja",
+        name: "Mean and Variance",
         latex: [
           "\\bar{x} = \\frac{\\sum x_i}{n}",
           "\\sigma^2 = \\frac{\\sum (x_i - \\bar{x})^2}{n}",
