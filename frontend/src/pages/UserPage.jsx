@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import CodeCell from "../components/CodeCell";
 import FormulasViewer from "../components/FormulasViewer";
-import formulas from "../data/formulas.js";
 import "../styles/UserPage.css";
 import { useNavigate } from "react-router-dom";
-
+import { v4 as uuidv4 } from 'uuid';
 
 function UserPage() {
-  const [cells, setCells] = useState([{ id: Date.now() }]);
+  const [cells, setCells] = useState([{ id: uuidv4() }]);
   const [activeCellId, setActiveCellId] = useState(cells[0].id);
 
   const addCell = () => {
-    const newCell = { id: Date.now() };
-    setCells([...cells, newCell]);
+    const newCell = { id: uuidv4() };
+    setCells(prev => [...prev, newCell]);
     setActiveCellId(newCell.id);
   };
 
@@ -25,7 +24,7 @@ function UserPage() {
   };
 
   const clearAll = () => {
-    setCells([{ id: Date.now() }]);
+    setCells([{ id: uuidv4() }]);
   };
 
   const insertFormula = (latex) => {
@@ -103,7 +102,7 @@ function UserPage() {
           ))}
         </div>
         <div className="formulas-column">
-        <FormulasViewer formulas={formulas} onInsert={insertFormula} />
+        <FormulasViewer onInsert={insertFormula} />
         </div>
       </main>
     </div>

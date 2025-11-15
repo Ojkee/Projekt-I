@@ -15,12 +15,7 @@ export async function sendText(code) {
 }
 
 export async function loadFormulas() {
-  const res = await fetch("http://localhost:8080/get_formulas_json", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }
-  });
+  const res = await fetch("http://localhost:8080/get_formulas_json");
 
   if (!res.ok) {
     throw new Error(`HTTP error! status: ${res.status}`);
