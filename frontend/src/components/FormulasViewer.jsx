@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
-import "../styles/FormulasViewer.css"
+import "../styles/FormulasViewer.css";
 import { loadFormulas } from "../services/api";
 
 const FormulasViewer = ({ onInsert }) => {
@@ -11,23 +11,23 @@ const FormulasViewer = ({ onInsert }) => {
   useEffect(() => {
     loadFormulas()
       .then((data) => setFormulas(data))
-      .catch((err) => console.error("Error loading formulas:", err))
-  })
+      .catch((err) => console.error("Error loading formulas:", err));
+  }, []); 
 
   const filteredCategories = formulas
     .map((category) => ({
       ...category,
-      items: category.items.filter(
+      formulas: category.formulas.filter(
         (item) =>
-          item.name.toLowerCase().includes(search.toLowerCase()) ||
-          category.category.toLowerCase().includes(search.toLowerCase())
+          item.display_name.toLowerCase().includes(search.toLowerCase()) ||
+          category.name.toLowerCase().includes(search.toLowerCase())
       ),
     }))
-    .filter((category) => category.items.length > 0);
+    .filter((category) => category.formulas.length > 0);
 
   return (
     <div className="formulas-container">
-        <div className="formula-search-background">
+      <div className="formula-search-background">
         <input
           type="text"
           placeholder="Search formula..."
@@ -35,37 +35,22 @@ const FormulasViewer = ({ onInsert }) => {
           onChange={(e) => setSearch(e.target.value)}
           className="formula-search"
         />
-        </div>
+      </div>
 
       {filteredCategories.map((cat) => (
         <div key={cat.name} className="formula-category">
           <h3>{cat.name}</h3>
 
-          {cat.items.map((item) =>
-            Array.isArray(item.latex_str) ? (
-              item.latex_str.map((i) => {
-                return (
-                <div
-                  key={i}
-                  className="formula-item"
-                  onClick={() => onInsert(item.box_name)}
-                >
-                  <strong>{item.display_name}</strong>
-                    <BlockMath math={item.latex_str} />
-                  </div>
-                );
-              })
-            ) : (
-              <div
-                key={item.display_name}
-                className="formula-item"
-                onClick={() => onInsert(item.box_name)}
-              >
-                <strong>{item.name}</strong>
-                <BlockMath math={item.latex_str} />
-              </div>
-            )
-          )}
+          {cat.formulas.map((item) => (
+            <div
+              key={item.box_name}
+              className="formula-item"
+              onClick={() => onInsert(item.box_name)} 
+            >
+              <strong>{item.display_name}</strong>
+              <BlockMath math={item.latex_str} />
+            </div>
+          ))}
         </div>
       ))}
     </div>

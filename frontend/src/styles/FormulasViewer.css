@@ -143,12 +143,12 @@
   animation: fadeInFormula 0.3s ease;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 800px) {
   .formulas-container {
     position: relative;
     top: auto;
     right: auto;
-    width: 25rem;
+    width: 24rem;
     max-height: 24rem;
     margin: 24px auto 0;
   }
