@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import "../styles/FormulasViewer.css"
+import { loadFormulas } from "../services/api";
 
-const FormulasViewer = ({ formulas, onInsert }) => {
+const FormulasViewer = ({ onInsert }) => {
   const [search, setSearch] = useState("");
+  const [formulas, setFormulas] = useState([]);
+
+  useEffect(() => {
+    loadFormulas()
+      .then((data) => setFormulas(data))
+      .catch((err) => console.error("Error loading formulas:", err))
+  })
 
   const filteredCategories = formulas
     .map((category) => ({
@@ -30,33 +38,31 @@ const FormulasViewer = ({ formulas, onInsert }) => {
         </div>
 
       {filteredCategories.map((cat) => (
-        <div key={cat.category} className="formula-category">
-          <h3>{cat.category}</h3>
+        <div key={cat.name} className="formula-category">
+          <h3>{cat.name}</h3>
 
           {cat.items.map((item) =>
-            Array.isArray(item.latex) ? (
-              item.latex.map((eq, i) => {
-                const eqName = eq.eq_name || "";
-                const eqLatex = eq.eq || eq;
+            Array.isArray(item.latex_str) ? (
+              item.latex_str.map((i) => {
                 return (
                 <div
                   key={i}
                   className="formula-item"
-                  onClick={() => onInsert(eqName)}
+                  onClick={() => onInsert(item.box_name)}
                 >
-                  <strong>{item.name}</strong>
-                    <BlockMath math={eqLatex} />
+                  <strong>{item.display_name}</strong>
+                    <BlockMath math={item.latex_str} />
                   </div>
                 );
               })
             ) : (
               <div
-                key={item.name}
+                key={item.display_name}
                 className="formula-item"
-                onClick={() => onInsert(item.latex)}
+                onClick={() => onInsert(item.box_name)}
               >
                 <strong>{item.name}</strong>
-                <BlockMath math={item.latex} />
+                <BlockMath math={item.latex_str} />
               </div>
             )
           )}
