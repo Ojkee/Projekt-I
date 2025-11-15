@@ -99,9 +99,29 @@ CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS: list[Case] = [
     ),
 ]
 
+CASES_EVALUATOR_FORMULA_BINOMIAL_IDENTITIES: list[Case] = [
+    # Case(
+    #     name="Square of a difference in expression",
+    #     input="(2a + 3b)^2\n!square_of_a_difference (2a + 3b)^2",
+    #     expected=[
+    #         "EXPR((((2.0*a)+(3.0*b))^2.0))",
+    #         "EXPR(((((2.0*a)^2.0)+(((2.0*(2.0*a))*(3.0*b))*-1.0))+((3.0*b)^2.0)))",
+    #     ],
+    # ),
+    # Case(
+    #     name="Square of a Difference in expression",
+    #     input="(2a)^2 - 2*(2a)*(3b) + (3b)^2\n!square_of_a_difference (2a)^2 - 2*(2a)*(3b) + (3b)^2",
+    #     expected=[
+    #         "EXPR(((((2.0*a)^2.0)+(((2.0*(2.0*a))*(3.0*b))*-1))+((3.0*b)^2.0)))",
+    #         "EXPR((((2.0*a)+(3.0*b))^2.0))",
+    #     ],
+    # ),
+]
+
 CASES_EVALUATOR_FORMULA: list[Case] = []
 CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_POWERS)
 CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_POWERS_FRACTIONS)
+CASES_EVALUATOR_FORMULA.extend(CASES_EVALUATOR_FORMULA_BINOMIAL_IDENTITIES)
 
 
 @pytest.mark.parametrize("case", CASES_EVALUATOR_FORMULA, ids=lambda c: c.name)

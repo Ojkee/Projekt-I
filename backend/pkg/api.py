@@ -41,7 +41,7 @@ def get_implemented_formulas_json() -> FrontFormulas:
         latex_str: str
 
     def formula_dict(box_name: str, entry: FormulaEntry) -> FrontFormula:
-        return asdict(FormData(entry.display_name, box_name, entry.latex_str))
+        return asdict(FormData(entry.display_name, f"!{box_name}", entry.latex_str))
 
     result: FrontFormulas = {}
     for category_name, category in FORMULA_MAP.items():
