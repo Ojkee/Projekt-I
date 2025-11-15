@@ -38,7 +38,7 @@ _FORMULAS_POWER: Mapping[str, FormulaEntry] = {
     ),
     "power_of_a_product": FormulaEntry(
         "Power of a Product rule",
-        r"( a \cdot b) ^ r",
+        r"( a \cdot b) ^ r = a^r \cdot b^r",
         Pow(Mul(WildNode("a"), WildNode("b")), WildNode("r")),
         Mul(Pow(WildNode("a"), WildNode("r")), Pow(WildNode("b"), WildNode("r"))),
     ),
