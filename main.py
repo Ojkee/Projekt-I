@@ -12,25 +12,43 @@ BACKEND_DIR = "./backend"
 FRONTEND_DIR = "./frontend"
 DIST_DIR = os.path.join(FRONTEND_DIR, "dist")
 
+
 def install_front_dependencies():
     print("Installing frontend dependencies...")
     subprocess.run(["npm", "install"], cwd=FRONTEND_DIR, check=True)
 
     # Backend dependencies
-    subprocess.run([sys.executable, "-m", "pip", "install", "-r", os.path.join(BACKEND_DIR, "requirements.txt")], check=True)
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "-r",
+            os.path.join(BACKEND_DIR, "requirements.txt"),
+        ],
+        check=True,
+    )
+
 
 def run_dev():
     print("Starting backend server...")
     threading.Thread(target=run_server, args=(PORT, True), daemon=True).start()
 
     try:
-        subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        # subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
     except KeyboardInterrupt:
         print("\nStopping...")
 
+
 def run_prod():
     print("Building frontend for production...")
-    subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "build"], cwd=FRONTEND_DIR, check=True)
+    subprocess.run(
+        [r"C:\Program Files\nodejs\npm.cmd", "run", "build"],
+        cwd=FRONTEND_DIR,
+        check=True,
+    )
 
     print("Running backend server in production mode...")
     try:

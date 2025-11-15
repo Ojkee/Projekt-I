@@ -17,11 +17,11 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
 
     try { 
         res = await sendText(lines.join("\n"));
-      } catch (err) {
-        console.error("Cannot connect to backend:", err);
+    } catch (err) {
+        console.error("Cannot connect to backend: ", err);
+        // res = { jakis error dla uzyt }
     }
 
-    console.log("Response:", res.final);
     const results = res.steps.map(function(e, i) {
           return { line: e, output: res.steps[i] };
     });
