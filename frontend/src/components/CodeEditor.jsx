@@ -3,6 +3,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { syntaxHighlighting } from "@codemirror/language";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { myLang, myLangHighlight } from "../highlighting";
+import { EditorView, placeholder as cmPlaceholder } from "@codemirror/view"; 
 
 const CodeEditor = ({ value, onChange, onEnter }) => {
   const editorRef = useRef(null);
@@ -25,7 +26,7 @@ const CodeEditor = ({ value, onChange, onEnter }) => {
         height="700px"
         width="700px"
         theme={oneDark}
-        extensions={[myLang, syntaxHighlighting(myLangHighlight)]}
+        extensions={[myLang, syntaxHighlighting(myLangHighlight), EditorView.lineWrapping, cmPlaceholder("Type your math problem")]}
         onChange={onChange}
       />
     </div>

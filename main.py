@@ -36,8 +36,8 @@ def run_dev():
     threading.Thread(target=run_server, args=(PORT, True), daemon=True).start()
 
     try:
-        subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
-        # subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        # subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
     except KeyboardInterrupt:
         print("\nStopping...")
 

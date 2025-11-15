@@ -1,3 +1,9 @@
+.formulas-wrapper{
+  border-radius: 18px;
+  overflow: hidden; 
+  max-height: calc(100vh - 120px);
+}
+
 .formulas-container {
   flex: 1 1 60%;
   min-width: 220px;
@@ -19,11 +25,12 @@
 
 
 .formulas-container::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 .formulas-container::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  border-radius: 16px;
+  background: transparent;
 }
 .formulas-container::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -84,6 +91,7 @@
   word-break: break-word;
   hyphens: auto;
   overflow: hidden;
+  font-size: 0.8rem;
 }
 
 .formula-item::before {
@@ -143,13 +151,20 @@
   animation: fadeInFormula 0.3s ease;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+  .formulas-wrapper {
+    width: 100%;           
+    max-width: 70rem;     
+    height: 17rem;        
+    overflow: hidden;     
+    box-sizing: border-box;
+    margin: 20px auto 0;
+  }
+
   .formulas-container {
     position: relative;
-    top: auto;
-    right: auto;
-    width: 24rem;
-    max-height: 24rem;
-    margin: 24px auto 0;
+    flex: 1;
+    max-height: 100%;     
+    padding: 0 12px;
   }
 }

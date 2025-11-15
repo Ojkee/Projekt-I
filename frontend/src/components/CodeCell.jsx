@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import CodeEditor from "./CodeEditor";
-import { LucidePlay, LucideTrash } from "lucide-react";
 import { sendText } from "../services/api";
 
 const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
@@ -12,23 +11,25 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
     if (!code.trim()) return;
     setRunning(true);
     const lines = code.split("\n").filter((l) => l.trim() !== "");
-
-    var res;
+    let timeout;
 
     try { 
-        res = await sendText(lines.join("\n"));
+      const res = await Promise.race([
+        sendText(lines.join("\n")),
+        new Promise((_, reject) => {
+          timeout = setTimeout(() => reject(new Error("Timeout: no response in 3s")), 3000);
+        }),
+      ]);
+
+      const results = res.steps.map((e, i) => ({ line: e, output: res.steps[i] }));
+      setOutputs(results);
     } catch (err) {
         console.error("Cannot connect to backend: ", err);
-        // res = { jakis error dla uzyt }
+        setOutputs([{line: "Error", output: err.message}]);
+    } finally {
+      clearTimeout(timeout);
+      setRunning(false);
     }
-
-    const results = res.steps.map(function(e, i) {
-          return { line: e, output: res.steps[i] };
-    });
-
-
-    setOutputs(results);
-    setRunning(false);
   };
 
   useEffect(() => {
