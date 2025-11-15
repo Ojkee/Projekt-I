@@ -1,6 +1,7 @@
 from dataclasses import asdict, dataclass
 from typing import TypeAlias
 from backend.internal.lexing import Lexer
+from backend.internal.math_builtins.formula_entry import FormulaEntry
 from backend.internal.math_builtins.formula_handler import FORMULA_MAP
 from backend.internal.tokenstreams import TokenStream
 from backend.internal.parsing import Parser
@@ -35,12 +36,15 @@ FrontFormulas: TypeAlias = dict[str, list[FrontFormula]]
 def get_implemented_formulas_json() -> FrontFormulas:
     @dataclass(frozen=True)
     class FormData:
-        pass
+        display_name: str
+        box_name: str
+        latex_str: str
 
-    def formula_dict() -> FrontFormula:
-        return asdict(FormData())
+    def formula_dict(box_name: str, entry: FormulaEntry) -> FrontFormula:
+        return asdict(FormData(entry.display_name, box_name, entry.latex_str))
 
     result: FrontFormulas = {}
     for category_name, category in FORMULA_MAP.items():
-        pass
+        forms = [formula_dict(*f) for f in category.items()]
+        result[category_name] = forms
     return result

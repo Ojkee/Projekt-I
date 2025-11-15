@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.rest.handlers import run
+from backend.rest.handlers import formula_list_api
 
 
 def create_app() -> FastAPI:
@@ -15,6 +16,6 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(run.router)
+    app.include_router(formula_list_api.router)
 
     return app
-
