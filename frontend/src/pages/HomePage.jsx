@@ -46,7 +46,7 @@ function HomePage() {
               <div className="hero-image-glow" />
               <img 
                 src={heroImage} 
-                alt="Uczniowie uczący się matematyki z Matiką" 
+                alt="Matika" 
                 className="hero-image"
               />
             </div>
