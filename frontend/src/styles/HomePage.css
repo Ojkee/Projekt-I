@@ -43,6 +43,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 
@@ -65,7 +66,7 @@ body {
 }
 
 .hero-content {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.8s ease-out;
 }
 
 @keyframes fadeIn {

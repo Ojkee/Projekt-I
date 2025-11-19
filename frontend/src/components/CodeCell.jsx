@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CodeEditor from "./CodeEditor";
 import { sendText } from "../services/api";
 
-const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
-  const [code, setCode] = useState("");
+const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus }) => {
   const [outputs, setOutputs] = useState([]);
   const [running, setRunning] = useState(false);
 
+  const resultRef = useRef(null);
+  useEffect(() =>{
+    if (resultRef.current) {
+      resultRef.current.scrollTop = resultRef.current.scrollHeight;
+    }
+  },[outputs]); 
   const handleRun = async () => {
-    if (!code.trim()) return;
+    if (!content.trim()) return;   
     setRunning(true);
-    const lines = code.split("\n").filter((l) => l.trim() !== "");
+    const lines = content.split("\n").filter((l) => l.trim() !== "");
     let timeout;
 
     try { 
@@ -34,26 +39,22 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.detail.cellId === cellId) setCode((prev) => prev + e.detail.latex);
+      if (e.detail.cellId === cellId) onChange(cellId, content + e.detail.latex);
     };
     window.addEventListener("insertFormula", handler);
     return () => window.removeEventListener("insertFormula", handler);
-  }, [cellId]);
+  }, [cellId, content, onChange]);
 
   useEffect(() => {
     const handleGlobalRun = () => handleRun();
     window.addEventListener("runAllCells", handleGlobalRun);
     return () => window.removeEventListener("runAllCells", handleGlobalRun);
-  }, [code]);
+  }, [content]);
 
   return (
     <div className="codecell" style={{ position: "relative", marginBottom: "20px" }}>
       {isRemovable && (
-        <button
-          onClick={() => onRemove && onRemove(cellId)}
-          className="remove-cell-btn"
-          title="Remove cell"
-        >
+        <button onClick={() => onRemove && onRemove(cellId)} className="remove-cell-btn" title="Remove cell">
           <svg className="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -61,7 +62,7 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
       )}
 
       <div onClick={() => onFocus && onFocus()} style={{ cursor: "text" }}>
-        <CodeEditor value={code} onChange={setCode} onEnter={handleRun} />
+        <CodeEditor value={content} onChange={(newCode) => onChange(cellId, newCode)} onEnter={handleRun} />
       </div>
 
       <div className="codecell-buttons">
@@ -75,7 +76,8 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
       </div>
 
       {outputs.length > 0 && (
-        <div className="results">
+      <div className="results-wrapper">
+        <div className="results" ref={(resultRef)}>
           {outputs.map((item, i) => (
             <div key={i} className="result-line">
               <span className="result-step">{item.line}</span>
@@ -83,10 +85,10 @@ const CodeCell = ({ cellId, onRemove, isRemovable, onFocus }) => {
             </div>
           ))}
         </div>
+      </div>
       )}
     </div>
   );
 };
-
 
 export default CodeCell;

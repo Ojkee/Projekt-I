@@ -8,16 +8,16 @@ function InstructionPage() {
   return (
     <div className="how-to-use-page">
       <header className="page-header">
-        <div className="container header-content">
-          <button className="back-button" onClick={() => navigate("/")}>
-            <svg className="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back
-          </button>
-          <h1 className="logo-text">Matika</h1>
-          <div className="spacer" />
-        </div>
+          <div className="header-content">
+            <button className="back-button" onClick={() => navigate("/")}>
+              <svg className="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back
+            </button>
+            <h1 className="logo-text">Matika</h1>
+            <div className="spacer" />
+          </div>
       </header>
 
       <main className="main-content">
