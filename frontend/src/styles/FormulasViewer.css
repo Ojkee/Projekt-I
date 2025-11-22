@@ -148,7 +148,7 @@
 }
 
 .formula-item {
-  animation: fadeInFormula 0.3s ease;
+  animation: fadeInFormula 0.8s ease;
 }
 
 @media (max-width: 900px) {

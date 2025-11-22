@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CodeCell from "../components/CodeCell";
 import FormulasViewer from "../components/FormulasViewer";
 import "../styles/UserPage.css";
@@ -6,11 +6,29 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 
 function UserPage() {
-  const [cells, setCells] = useState([{ id: uuidv4() }]);
-  const [activeCellId, setActiveCellId] = useState(cells[0].id);
+  const [cells, setCells] = useState(() => {
+  const saved = localStorage.getItem("cells");
+    return saved ? JSON.parse(saved) : [{ id: uuidv4(), content: "" }];
+  });
+
+  const [activeCellId, setActiveCellId] = useState(
+    () => cells[0]?.id || null
+  );
+
+  useEffect(() => {
+    localStorage.setItem("cells", JSON.stringify(cells));
+  }, [cells]);
+
+  const updateCellContent = (id, newContent) => {
+  setCells(prev =>
+    prev.map(cell =>
+      cell.id === id ? { ...cell, content: newContent } : cell
+    )
+  );
+};
 
   const addCell = () => {
-    const newCell = { id: uuidv4() };
+    const newCell = { id: uuidv4(), content: "" };
     setCells(prev => [...prev, newCell]);
     setActiveCellId(newCell.id);
   };
@@ -24,7 +42,9 @@ function UserPage() {
   };
 
   const clearAll = () => {
-    setCells([{ id: uuidv4() }]);
+    const fresh = [{ id: uuidv4(), content: "" }];
+    setCells(fresh);
+    setActiveCellId(fresh[0].id);
   };
 
   const insertFormula = (latex) => {
@@ -96,6 +116,8 @@ function UserPage() {
               key={cell.id}
               cellId={cell.id}
               onRemove={removeCell}
+              content={cell.content}
+              onChange={updateCellContent}
               isRemovable={idx !== 0}
               onFocus={() => setActiveCellId(cell.id)} 
             />
