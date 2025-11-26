@@ -68,23 +68,24 @@ class FlattenMul(FlattenNode):
 
     def constant_fold(self) -> FlattenNode:
         numeric_product = 1.0
-        children_to_remove = []
+        new_children = []
 
         for child in self.children:
-            child.constant_fold()
-            if isinstance(child, FlattenNumeric):
-                numeric_product *= child.value
-                children_to_remove.append(child)
+            folded = child.constant_fold()
 
-        for child in children_to_remove:
-            self.children.remove(child)
+            if isinstance(folded, FlattenNumeric):
+                numeric_product *= folded.value
+            else:
+                new_children.append(folded)
 
-        self.children.append(FlattenNumeric(numeric_product))
+        if numeric_product != 1 or not new_children:
+            new_children.append(FlattenNumeric(numeric_product))
 
-        if len(self.children) == 1:
-            return self.children[0]
+        if len(new_children) == 1:
+            return new_children[0]
 
-        return self
+        return FlattenMul(new_children)
+
 
     def __str__(self) -> str:
         parts = []

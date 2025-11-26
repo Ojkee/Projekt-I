@@ -57,20 +57,21 @@ class FlattenPow(FlattenNode):
         self.exponent = exponent
 
     def constant_fold(self) -> FlattenNode:
-        self.base.constant_fold()
-        self.exponent.constant_fold()
+        base = self.base.constant_fold()
+        exponent = self.exponent.constant_fold()
 
-        match self.base, self.exponent:
-            case (FlattenNumeric(lv), FlattenNumeric(rv)):
-                return FlattenNumeric(lv**rv)
+        match base, exponent:
+            case FlattenNumeric(lv), FlattenNumeric(rv):
+                return FlattenNumeric(lv ** rv)
 
-            case (_, FlattenNumeric(0)):
+            case _, FlattenNumeric(0):
                 return FlattenNumeric(1)
 
-            case (_, FlattenNumeric(1)):
-                return self.base
+            case _, FlattenNumeric(1):
+                return base
 
-        return self
+        return FlattenPow(base, exponent)
+
 
     def __str__(self) -> str:
         base_str = str(self.base)

@@ -62,23 +62,23 @@ class FlattenAdd(FlattenNode):
 
     def constant_fold(self):
         numeric_sum = 0.0
-        chidren_to_remove = []
+        new_children = []
 
         for child in self.children:
-            child.constant_fold()
-            if isinstance(child, FlattenNumeric):
-                numeric_sum += child.value
-                chidren_to_remove.append(child)
+            folded = child.constant_fold()
 
-        for child in chidren_to_remove:
-            self.children.remove(child)
+            if isinstance(folded, FlattenNumeric):
+                numeric_sum += folded.value
+            else:
+                new_children.append(folded)
 
-        self.children.append(FlattenNumeric(numeric_sum))
+        if numeric_sum != 0 or not new_children:
+            new_children.append(FlattenNumeric(numeric_sum))
 
-        if len(self.children) == 1:
-            return self.children[0]
+        if len(new_children) == 1:
+            return new_children[0]
 
-        return self
+        return FlattenAdd(new_children)
 
     def __str__(self) -> str:
         parts = []
