@@ -273,17 +273,17 @@ def rule_combine_powers(node: "FlattenNode") -> "FlattenNode" | None:
 
 
 RULES = [
+    rule_constant_fold,
     rule_combine_like_terms,
     rule_distribute_mul,
     rule_canonical_form,
     rule_combine_powers,
-    rule_constant_fold,
 ]
 
 def simplify(node: FlattenNode) -> FlattenNode:
     prev_str = ""
     current = node
-    while str(current) != prev_str: #TODO: constant_fold czasami nie dziala po aplikacji wszystkich reguł
+    while str(current) != prev_str: #TODO: constant_fold czasami nie dziala po aplikacji wszystkich reguł i zostaje np 4+2*2x
         prev_str = str(current)
         current = _apply_rules_recursively(current)
     return current
