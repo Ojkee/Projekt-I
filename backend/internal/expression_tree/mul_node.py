@@ -1,7 +1,8 @@
 from __future__ import annotations
 from backend.internal.expression_tree import Node, FlattenNode
 from backend.internal.expression_tree.numeric_node import FlattenNumeric, Numeric
-from backend.internal.expression_tree.pow_node import Pow
+from backend.internal.expression_tree.pow_node import Pow, FlattenPow
+from backend.internal.expression_tree.symbol_node import FlattenSymbol
 
 
 class Mul(Node):
@@ -22,6 +23,9 @@ class Mul(Node):
 
     def __repr__(self):
         return "(" + repr(self.left) + "*" + repr(self.right) + ")"
+
+    def __str__(self) -> str:
+        return self.flatten().__str__()
 
     def flatten(self) -> FlattenMul:
         children = []
@@ -79,19 +83,28 @@ class FlattenMul(FlattenNode):
                 new_children.append(folded)
 
         if numeric_product != 1 or not new_children:
-            new_children.append(FlattenNumeric(numeric_product))
+            new_children.insert(0, FlattenNumeric(numeric_product))
 
         if len(new_children) == 1:
             return new_children[0]
 
         return FlattenMul(new_children)
 
+    def unflatten(self) -> Mul:
+        if not self.children:
+            raise ValueError("Cannot unflatten a Mul node with no children.")
+
+        result: Node = self.children[0].unflatten()
+        for child in self.children[1:]:
+            child_unflattened = child.unflatten()
+            result = Mul(result, child_unflattened)
+
+        return result
+
 
     def __str__(self) -> str:
         parts = []
-        is_negative = isinstance(self.children[0], FlattenNumeric) and self.children[
-            0
-        ] == FlattenNumeric(-1)
+        is_negative = isinstance(self.children[0], FlattenNumeric) and self.children[0] == FlattenNumeric(-1)
         start = 1 if is_negative else 0
 
         for c in self.children[start:]:
@@ -111,3 +124,19 @@ class FlattenMul(FlattenNode):
 
     def precedence(self):
         return self.PRECEDENCE
+    
+    def canonical_sort(self):
+        def key(term):
+
+            if isinstance(term, FlattenNumeric):
+                return (0, "", 0)
+
+            if isinstance(term, FlattenSymbol):
+                return (1, term.name, -1)
+
+            if isinstance(term, FlattenPow) and isinstance(term.base, FlattenSymbol) and isinstance(term.exponent, FlattenNumeric):
+                return (1, term.base.name, -term.exponent.value)
+
+            return (2, str(term), 0)
+
+        self.children.sort(key=key)

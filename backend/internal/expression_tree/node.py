@@ -54,9 +54,6 @@ class Node(ABC):
 
 class FlattenNode(ABC):
     PRECEDENCE = 999
-    # @abstractmethod
-    # def canonicical_form(self)
-    #    pass`
 
     @abstractmethod
     def constant_fold(self) -> FlattenNode:
@@ -79,20 +76,16 @@ class FlattenNode(ABC):
         """
         pass
 
-    #    @abstractmethod
-    #    def reduce(self):
-    #        pass
-
-    #    @abstractmethod
-    #    def simplify(self):
-    #        pass
-
     @abstractmethod
     def __eq__(self, other) -> bool:
         pass
 
     @abstractmethod
     def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def unflatten(self) -> Node:
         pass
 
     @abstractmethod

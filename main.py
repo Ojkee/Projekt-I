@@ -37,7 +37,7 @@ def run_dev():
 
     try:
         # subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
-        subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
     except KeyboardInterrupt:
         print("\nStopping...")
 
@@ -45,7 +45,7 @@ def run_dev():
 def run_prod():
     print("Building frontend for production...")
     subprocess.run(
-        [r"C:\Program Files\nodejs\npm.cmd", "run", "build"],
+        [r"npm", "run", "build"],
         cwd=FRONTEND_DIR,
         check=True,
     )

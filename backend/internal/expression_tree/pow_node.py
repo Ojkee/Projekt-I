@@ -93,5 +93,8 @@ class FlattenPow(FlattenNode):
             and self.exponent == other.exponent
         )
 
+    def unflatten(self) -> Pow:
+        return Pow(self.base.unflatten(), self.exponent.unflatten())
+
     def precedence(self):
         return self.PRECEDENCE

@@ -37,7 +37,12 @@ class FlattenNumeric(FlattenNode):
         return isinstance(other, FlattenNumeric) and self.value == other.value
 
     def __str__(self):
+        if self.value == int(self.value):
+            return str(int(self.value))
         return str(self.value)
+
+    def unflatten(self) -> Numeric:
+        return Numeric(self.value)
 
     def precedence(self):
         return self.PRECEDENCE

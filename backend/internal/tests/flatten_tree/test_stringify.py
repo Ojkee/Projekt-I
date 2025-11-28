@@ -156,6 +156,22 @@ CASES_COMPLEX = [
         ]),
         "a - (b + 2)",
     ),
+    Case(
+        "Custom complex expression (x+2+2+2/2)*24/11",
+        FlattenMul([
+            FlattenAdd([
+                FlattenSymbol("x"),
+                FlattenNumeric(2),
+                FlattenNumeric(2),
+                FlattenMul([FlattenNumeric(2), FlattenPow(FlattenNumeric(2), FlattenNumeric(-1))])  # 2/2
+            ]),
+            FlattenMul([
+                FlattenNumeric(24),
+                FlattenPow(FlattenNumeric(11), FlattenNumeric(-1))  # /11
+            ])
+        ]),
+        "(x + 2 + 2 + 2 * 2 ^ -1) * 24 * 11 ^ -1",
+    ),
 ]
 
 EXPRESSION_TREE_UT: list[Case] = []

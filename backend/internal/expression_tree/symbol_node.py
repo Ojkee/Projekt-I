@@ -40,5 +40,8 @@ class FlattenSymbol(FlattenNode):
     def __eq__(self, other):
         return isinstance(other, FlattenSymbol) and self.name == other.name
 
+    def unflatten(self) -> Symbol:
+        return Symbol(self.name)
+
     def precedence(self):
         return self.PRECEDENCE

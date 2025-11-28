@@ -35,7 +35,7 @@ CASES_ADDITION = [
     Case(
         "Addition with symbols",
         FlattenAdd([FlattenNumeric(12), FlattenSymbol("x"), FlattenNumeric(7)]),
-        FlattenAdd([FlattenSymbol("x"), FlattenNumeric(19)]),
+        FlattenAdd([FlattenNumeric(19), FlattenSymbol("x")]),
     ),
 ]
 
@@ -68,7 +68,7 @@ CASES_MULTIPLICATION = [
     Case(
         "Multiplication with symbols",
         FlattenMul([FlattenNumeric(7), FlattenSymbol("y"), FlattenNumeric(3)]),
-        FlattenMul([FlattenSymbol("y"), FlattenNumeric(21)]),
+        FlattenMul([FlattenNumeric(21), FlattenSymbol("y")]),
     ),
 ]
 
@@ -76,12 +76,20 @@ CASES_ADVANCED = [
     Case(
         "Addition and multiplication",
         FlattenAdd([FlattenMul([FlattenNumeric(2), FlattenNumeric(3)]), FlattenSymbol("x")]),
-        FlattenAdd([FlattenSymbol("x"), FlattenNumeric(6)]),
+        FlattenAdd([FlattenNumeric(6), FlattenSymbol("x")]),
     ),
     Case(
         "Multiplication and addition",
         FlattenMul([FlattenAdd([FlattenNumeric(1), FlattenNumeric(2)]), FlattenSymbol("z")]),
-        FlattenMul([FlattenSymbol("z"), FlattenNumeric(3)]),
+        FlattenMul([FlattenNumeric(3), FlattenSymbol("z")]),
+    ),
+        Case(
+        "Nested addition",
+        FlattenAdd([
+            FlattenNumeric(1),
+            FlattenNumeric(2), FlattenSymbol("y")
+        ]),
+        FlattenAdd([FlattenNumeric(3), FlattenSymbol("y")]),
     ),
     Case(
         "Complex nested expression",
@@ -89,7 +97,7 @@ CASES_ADVANCED = [
             FlattenMul([FlattenNumeric(2), FlattenAdd([FlattenNumeric(3), FlattenNumeric(4)])]),
             FlattenSymbol("w")
         ]),
-        FlattenAdd([FlattenSymbol("w"),FlattenNumeric(14)]),
+        FlattenAdd([FlattenNumeric(14), FlattenSymbol("w")]),
     ),
     Case(
         "Complex nested expression with multiple levels",
@@ -110,9 +118,9 @@ CASES_ADVANCED = [
             FlattenNumeric(4)
         ]),
         FlattenAdd([
-            FlattenMul([FlattenSymbol("a"), FlattenNumeric(2.0)]),
-            FlattenMul([FlattenSymbol("b"), FlattenNumeric(3.0)]),
-            FlattenNumeric(4)
+            FlattenNumeric(4),
+            FlattenMul([FlattenNumeric(2.0), FlattenSymbol("a")]),
+            FlattenMul([FlattenNumeric(3.0), FlattenSymbol("b")]),
         ]),
     ),
 ]
@@ -148,6 +156,16 @@ CASES_POWER = [
         FlattenPow(FlattenAdd([FlattenNumeric(1), FlattenNumeric(1)]), FlattenNumeric(3)),
         FlattenNumeric(8),
     ),
+    Case(
+        "Power with symbol base",
+        FlattenPow(FlattenSymbol("x"), FlattenNumeric(2)),
+        FlattenPow(FlattenSymbol("x"), FlattenNumeric(2)),
+    ),
+    Case(
+        "Power with symbol exponent",
+        FlattenPow(FlattenNumeric(2), FlattenSymbol("y")),
+        FlattenPow(FlattenNumeric(2), FlattenSymbol("y")),
+    ),
 ]
 
 EXPRESSION_TREE_UT: list[Case] = []
@@ -159,5 +177,4 @@ EXPRESSION_TREE_UT.extend(CASES_POWER)
 @pytest.mark.parametrize("case", EXPRESSION_TREE_UT, ids=lambda c: c.name)
 def test_expression_tree(case: Case) -> None:
     folded = case.input.constant_fold()
-    print(f"Test case '{case.name}': GOT: {folded} EXPECTED: {case.expected}")
-    assert folded == case.expected
+    assert folded == case.expected, f"Test case '{case.name}': GOT: {folded} EXPECTED: {case.expected}"

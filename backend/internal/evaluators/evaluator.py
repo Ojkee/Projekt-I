@@ -58,6 +58,31 @@ class Evaluator:
                 case SubjectObject() as sub:
                     subject_object = sub
                 case (AtomTransformObject() | FormulaObject()) as t_obj:
+                    #WORKAROUMND FOR manual TESTTING
+                    ###### START WORKAROUND
+                    if isinstance(t_obj, FormulaObject) and t_obj.name.literal == "simplify":
+                        from backend.internal.expression_tree.node import FlattenNode
+                        from backend.internal.expression_tree.add_node import simplify
+
+                        if isinstance(subject_object, ExpressionObject):
+                            flattened: FlattenNode = subject_object.value.flatten()
+                            simplified = simplify(flattened)
+                            subject_object.value = simplified.unflatten()
+                            print("Simplified to:", subject_object.value, "type:", type(subject_object.value))
+                            subjects.append(copy.deepcopy(subject_object))
+
+                        elif isinstance(subject_object, EquationObject):
+                            flattened_lhs: FlattenNode = subject_object.lhs.flatten()
+                            simplified_lhs = simplify(flattened_lhs)
+                            flattened_rhs: FlattenNode = subject_object.rhs.flatten()
+                            simplified_rhs = simplify(flattened_rhs)
+
+                            subject_object.lhs = simplified_lhs.unflatten()
+                            subject_object.rhs = simplified_rhs.unflatten()
+                            subjects.append(copy.deepcopy(subject_object))
+
+                        continue
+                    ###### END WORKAROUND
                     try:
                         subject_object.apply(t_obj)
                     except ValueError as e:
@@ -68,6 +93,7 @@ class Evaluator:
                     break
                 case obj:
                     raise ValueError(f"Unimplemented transform type: {type(obj)}")
+
 
             if err_msg := Validator.check(subject_object):
                 return subjects + [ErrorObject(err_msg)]
@@ -113,6 +139,8 @@ class Evaluator:
 
     def _eval_formula(self, formula: Formula) -> FormulaObject | ErrorObject:
         name = formula.name.literal
+        if name == "simplify":
+            return FormulaObject(formula.name, [])
         if not BuiltIns.is_present(name):
             return ErrorObject(EvaluatorErrorUserMsg.no_formula(name))
 
