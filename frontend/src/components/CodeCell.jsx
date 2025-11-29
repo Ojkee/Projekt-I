@@ -13,33 +13,38 @@ const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus })
     }
   },[outputs]); 
   const handleRun = async () => {
-    if (!content.trim()) return;   
-    setRunning(true);
-    const lines = content.split("\n").filter((l) => l.trim() !== "");
-    let timeout;
+  if (!content.trim()) return;
+  setRunning(true);
 
-    try { 
-      const res = await Promise.race([
-        sendText(lines.join("\n")),
-        new Promise((_, reject) => {
-          timeout = setTimeout(() => reject(new Error("Timeout: no response in 3s")), 3000);
-        }),
-      ]);
+  const lines = content.split("\n").filter((l) => l.trim() !== "");
+  let timeout;
 
-      const results = res.steps.map((e, i) => ({ line: e, output: res.steps[i] }));
-      setOutputs(results);
-    } catch (err) {
-        console.error("Cannot connect to backend: ", err);
-        setOutputs([{line: "Error", output: err.message}]);
-    } finally {
-      clearTimeout(timeout);
-      setRunning(false);
-    }
-  };
+  try {
+    const res = await Promise.race([
+      sendText(lines.join("\n")),
+      new Promise((_, reject) => {
+        timeout = setTimeout(() => reject(new Error("Timeout: no response in 3s")), 3000);
+      }),
+    ]);
+
+    const result = (res.steps || []).map((step, i) => ({
+      line: lines[i],
+      output: step
+    }));
+
+    setOutputs(result);
+  } catch (err) {
+    console.error("Cannot connect to backend: ", err);
+    setOutputs([{ line: "Error", output: err.message }]);
+  } finally {
+    clearTimeout(timeout);
+    setRunning(false);
+  }
+};
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.detail.cellId === cellId) onChange(cellId, content + e.detail.latex);
+      if (e.detail.cellId === cellId) onChange(cellId, content + e.detail.f_name);
     };
     window.addEventListener("insertFormula", handler);
     return () => window.removeEventListener("insertFormula", handler);

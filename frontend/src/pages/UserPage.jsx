@@ -47,9 +47,9 @@ function UserPage() {
     setActiveCellId(fresh[0].id);
   };
 
-  const insertFormula = (latex) => {
+  const insertFormula = (f_name) => {
     if (!activeCellId) return;
-    const event = new CustomEvent("insertFormula", { detail: { cellId: activeCellId, latex } });
+    const event = new CustomEvent("insertFormula", { detail: { cellId: activeCellId, f_name} });
     window.dispatchEvent(event);
   };
 

@@ -9,8 +9,7 @@ const CodeEditor = ({ value, onChange, onEnter }) => {
   const editorRef = useRef(null);
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); 
+    if (e.key === "Enter" && !e.shiftKey) { 
       if (onEnter) onEnter();
     }
   };
