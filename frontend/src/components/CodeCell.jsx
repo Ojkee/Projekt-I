@@ -5,7 +5,7 @@ import { sendText } from "../services/api";
 const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus }) => {
   const [outputs, setOutputs] = useState([]);
   const [running, setRunning] = useState(false);
-
+  const insertRef = useRef(null);
   const resultRef = useRef(null);
   useEffect(() =>{
     if (resultRef.current) {
@@ -44,11 +44,13 @@ const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus })
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.detail.cellId === cellId) onChange(cellId, content + e.detail.f_name);
+      if (e.detail.cellId === cellId && insertRef.current) {
+        insertRef.current(e.detail.f_name);
+      }
     };
     window.addEventListener("insertFormula", handler);
     return () => window.removeEventListener("insertFormula", handler);
-  }, [cellId, content, onChange]);
+  }, [cellId, content]);
 
   useEffect(() => {
     const handleGlobalRun = () => handleRun();
@@ -67,7 +69,7 @@ const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus })
       )}
 
       <div onClick={() => onFocus && onFocus()} style={{ cursor: "text" }}>
-        <CodeEditor value={content} onChange={(newCode) => onChange(cellId, newCode)} onEnter={handleRun} />
+        <CodeEditor value={content} onChange={(newCode) => onChange(cellId, newCode)} onEnter={handleRun} onExposeInsert={(fn) => (insertRef.current = fn)} />
       </div>
 
       <div className="codecell-buttons">
@@ -77,6 +79,15 @@ const CodeCell = ({ cellId, content, onChange, onRemove, isRemovable, onFocus })
           </svg>
           Run
           {running ? " Running..." : ""}
+        </button>
+        <button className="icon-btn" title="Simplify" onClick={() =>
+          window.dispatchEvent(
+            new CustomEvent("insertFormula", {
+              detail:{cellId, f_name: "!simplify"}
+            })
+          )
+        }>
+          Simplify
         </button>
       </div>
 

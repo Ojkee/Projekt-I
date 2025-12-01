@@ -105,9 +105,9 @@ function HomePage() {
                   />
                 </svg>
               </div>
-              <h3 className="feature-title">Versatile Topics</h3>
+              <h3 className="feature-title">Instant Help</h3>
               <p className="feature-description">
-                From algebra to calculus, trigonometry to statistics. We'll help you with every topic in school.
+                Receive instant, easy-to-understand answers whenever you need them.
               </p>
             </div>
             <div className="feature-card">
