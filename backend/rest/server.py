@@ -12,7 +12,6 @@ STATIC_FILES_DIR = os.path.join(os.getcwd(), "frontend", "dist")
 def run_server(port: int, DEV_MODE: bool = False) -> bool:
     app = create_app()
 
-    # Workaround
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:5173"],
@@ -26,4 +25,5 @@ def run_server(port: int, DEV_MODE: bool = False) -> bool:
             "/", StaticFiles(directory=STATIC_FILES_DIR, html=True), name="frontend"
         )
 
-    uvicorn.run(app, host="localhost", port=port, reload=False)
+    PORT = int(os.environ.get("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=PORT, reload=False)

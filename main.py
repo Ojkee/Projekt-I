@@ -44,22 +44,24 @@ def run_dev():
 
 
 def run_prod():
-    print("Building frontend for production...")
-    subprocess.run(
-        [r"npm", "run", "build"],
-        cwd=FRONTEND_DIR,
-        check=True,
-    )
+    # print("Building frontend for production...")
+    # subprocess.run(
+    #     [r"npm", "run", "build"],
+    #     cwd=FRONTEND_DIR,
+    #     check=True,
+    # )
 
-    print("Running backend server in production mode...")
-    try:
-        run_server(PORT, DEV_MODE=False)
-    except KeyboardInterrupt:
-        print("\nStopping...")
-    finally:
-        if os.path.exists(DIST_DIR):
-            print("Removing frontend/dist directory...")
-            shutil.rmtree(DIST_DIR)
+    run_server(PORT, DEV_MODE=False)
+
+    # print("Running backend server in production mode...")
+    # try:
+    #     run_server(PORT, DEV_MODE=False)
+    # except KeyboardInterrupt:
+    #     print("\nStopping...")
+    # finally:
+    #     if os.path.exists(DIST_DIR):
+    #         print("Removing frontend/dist directory...")
+    #         shutil.rmtree(DIST_DIR)
 
 
 if __name__ == "__main__":
