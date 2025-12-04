@@ -12,12 +12,17 @@ from fastapi.middleware.cors import CORSMiddleware
 def run_server(port: int, DEV_MODE: bool = False) -> bool:
     app = create_app()
 
+    origins = [
+        "https://matika.onrender.com/",
+        "http://localhost:5173/",
+    ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173"],
+        allow_origins=origins,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=[""],
+        allow_headers=[""],
     )
 
     #if not DEV_MODE:
