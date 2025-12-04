@@ -13,8 +13,8 @@ def run_server(port: int, DEV_MODE: bool = False) -> bool:
     app = create_app()
 
     origins = [
-        "https://matika.onrender.com/",
-        "http://localhost:5173/",
+        "https://matika.onrender.com",
+        "http://localhost:5173",
     ]
 
     app.add_middleware(
