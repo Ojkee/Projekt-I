@@ -34,10 +34,11 @@ def install_front_dependencies():
 def run_dev():
     print("Starting backend server...")
     threading.Thread(target=run_server, args=(PORT, True), daemon=True).start()
-
+    
     try:
         # subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
-        subprocess.run([r"npm", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "run", "dev"], cwd=FRONTEND_DIR, check=True)
+        #jak ci nie działa to odkomentuj Wojtyła XD
     except KeyboardInterrupt:
         print("\nStopping...")
 

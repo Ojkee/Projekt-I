@@ -135,9 +135,9 @@ function InstructionPage() {
               </p>
             </div>
             <div className="tip-card">
-              <h4 className="tip-heading">✓ Learn from Solutions</h4>
+              <h4 className="tip-heading">✓ Try the Simplify</h4>
               <p className="tip-text">
-                Don't just copy – understand every step of the solving process.
+                Tap Simplify to shrink the expression and reveal clear steps you can follow.
               </p>
             </div>
           </div>

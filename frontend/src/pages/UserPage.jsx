@@ -66,8 +66,8 @@ function UserPage() {
       <header className="userpage-toolbar">
         <div className="userpage-toolbar-inner">
           <div className="toolbar-left">
-          <button className="back-btn" onClick={() => navigate("/")}>
-            <svg className="back-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button className="back-btn" onClick={() => navigate("/") } title="Back">
+            <svg className="back-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back
@@ -76,18 +76,18 @@ function UserPage() {
           <h1 className="logo-text">Matika</h1>
 
           <div className="toolbar-right">
-            <button onClick={runAll} className="run-all-btn">
+            <button onClick={runAll} className="run-all-btn" title="Run all">
               <svg className="run-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> 
               </svg>
               Run all</button>
-            <button onClick={addCell} className="add-cell-btn">
+            <button onClick={addCell} className="add-cell-btn" title="Add">
               <svg className="add-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               Add</button>
-            <button onClick={clearAll} className="remove-all-btn">
+            <button onClick={clearAll} className="remove-all-btn" title="Delete all">
               <svg className="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
